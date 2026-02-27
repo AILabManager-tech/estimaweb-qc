@@ -74,12 +74,11 @@ export function ResultsStep({
       >
         <h3 className="text-h3 font-bold text-text-primary">{tCta("title")}</h3>
         <p className="mt-2 text-sm text-text-secondary">{tCta("subtitle")}</p>
-        {/* TODO(human): Implement the CTA click handler.
-            Decide what happens when the user clicks "Talk to an expert".
-            Options: window.open to contact page, mailto with pre-filled subject,
-            tel: link, or a combination. Consider: the user just saw their estimate
-            and wants to take action with minimal friction. */}
-        <Button className="mt-6 px-8" variant="primary" onClick={() => { /* TODO(human) */ }}>
+        <Button className="mt-6 px-8" variant="primary" onClick={() => {
+          const subject = encodeURIComponent("Demande de devis — EstimaWeb QC");
+          const body = encodeURIComponent("Bonjour,\n\nJ'ai utilisé EstimaWeb QC et j'aimerais obtenir un devis personnalisé pour mon projet web.\n\nMerci!");
+          window.location.href = `mailto:ai.developpe.agents@jimerle.com?subject=${subject}&body=${body}`;
+        }}>
           <MessageSquare className="h-4 w-4" />
           {tCta("cta")}
         </Button>
