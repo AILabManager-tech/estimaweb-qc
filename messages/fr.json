@@ -1,0 +1,255 @@
+{
+  "metadata": {
+    "title": "EstimaWeb QC — Estimateur de coûts web pour PME québécoises",
+    "description": "Obtenez une estimation détaillée du coût de votre projet web en quelques minutes. Outil gratuit basé sur les données du marché québécois."
+  },
+  "common": {
+    "appName": "EstimaWeb QC",
+    "tagline": "Estimez le coût de votre projet web en quelques minutes",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "step": "Étape",
+    "of": "de",
+    "downloadPdf": "Télécharger le PDF",
+    "getQuote": "Voir mon estimation",
+    "restart": "Recommencer",
+    "currency": "CAD",
+    "perMonth": "/mois",
+    "year1": "Année 1",
+    "recurring": "Récurrent annuel",
+    "recommended": "Recommandé",
+    "poweredBy": "Propulsé par Mark Systems",
+    "langSwitch": "EN"
+  },
+  "hero": {
+    "badge": "// Estimateur web",
+    "titlePre": "Combien coûte ",
+    "titleAccent": "votre site web",
+    "titlePost": "?",
+    "subtitle": "Estimation gratuite en 2 minutes, basée sur les données réelles du marché québécois.",
+    "cta": "Démarrer l'estimation",
+    "trust1": "200+ PME estimées",
+    "trust2": "Données calibrées 2025",
+    "trust3": "Conforme Loi 25"
+  },
+  "header": {
+    "brand": "Mark Systems"
+  },
+  "footer": {
+    "tagline": "Propulsé par Mark Systems",
+    "privacy": "Politique de confidentialité",
+    "rights": "Tous droits réservés."
+  },
+  "wizard": {
+    "title": "Estimateur de coûts web",
+    "subtitle": "Répondez à quelques questions pour obtenir une estimation personnalisée",
+    "steps": {
+      "sector": "Secteur",
+      "siteType": "Type de site",
+      "features": "Fonctionnalités",
+      "extras": "Langue & extras",
+      "contact": "Contact",
+      "results": "Résultats"
+    }
+  },
+  "steps": {
+    "sector": {
+      "title": "Quel est votre secteur d'activité?",
+      "subtitle": "Cela nous permet de proposer des modules spécialisés pour votre industrie.",
+      "JUR": {
+        "label": "Juridique",
+        "description": "Cabinets d'avocats, notaires"
+      },
+      "MED": {
+        "label": "Médical / Santé",
+        "description": "Cliniques, cabinets médicaux"
+      },
+      "PRO": {
+        "label": "Professions réglementées",
+        "description": "Comptables, ingénieurs, architectes"
+      },
+      "PME": {
+        "label": "PME générale",
+        "description": "Commerce, services, manufacturier, restauration"
+      }
+    },
+    "siteType": {
+      "title": "Quel type de site web avez-vous besoin?",
+      "subtitle": "Choisissez le type qui correspond le mieux à vos besoins.",
+      "S01": {
+        "label": "Site vitrine (1-5 pages)",
+        "description": "Présentation simple de votre entreprise"
+      },
+      "S02": {
+        "label": "Site vitrine (6-15 pages)",
+        "description": "Design personnalisé, contenu structuré"
+      },
+      "S03": {
+        "label": "E-commerce basique",
+        "description": "Boutique en ligne, moins de 100 produits"
+      },
+      "S04": {
+        "label": "E-commerce avancé",
+        "description": "100+ produits, filtres, inventaire avancé"
+      },
+      "S05": {
+        "label": "Plateforme sur mesure",
+        "description": "Application web custom, architecture dédiée"
+      },
+      "S06": {
+        "label": "Landing page",
+        "description": "Page unique optimisée pour la conversion"
+      }
+    },
+    "features": {
+      "title": "Quelles fonctionnalités souhaitez-vous?",
+      "subtitle": "Sélectionnez toutes les options qui s'appliquent.",
+      "sectorModules": "Modules spécialisés pour votre secteur",
+      "M03": {
+        "label": "Réservation en ligne",
+        "description": "Système de prise de rendez-vous"
+      },
+      "M04": {
+        "label": "Portail client",
+        "description": "Espace membre sécurisé"
+      },
+      "M05": {
+        "label": "Intégration CRM",
+        "description": "HubSpot, Salesforce, etc."
+      },
+      "M06": {
+        "label": "Chatbot IA",
+        "description": "Assistant conversationnel intelligent"
+      },
+      "M07": {
+        "label": "Accessibilité SGQRI 008",
+        "description": "Conformité gouvernementale"
+      },
+      "M08": {
+        "label": "Conformité Loi 25",
+        "description": "Protection des données personnelles"
+      },
+      "M09": {
+        "label": "Formulaires complexes",
+        "description": "Workflows et logique conditionnelle"
+      },
+      "M10": {
+        "label": "Migration de données",
+        "description": "Transfert depuis un site existant"
+      },
+      "M11": {
+        "label": "Paiement en ligne",
+        "description": "Stripe, Square, etc."
+      },
+      "M12": {
+        "label": "Animations avancées",
+        "description": "Micro-interactions, parallaxe"
+      }
+    },
+    "sectorModules": {
+      "JUR01": { "label": "Conformité Barreau du Québec" },
+      "JUR02": { "label": "Architecture domaines de pratique" },
+      "JUR03": { "label": "Portail client confidentiel" },
+      "JUR04": { "label": "Blog juridique + infolettres" },
+      "JUR05": { "label": "SEO juridique local" },
+      "JUR06": { "label": "Intégration Clio" },
+      "MED01": { "label": "Prise de RDV en ligne" },
+      "MED02": { "label": "Conformité Loi 25 (données santé)" },
+      "MED03": { "label": "Portail patient sécurisé" },
+      "MED04": { "label": "Intégration DME" },
+      "MED05": { "label": "Contenu éducatif patients" },
+      "MED06": { "label": "Multi-praticiens" },
+      "PRO01": { "label": "Conformité ordre professionnel" },
+      "PRO02": { "label": "Calculateurs / simulateurs" },
+      "PRO03": { "label": "Intégration logiciel métier" },
+      "PRO04": { "label": "Portail documents clients" },
+      "PRO05": { "label": "Système de soumission en ligne" },
+      "PME01": { "label": "Catalogue produits/services" },
+      "PME02": { "label": "Formulaire de soumission" },
+      "PME03": { "label": "Google Business / Maps / avis" },
+      "PME04": { "label": "Section carrières" },
+      "PME05": { "label": "Menu en ligne / commande" },
+      "PME06": { "label": "Galerie portfolio" },
+      "PME07": { "label": "Intégration réseaux sociaux" }
+    },
+    "extras": {
+      "title": "Langue et options supplémentaires",
+      "subtitle": "Configurez les derniers détails de votre projet.",
+      "bilingual": {
+        "label": "Site bilingue (FR/EN)?",
+        "yes": "Oui, bilingue",
+        "no": "Non, français seulement"
+      },
+      "multilingual": {
+        "label": "Multilingue (3+ langues)?",
+        "yes": "Oui, 3 langues ou plus",
+        "no": "Non"
+      },
+      "urgency": {
+        "label": "Livraison urgente (< 4 semaines)?",
+        "yes": "Oui, urgent",
+        "no": "Non, délai normal"
+      }
+    },
+    "contact": {
+      "title": "Presque terminé!",
+      "subtitle": "Entrez vos coordonnées pour recevoir votre estimation détaillée.",
+      "name": "Nom complet",
+      "email": "Adresse courriel",
+      "company": "Nom de l'entreprise",
+      "phone": "Téléphone (optionnel)",
+      "privacy": "Vos données sont protégées conformément à la Loi 25.",
+      "submit": "Voir mon estimation"
+    },
+    "results": {
+      "title": "Votre estimation personnalisée",
+      "subtitle": "Trois scénarios basés sur les données du marché québécois"
+    }
+  },
+  "scenarios": {
+    "eco": {
+      "name": "Économique",
+      "description": "Solution fonctionnelle et accessible"
+    },
+    "rec": {
+      "name": "Recommandé",
+      "description": "Équilibre optimal qualité/prix"
+    },
+    "premium": {
+      "name": "Premium",
+      "description": "Solution haut de gamme complète"
+    }
+  },
+  "results": {
+    "initialCost": "Réalisation initiale",
+    "baseCost": "Socle de base",
+    "multipliers": "Multiplicateurs",
+    "sectorModules": "Modules sectoriels",
+    "contingency": "Marge imprévus (15%)",
+    "monthlyCost": "Coûts mensuels",
+    "maintenance": "Forfait maintenance",
+    "thirdParty": "Coûts tiers estimés",
+    "year1Total": "Total Année 1",
+    "annualRecurring": "Coût annuel récurrent"
+  },
+  "transparency": {
+    "title": "Notes de transparence",
+    "notes": [
+      "Ces montants sont des fourchettes indicatives, pas un devis ferme. Un audit détaillé est nécessaire pour un prix exact.",
+      "Le marché web québécois est variable : un freelance junior peut coûter 40% moins cher, une grande agence 50% plus cher.",
+      "Les coûts tiers (hébergement, licences, etc.) sont payés directement par le client et peuvent varier.",
+      "Le retour sur investissement (ROI) d'un site web professionnel se mesure sur 2-3 ans, pas en mois."
+    ]
+  },
+  "contact_cta": {
+    "title": "Obtenez un devis personnalisé gratuit",
+    "subtitle": "Nos experts analysent votre projet en détail et vous proposent une solution sur mesure.",
+    "cta": "Parler à un expert",
+    "response": "Réponse sous 24h"
+  },
+  "validation": {
+    "required": "Ce champ est requis",
+    "email": "Adresse courriel invalide",
+    "name": "Veuillez entrer votre nom"
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "metadata": {
+    "title": "EstimaWeb QC — Web Cost Estimator for Quebec SMEs",
+    "description": "Get a detailed estimate of your web project cost in minutes. Free tool based on Quebec market data."
+  },
+  "common": {
+    "appName": "EstimaWeb QC",
+    "tagline": "Estimate the cost of your web project in minutes",
+    "next": "Next",
+    "previous": "Previous",
+    "step": "Step",
+    "of": "of",
+    "downloadPdf": "Download PDF",
+    "getQuote": "See my estimate",
+    "restart": "Start over",
+    "currency": "CAD",
+    "perMonth": "/month",
+    "year1": "Year 1",
+    "recurring": "Annual recurring",
+    "recommended": "Recommended",
+    "poweredBy": "Powered by Mark Systems",
+    "langSwitch": "FR"
+  },
+  "hero": {
+    "badge": "// Web estimator",
+    "titlePre": "How much does ",
+    "titleAccent": "your website",
+    "titlePost": " cost?",
+    "subtitle": "Free estimate in 2 minutes, based on real Quebec market data.",
+    "cta": "Start the estimate",
+    "trust1": "200+ SMEs estimated",
+    "trust2": "2025 calibrated data",
+    "trust3": "Law 25 compliant"
+  },
+  "header": {
+    "brand": "Mark Systems"
+  },
+  "footer": {
+    "tagline": "Powered by Mark Systems",
+    "privacy": "Privacy policy",
+    "rights": "All rights reserved."
+  },
+  "wizard": {
+    "title": "Web Cost Estimator",
+    "subtitle": "Answer a few questions to get a personalized estimate",
+    "steps": {
+      "sector": "Sector",
+      "siteType": "Site Type",
+      "features": "Features",
+      "extras": "Language & Extras",
+      "contact": "Contact",
+      "results": "Results"
+    }
+  },
+  "steps": {
+    "sector": {
+      "title": "What is your industry?",
+      "subtitle": "This helps us suggest specialized modules for your sector.",
+      "JUR": {
+        "label": "Legal",
+        "description": "Law firms, notaries"
+      },
+      "MED": {
+        "label": "Medical / Health",
+        "description": "Clinics, medical offices"
+      },
+      "PRO": {
+        "label": "Regulated professions",
+        "description": "Accountants, engineers, architects"
+      },
+      "PME": {
+        "label": "General SME",
+        "description": "Retail, services, manufacturing, restaurants"
+      }
+    },
+    "siteType": {
+      "title": "What type of website do you need?",
+      "subtitle": "Choose the type that best fits your needs.",
+      "S01": {
+        "label": "Showcase site (1-5 pages)",
+        "description": "Simple business presentation"
+      },
+      "S02": {
+        "label": "Showcase site (6-15 pages)",
+        "description": "Custom design, structured content"
+      },
+      "S03": {
+        "label": "Basic e-commerce",
+        "description": "Online store, under 100 products"
+      },
+      "S04": {
+        "label": "Advanced e-commerce",
+        "description": "100+ products, filters, advanced inventory"
+      },
+      "S05": {
+        "label": "Custom platform",
+        "description": "Custom web application, dedicated architecture"
+      },
+      "S06": {
+        "label": "Landing page",
+        "description": "Single page optimized for conversion"
+      }
+    },
+    "features": {
+      "title": "What features do you need?",
+      "subtitle": "Select all options that apply.",
+      "sectorModules": "Specialized modules for your sector",
+      "M03": {
+        "label": "Online booking",
+        "description": "Appointment scheduling system"
+      },
+      "M04": {
+        "label": "Client portal",
+        "description": "Secure member area"
+      },
+      "M05": {
+        "label": "CRM integration",
+        "description": "HubSpot, Salesforce, etc."
+      },
+      "M06": {
+        "label": "AI Chatbot",
+        "description": "Intelligent conversational assistant"
+      },
+      "M07": {
+        "label": "SGQRI 008 Accessibility",
+        "description": "Government compliance"
+      },
+      "M08": {
+        "label": "Law 25 Compliance",
+        "description": "Personal data protection"
+      },
+      "M09": {
+        "label": "Complex forms",
+        "description": "Workflows and conditional logic"
+      },
+      "M10": {
+        "label": "Data migration",
+        "description": "Transfer from existing site"
+      },
+      "M11": {
+        "label": "Online payment",
+        "description": "Stripe, Square, etc."
+      },
+      "M12": {
+        "label": "Advanced animations",
+        "description": "Micro-interactions, parallax"
+      }
+    },
+    "sectorModules": {
+      "JUR01": { "label": "Quebec Bar compliance" },
+      "JUR02": { "label": "Practice areas architecture" },
+      "JUR03": { "label": "Confidential client portal" },
+      "JUR04": { "label": "Legal blog + newsletters" },
+      "JUR05": { "label": "Local legal SEO" },
+      "JUR06": { "label": "Clio integration" },
+      "MED01": { "label": "Online appointment booking" },
+      "MED02": { "label": "Law 25 Compliance (health data)" },
+      "MED03": { "label": "Secure patient portal" },
+      "MED04": { "label": "EMR integration" },
+      "MED05": { "label": "Patient educational content" },
+      "MED06": { "label": "Multi-practitioner" },
+      "PRO01": { "label": "Professional order compliance" },
+      "PRO02": { "label": "Calculators / simulators" },
+      "PRO03": { "label": "Business software integration" },
+      "PRO04": { "label": "Client document portal" },
+      "PRO05": { "label": "Online quote system" },
+      "PME01": { "label": "Product/service catalog" },
+      "PME02": { "label": "Quote request form" },
+      "PME03": { "label": "Google Business / Maps / reviews" },
+      "PME04": { "label": "Careers section" },
+      "PME05": { "label": "Online menu / ordering" },
+      "PME06": { "label": "Portfolio gallery" },
+      "PME07": { "label": "Social media integration" }
+    },
+    "extras": {
+      "title": "Language and additional options",
+      "subtitle": "Configure the final details of your project.",
+      "bilingual": {
+        "label": "Bilingual site (FR/EN)?",
+        "yes": "Yes, bilingual",
+        "no": "No, French only"
+      },
+      "multilingual": {
+        "label": "Multilingual (3+ languages)?",
+        "yes": "Yes, 3 languages or more",
+        "no": "No"
+      },
+      "urgency": {
+        "label": "Urgent delivery (< 4 weeks)?",
+        "yes": "Yes, urgent",
+        "no": "No, normal timeline"
+      }
+    },
+    "contact": {
+      "title": "Almost done!",
+      "subtitle": "Enter your contact details to receive your detailed estimate.",
+      "name": "Full name",
+      "email": "Email address",
+      "company": "Company name",
+      "phone": "Phone (optional)",
+      "privacy": "Your data is protected in accordance with Law 25.",
+      "submit": "See my estimate"
+    },
+    "results": {
+      "title": "Your personalized estimate",
+      "subtitle": "Three scenarios based on Quebec market data"
+    }
+  },
+  "scenarios": {
+    "eco": {
+      "name": "Economy",
+      "description": "Functional and affordable solution"
+    },
+    "rec": {
+      "name": "Recommended",
+      "description": "Optimal quality/price balance"
+    },
+    "premium": {
+      "name": "Premium",
+      "description": "Complete high-end solution"
+    }
+  },
+  "results": {
+    "initialCost": "Initial build",
+    "baseCost": "Base cost",
+    "multipliers": "Multipliers",
+    "sectorModules": "Sector modules",
+    "contingency": "Contingency (15%)",
+    "monthlyCost": "Monthly costs",
+    "maintenance": "Maintenance plan",
+    "thirdParty": "Estimated third-party costs",
+    "year1Total": "Year 1 Total",
+    "annualRecurring": "Annual recurring cost"
+  },
+  "transparency": {
+    "title": "Transparency notes",
+    "notes": [
+      "These amounts are indicative ranges, not a firm quote. A detailed audit is needed for an exact price.",
+      "The Quebec web market varies: a junior freelancer may cost 40% less, a large agency 50% more.",
+      "Third-party costs (hosting, licenses, etc.) are paid directly by the client and may vary.",
+      "The return on investment (ROI) of a professional website is measured over 2-3 years, not months."
+    ]
+  },
+  "contact_cta": {
+    "title": "Get a free personalized quote",
+    "subtitle": "Our experts analyze your project in detail and propose a tailored solution.",
+    "cta": "Talk to an expert",
+    "response": "Response within 24h"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Invalid email address",
+    "name": "Please enter your name"
+  }
+}
