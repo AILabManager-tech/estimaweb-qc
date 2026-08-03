@@ -140,6 +140,8 @@ const copy = {
     notes: "Notes de transparence",
     noteThirdParty:
       "Les coûts tiers sont des estimations et sont normalement payés directement par le client.",
+    noteRecurring:
+      "Le forfait de maintenance et les coûts tiers de base sont assignés automatiquement selon le scénario.",
     noteSource:
       "La grille interne a été créée le 27 février 2026 avec une année de référence déclarée 2025. Aucune source externe n’est conservée; une validation humaine du marché est requise.",
     warning:
@@ -177,6 +179,8 @@ const copy = {
     notes: "Transparency notes",
     noteThirdParty:
       "Third-party costs are estimates and are normally paid directly by the client.",
+    noteRecurring:
+      "The maintenance plan and baseline third-party costs are assigned automatically by scenario.",
     noteSource:
       "The internal grid was created on February 27, 2026 with a stated 2025 reference year. No external source is retained; a human market review is required.",
     warning:
@@ -295,6 +299,7 @@ export function EstimationPDF({
         <View style={styles.notes} wrap={false}>
           <Text style={styles.noteTitle}>{t.notes}</Text>
           <Text style={styles.noteText}>• {t.noteThirdParty}</Text>
+          <Text style={styles.noteText}>• {t.noteRecurring}</Text>
           <Text style={styles.noteText}>• {t.noteSource}</Text>
           <Text style={styles.warning}>{t.warning}</Text>
         </View>

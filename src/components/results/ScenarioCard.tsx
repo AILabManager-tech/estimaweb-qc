@@ -62,14 +62,14 @@ export function ScenarioCard({
 
       {/* Header */}
       <div className={cn("p-5", styles.header, styles.border)}>
-        <span
+        <h3
           className={cn(
             "inline-block rounded-sm px-2.5 py-0.5 text-xs font-bold",
             styles.badge
           )}
         >
           {tScenarios(`${scenario}.name`)}
-        </span>
+        </h3>
         <p className="mt-1.5 text-sm text-text-secondary">
           {tScenarios(`${scenario}.description`)}
         </p>

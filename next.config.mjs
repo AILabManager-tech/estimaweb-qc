@@ -8,6 +8,7 @@ const scriptSources =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  agentRules: false,
   poweredByHeader: false,
   async headers() {
     return [

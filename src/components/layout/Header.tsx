@@ -47,6 +47,7 @@ export function Header() {
           </span>
         </a>
         <button
+          type="button"
           onClick={switchLocale}
           aria-label={t("switchLanguage")}
           className="min-h-11 rounded-sm border border-surface-border bg-surface px-4 py-2 font-mono text-xs font-semibold text-text-secondary transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"

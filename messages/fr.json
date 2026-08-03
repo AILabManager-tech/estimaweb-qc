@@ -237,10 +237,11 @@
   "transparency": {
     "title": "Notes de transparence",
     "notes": [
-      "Ces montants sont des fourchettes indicatives, pas un devis ferme. Un audit détaillé est nécessaire pour un prix exact.",
+      "Ces montants sont des estimations indicatives, pas un devis ferme. Un audit détaillé est nécessaire pour un prix exact.",
       "La grille interne a été créée le 27 février 2026 avec une année de référence déclarée 2025. Aucune source externe n’est conservée; une validation humaine du marché est requise.",
       "Les coûts tiers (hébergement, licences, etc.) sont payés directement par le client et peuvent varier.",
-      "Vos réponses et les calculs restent dans votre navigateur. Le rapport PDF est généré localement sur votre appareil."
+      "Vos réponses et les calculs restent dans votre navigateur. Le rapport PDF est généré localement sur votre appareil.",
+      "Le forfait de maintenance et les coûts tiers de base sont assignés automatiquement selon le scénario; ils ne sont pas sélectionnés dans l’assistant."
     ]
   },
   "contact_cta": {

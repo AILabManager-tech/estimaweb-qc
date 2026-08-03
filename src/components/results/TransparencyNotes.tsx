@@ -11,6 +11,7 @@ export function TransparencyNotes() {
     t("notes.1"),
     t("notes.2"),
     t("notes.3"),
+    t("notes.4"),
   ];
 
   return (

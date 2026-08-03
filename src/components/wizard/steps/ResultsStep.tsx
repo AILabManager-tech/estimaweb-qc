@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { ScenarioCard } from "@/components/results/ScenarioCard";
 import { TransparencyNotes } from "@/components/results/TransparencyNotes";
 import { Button } from "@/components/ui/Button";
-import { Download, RotateCcw, MessageSquare, Clock, Pencil } from "lucide-react";
+import { Download, RotateCcw, MessageSquare, Mail, Pencil } from "lucide-react";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 import type { EstimationResult } from "@/lib/engine/types";
 
@@ -88,7 +88,7 @@ export function ResultsStep({
           {tCta("cta")}
         </Button>
         <div className="mt-4 flex items-center justify-center gap-2 text-xs text-text-tertiary">
-          <Clock className="h-3 w-3" />
+          <Mail className="h-3 w-3" />
           <span>{tCta("response")}</span>
         </div>
       </motion.div>

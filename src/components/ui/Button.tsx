@@ -19,7 +19,7 @@ const variantStyles: Record<Variant, string> = {
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "primary", disabled, ...props }, ref) => {
+  ({ className, variant = "primary", disabled, type = "button", ...props }, ref) => {
     return (
       <button
         ref={ref}
@@ -29,6 +29,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           className
         )}
         disabled={disabled}
+        type={type}
         {...props}
       />
     );

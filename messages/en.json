@@ -237,10 +237,11 @@
   "transparency": {
     "title": "Transparency notes",
     "notes": [
-      "These amounts are indicative ranges, not a firm quote. A detailed audit is needed for an exact price.",
+      "These amounts are indicative estimates, not a firm quote. A detailed audit is needed for an exact price.",
       "The internal grid was created on February 27, 2026 with a stated 2025 reference year. No external source is retained; a human market review is required.",
       "Third-party costs (hosting, licenses, etc.) are paid directly by the client and may vary.",
-      "Your answers and calculations stay in your browser. The PDF report is generated locally on your device."
+      "Your answers and calculations stay in your browser. The PDF report is generated locally on your device.",
+      "The maintenance plan and baseline third-party costs are assigned automatically by scenario; they are not selected in the wizard."
     ]
   },
   "contact_cta": {
