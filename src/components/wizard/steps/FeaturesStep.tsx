@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { MULTIPLIERS, SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
 import { formatCurrency } from "@/lib/utils";
@@ -23,6 +23,7 @@ export function FeaturesStep({
 }: FeaturesStepProps) {
   const tFeatures = useTranslations("steps.features");
   const tModules = useTranslations("steps.sectorModules");
+  const locale = useLocale() as "fr" | "en";
 
   const totalSelected = selectedMultipliers.length + selectedSectorModules.length;
 
@@ -32,7 +33,7 @@ export function FeaturesStep({
       value: id,
       label: tFeatures(`${id}.label`),
       description: tFeatures(`${id}.description`),
-      priceHint: `+ ${formatCurrency(m.value.min)} – ${formatCurrency(m.value.max)}`,
+      priceHint: `+ ${formatCurrency(m.value.min, locale)} – ${formatCurrency(m.value.max, locale)}`,
     };
   });
 
@@ -40,14 +41,13 @@ export function FeaturesStep({
   const sectorOptions = sectorModules.map((mod) => ({
     value: mod.id,
     label: tModules(`${mod.id}.label`),
-    priceHint: `+ ${formatCurrency(mod.price.min)} – ${formatCurrency(mod.price.max)}`,
+    priceHint: `+ ${formatCurrency(mod.price.min, locale)} – ${formatCurrency(mod.price.max, locale)}`,
   }));
 
   return (
     <div className="space-y-8">
       <div>
         <span className="font-mono text-xs uppercase tracking-widest text-accent">
-          {"// "}
           {tFeatures("title").split(" ")[0]}
         </span>
         <h2 className="mt-2 text-h3 font-bold text-text-primary">
@@ -56,7 +56,7 @@ export function FeaturesStep({
         <p className="mt-1 text-text-secondary">{tFeatures("subtitle")}</p>
         {totalSelected > 0 && (
           <span className="mt-2 inline-block rounded-sm bg-accent/10 px-2.5 py-1 font-mono text-xs text-accent">
-            {totalSelected} {totalSelected === 1 ? "sélectionnée" : "sélectionnées"}
+            {tFeatures("selectedCount", { count: totalSelected })}
           </span>
         )}
       </div>
@@ -71,13 +71,13 @@ export function FeaturesStep({
           removed.forEach((v) => onToggleMultiplier(v));
         }}
         columns={2}
+        ariaLabel={tFeatures("title")}
       />
 
       {sectorOptions.length > 0 && (
         <>
           <div className="border-t border-surface-border pt-6">
             <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
-              {"// "}
               {tFeatures("sectorModules")}
             </h3>
           </div>
@@ -91,6 +91,7 @@ export function FeaturesStep({
               removed.forEach((v) => onToggleSectorModule(v));
             }}
             columns={2}
+            ariaLabel={tFeatures("sectorModules")}
           />
         </>
       )}

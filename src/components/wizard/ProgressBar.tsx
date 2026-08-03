@@ -14,24 +14,16 @@ const STEP_KEYS = [
   "siteType",
   "features",
   "extras",
-  "contact",
   "results",
 ] as const;
 
-const STEP_ABBR: Record<string, string> = {
-  sector: "Sect.",
-  siteType: "Type",
-  features: "Fonc.",
-  extras: "Lang.",
-  contact: "Info",
-  results: "Rés.",
-};
-
 export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
   const t = useTranslations("wizard.steps");
+  const tShort = useTranslations("wizard.stepsShort");
+  const tWizard = useTranslations("wizard");
 
   return (
-    <nav aria-label="Progress" className="w-full">
+    <nav aria-label={tWizard("progressLabel")} className="w-full">
       <ol className="flex items-center gap-1">
         {STEP_KEYS.map((key, i) => {
           const isCompleted = i < currentStep;
@@ -78,7 +70,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
                 )}
               >
                 <span className="hidden sm:inline">{t(key)}</span>
-                <span className="sm:hidden">{STEP_ABBR[key]}</span>
+                <span className="sm:hidden">{tShort(key)}</span>
               </span>
             </li>
           );

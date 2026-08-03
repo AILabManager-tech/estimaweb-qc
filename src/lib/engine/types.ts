@@ -59,13 +59,17 @@ export interface WizardState {
   isBilingual: boolean;
   isMultilingual: boolean;
   isUrgent: boolean;
-  contact: {
-    name: string;
-    email: string;
-    company: string;
-    phone: string;
-  };
   result: EstimationResult | null;
+}
+
+export interface CalculatorInput {
+  sector: Sector;
+  siteType: SiteTypeId;
+  selectedMultipliers: MultiplierId[];
+  selectedSectorModules: SectorModuleId[];
+  isBilingual: boolean;
+  isMultilingual: boolean;
+  isUrgent: boolean;
 }
 
 // ── Résultats ───────────────────────────────────────────────────

@@ -16,6 +16,7 @@ interface CheckboxGroupProps {
   values: string[];
   onChange: (values: string[]) => void;
   columns?: 2 | 3;
+  ariaLabel: string;
 }
 
 export function CheckboxGroup({
@@ -23,6 +24,7 @@ export function CheckboxGroup({
   values,
   onChange,
   columns = 2,
+  ariaLabel,
 }: CheckboxGroupProps) {
   const toggle = (val: string) => {
     onChange(
@@ -38,7 +40,7 @@ export function CheckboxGroup({
   };
 
   return (
-    <div className={cn("grid gap-3", gridCols[columns])} role="group">
+    <div className={cn("grid gap-3", gridCols[columns])} role="group" aria-label={ariaLabel}>
       {options.map((option) => {
         const isChecked = values.includes(option.value);
         return (

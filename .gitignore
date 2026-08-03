@@ -8,3 +8,8 @@ out/
 next-env.d.ts
 .vercel
 .gstack/
+test-results/
+playwright-report/
+# Next 16 dev-only agent scaffolding; global project instructions live outside this repo.
+AGENTS.md
+CLAUDE.md

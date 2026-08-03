@@ -5,8 +5,7 @@ import type { EstimationResult } from "@/lib/engine/types";
 
 interface PdfDownloadOptions {
   result: EstimationResult;
-  contactName?: string;
-  contactCompany?: string;
+  locale: "fr" | "en";
 }
 
 export function usePdfDownload() {
@@ -22,17 +21,20 @@ export function usePdfDownload() {
 
       const doc = EstimationPDF({
         result: options.result,
-        contactName: options.contactName,
-        contactCompany: options.contactCompany,
+        locale: options.locale,
       });
 
       const blob = await pdf(doc).toBlob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `estimaweb-qc-${Date.now()}.pdf`;
+      a.download = `estimaweb-qc-${options.locale}-${new Date()
+        .toISOString()
+        .slice(0, 10)}.pdf`;
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      a.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
     } finally {
       setIsGenerating(false);
     }

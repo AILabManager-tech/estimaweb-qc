@@ -26,7 +26,6 @@ export function BilingualStep({
     <div className="space-y-8">
       <div>
         <span className="font-mono text-xs uppercase tracking-widest text-accent">
-          {"// "}
           {t("title").split(" ")[0]}
         </span>
         <h2 className="mt-2 text-h3 font-bold text-text-primary">{t("title")}</h2>
@@ -46,6 +45,7 @@ export function BilingualStep({
             value={isBilingual ? "yes" : "no"}
             onChange={(v) => onSetBilingual(v === "yes")}
             columns={2}
+            ariaLabel={t("bilingual.label")}
           />
         </div>
 
@@ -61,6 +61,7 @@ export function BilingualStep({
             value={isMultilingual ? "yes" : "no"}
             onChange={(v) => onSetMultilingual(v === "yes")}
             columns={2}
+            ariaLabel={t("multilingual.label")}
           />
         </div>
 
@@ -76,6 +77,7 @@ export function BilingualStep({
             value={isUrgent ? "yes" : "no"}
             onChange={(v) => onSetUrgent(v === "yes")}
             columns={2}
+            ariaLabel={t("urgency.label")}
           />
         </div>
       </div>

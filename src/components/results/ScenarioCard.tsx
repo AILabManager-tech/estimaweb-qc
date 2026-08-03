@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { cn, formatCurrency } from "@/lib/utils";
 import { CostBreakdown } from "./CostBreakdown";
 import type { ScenarioBreakdown } from "@/lib/engine/types";
@@ -42,14 +42,15 @@ export function ScenarioCard({
   const tScenarios = useTranslations("scenarios");
   const tResults = useTranslations("results");
   const tCommon = useTranslations("common");
+  const locale = useLocale() as "fr" | "en";
   const styles = scenarioStyles[scenario];
 
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-sm border bg-surface overflow-hidden transition-all duration-300",
+        "relative flex flex-col overflow-hidden rounded-sm border bg-surface shadow-card transition-all duration-300",
         featured
-          ? "ring-2 ring-accent border-accent shadow-glow md:z-10"
+          ? "border-accent ring-2 ring-accent shadow-glow lg:z-10"
           : "border-surface-border hover:border-accent/30"
       )}
     >
@@ -82,7 +83,7 @@ export function ScenarioCard({
             {tResults("initialCost")}
           </h4>
           <p className="mt-1 text-3xl font-bold text-text-primary">
-            {formatCurrency(breakdown.initialTotal)}
+            {formatCurrency(breakdown.initialTotal, locale)}
           </p>
           <CostBreakdown
             lines={[
@@ -91,6 +92,7 @@ export function ScenarioCard({
               { label: tResults("sectorModules"), amount: breakdown.sectorModulesCost },
               { label: tResults("contingency"), amount: breakdown.contingency },
             ]}
+            locale={locale}
           />
         </div>
 
@@ -102,7 +104,7 @@ export function ScenarioCard({
             {tResults("monthlyCost")}
           </h4>
           <p className="mt-1 text-xl font-bold text-text-primary">
-            {formatCurrency(breakdown.monthlyTotal)}
+            {formatCurrency(breakdown.monthlyTotal, locale)}
             <span className="text-sm font-normal text-text-secondary">
               {tCommon("perMonth")}
             </span>
@@ -112,6 +114,7 @@ export function ScenarioCard({
               { label: tResults("maintenance"), amount: breakdown.maintenanceMonthly },
               { label: tResults("thirdParty"), amount: breakdown.thirdPartyMonthly },
             ]}
+            locale={locale}
           />
         </div>
 
@@ -119,20 +122,20 @@ export function ScenarioCard({
 
         {/* Totals */}
         <div className="mt-auto space-y-2">
-          <div className="flex items-baseline justify-between rounded-sm bg-accent/5 p-2">
-            <span className="text-sm font-medium text-text-secondary">
+          <div className="flex items-baseline justify-between gap-3 rounded-sm bg-accent/5 p-2.5">
+            <span className="min-w-0 text-sm font-medium text-text-secondary">
               {tResults("year1Total")}
             </span>
-            <span className="text-lg font-bold text-accent">
-              {formatCurrency(breakdown.year1Total)}
+            <span className="shrink-0 whitespace-nowrap text-lg font-bold text-accent">
+              {formatCurrency(breakdown.year1Total, locale)}
             </span>
           </div>
-          <div className="flex items-baseline justify-between px-2">
-            <span className="text-sm font-medium text-text-secondary">
+          <div className="flex items-baseline justify-between gap-3 px-2">
+            <span className="min-w-0 text-sm font-medium text-text-secondary">
               {tResults("annualRecurring")}
             </span>
-            <span className="text-sm font-semibold text-text-primary">
-              {formatCurrency(breakdown.annualRecurring)}
+            <span className="shrink-0 whitespace-nowrap text-sm font-semibold text-text-primary">
+              {formatCurrency(breakdown.annualRecurring, locale)}
             </span>
           </div>
         </div>

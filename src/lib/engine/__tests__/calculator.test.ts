@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { calculateEstimation } from "../calculator";
 import { lerp } from "../../utils";
+import type { CalculatorInput } from "../types";
 
 describe("lerp", () => {
   it("returns min at t=0", () => {
@@ -136,5 +137,18 @@ describe("calculateEstimation", () => {
     for (const scenario of [result.eco, result.rec, result.premium]) {
       expect(scenario.annualRecurring).toBe(scenario.monthlyTotal * 12);
     }
+  });
+
+  it("copies input arrays into the result", () => {
+    const input: CalculatorInput = {
+      ...baseInput,
+      selectedMultipliers: ["M03"],
+      selectedSectorModules: ["PME03"],
+    };
+    const result = calculateEstimation(input);
+    input.selectedMultipliers.push("M08");
+    input.selectedSectorModules.length = 0;
+    expect(result.inputs.multipliers).toEqual(["M03"]);
+    expect(result.inputs.sectorModules).toEqual(["PME03"]);
   });
 });

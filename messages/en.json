@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "title": "EstimaWeb QC — Web Cost Estimator for Quebec SMEs",
-    "description": "Get a detailed estimate of your web project cost in minutes. Free tool based on Quebec market data."
+    "title": "EstimaWeb QC — Free web estimator by Auxo Systems",
+    "description": "Get a free, indicative estimate for a Quebec web project using a transparent internal calculation grid."
   },
   "common": {
     "appName": "EstimaWeb QC",
@@ -11,32 +11,36 @@
     "step": "Step",
     "of": "of",
     "downloadPdf": "Download PDF",
+    "generatingPdf": "Generating…",
     "getQuote": "See my estimate",
+    "editAnswers": "Edit my answers",
     "restart": "Start over",
     "currency": "CAD",
     "perMonth": "/month",
     "year1": "Year 1",
     "recurring": "Annual recurring",
     "recommended": "Recommended",
-    "poweredBy": "Powered by Mark Systems",
-    "langSwitch": "FR"
+    "poweredBy": "A free tool by Auxo Systems",
+    "langSwitch": "FR",
+    "switchLanguage": "Display the French version"
   },
   "hero": {
-    "badge": "// Web estimator",
+    "badge": "Free web estimator",
     "titlePre": "How much does ",
     "titleAccent": "your website",
     "titlePost": " cost?",
-    "subtitle": "Free estimate in 2 minutes, based on real Quebec market data.",
+    "subtitle": "An indicative estimate in under 2 minutes, calculated locally from an internal pricing grid.",
     "cta": "Start the estimate",
-    "trust1": "200+ SMEs estimated",
-    "trust2": "2025 calibrated data",
-    "trust3": "Law 25 compliant"
+    "trust1": "Transparent calculation",
+    "trust2": "No data transmitted",
+    "trust3": "Amounts in Canadian dollars"
   },
   "header": {
-    "brand": "Mark Systems"
+    "brand": "EstimaWeb QC"
   },
   "footer": {
-    "tagline": "Powered by Mark Systems",
+    "tagline": "A free tool by Auxo Systems",
+    "auxoSite": "Auxo Systems website",
     "privacy": "Privacy policy",
     "rights": "All rights reserved."
   },
@@ -48,8 +52,15 @@
       "siteType": "Site Type",
       "features": "Features",
       "extras": "Language & Extras",
-      "contact": "Contact",
       "results": "Results"
+    },
+    "progressLabel": "Estimate progress",
+    "stepsShort": {
+      "sector": "Sector",
+      "siteType": "Type",
+      "features": "Feat.",
+      "extras": "Lang.",
+      "results": "Result"
     }
   },
   "steps": {
@@ -104,6 +115,7 @@
     "features": {
       "title": "What features do you need?",
       "subtitle": "Select all options that apply.",
+      "selectedCount": "{count, plural, one {# option selected} other {# options selected}}",
       "sectorModules": "Specialized modules for your sector",
       "M03": {
         "label": "Online booking",
@@ -178,7 +190,7 @@
       "bilingual": {
         "label": "Bilingual site (FR/EN)?",
         "yes": "Yes, bilingual",
-        "no": "No, French only"
+        "no": "No, one language only"
       },
       "multilingual": {
         "label": "Multilingual (3+ languages)?",
@@ -191,19 +203,9 @@
         "no": "No, normal timeline"
       }
     },
-    "contact": {
-      "title": "Almost done!",
-      "subtitle": "Enter your contact details to receive your detailed estimate.",
-      "name": "Full name",
-      "email": "Email address",
-      "company": "Company name",
-      "phone": "Phone (optional)",
-      "privacy": "Your data is protected in accordance with Law 25.",
-      "submit": "See my estimate"
-    },
     "results": {
       "title": "Your personalized estimate",
-      "subtitle": "Three scenarios based on Quebec market data"
+      "subtitle": "Three indicative scenarios, from the minimum scope to the most complete"
     }
   },
   "scenarios": {
@@ -223,7 +225,7 @@
   "results": {
     "initialCost": "Initial build",
     "baseCost": "Base cost",
-    "multipliers": "Multipliers",
+    "multipliers": "Complexity and features",
     "sectorModules": "Sector modules",
     "contingency": "Contingency (15%)",
     "monthlyCost": "Monthly costs",
@@ -236,20 +238,17 @@
     "title": "Transparency notes",
     "notes": [
       "These amounts are indicative ranges, not a firm quote. A detailed audit is needed for an exact price.",
-      "The Quebec web market varies: a junior freelancer may cost 40% less, a large agency 50% more.",
+      "The internal grid was created on February 27, 2026 with a stated 2025 reference year. No external source is retained; a human market review is required.",
       "Third-party costs (hosting, licenses, etc.) are paid directly by the client and may vary.",
-      "The return on investment (ROI) of a professional website is measured over 2-3 years, not months."
+      "Your answers and calculations stay in your browser. The PDF report is generated locally on your device."
     ]
   },
   "contact_cta": {
-    "title": "Get a free personalized quote",
-    "subtitle": "Our experts analyze your project in detail and propose a tailored solution.",
-    "cta": "Talk to an expert",
-    "response": "Response within 24h"
-  },
-  "validation": {
-    "required": "This field is required",
-    "email": "Invalid email address",
-    "name": "Please enter your name"
+    "title": "Validate your project with Auxo Systems",
+    "subtitle": "To turn this indicative estimate into a project scope, send us a message.",
+    "cta": "Email Auxo Systems",
+    "response": "info@auxosystems.ca",
+    "subject": "Web project — EstimaWeb QC",
+    "body": "Hello,\n\nI used EstimaWeb QC and would like to validate the scope of my web project.\n\nThank you!"
   }
 }

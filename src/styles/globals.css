@@ -12,7 +12,7 @@
   }
 
   ::selection {
-    @apply bg-text-primary/15 text-white;
+    @apply bg-accent/20 text-text-primary;
   }
 
   ::-webkit-scrollbar {
@@ -52,14 +52,14 @@
 
   .gradient-border {
     @apply relative overflow-hidden rounded-sm;
-    background: linear-gradient(135deg, rgba(0, 161, 155, 0.1), transparent);
+    background: linear-gradient(135deg, rgba(22, 90, 99, 0.1), transparent);
   }
 
   .gradient-border::before {
     content: "";
     @apply absolute inset-0 rounded-sm;
     padding: 1px;
-    background: linear-gradient(135deg, rgba(0, 161, 155, 0.4), transparent);
+    background: linear-gradient(135deg, rgba(22, 90, 99, 0.35), transparent);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -74,17 +74,10 @@
 
 /* Accent gradient text utility */
 .text-gradient-accent {
-  background: linear-gradient(135deg, #00A19B 0%, #008C87 50%, #00A19B 100%);
-  background-size: 200% 200%;
+  background: linear-gradient(135deg, #1F4A3A 0%, #165A63 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: gradient-shift 4s ease infinite;
-}
-
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
 }
 
 /* Subtle noise texture for depth */
@@ -96,7 +89,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  opacity: 0.015;
+  opacity: 0.025;
   pointer-events: none;
   z-index: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");

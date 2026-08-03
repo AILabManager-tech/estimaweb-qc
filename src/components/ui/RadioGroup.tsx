@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
 
 interface RadioOption {
@@ -16,6 +17,7 @@ interface RadioGroupProps {
   value: string | null;
   onChange: (value: string) => void;
   columns?: 2 | 3 | 4;
+  ariaLabel: string;
 }
 
 export function RadioGroup({
@@ -23,7 +25,9 @@ export function RadioGroup({
   value,
   onChange,
   columns = 2,
+  ariaLabel,
 }: RadioGroupProps) {
+  const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const gridCols = {
     2: "grid-cols-1 sm:grid-cols-2",
     3: "grid-cols-1 sm:grid-cols-2",
@@ -31,16 +35,35 @@ export function RadioGroup({
   };
 
   return (
-    <div className={cn("grid gap-3", gridCols[columns])} role="radiogroup">
-      {options.map((option) => {
+    <div className={cn("grid gap-3", gridCols[columns])} role="radiogroup" aria-label={ariaLabel}>
+      {options.map((option, index) => {
         const isSelected = value === option.value;
         return (
           <motion.button
+            ref={(element) => { optionRefs.current[index] = element; }}
             key={option.value}
             type="button"
             role="radio"
             aria-checked={isSelected}
+            tabIndex={isSelected || (value === null && index === 0) ? 0 : -1}
             onClick={() => onChange(option.value)}
+            onKeyDown={(event) => {
+              let nextIndex: number | null = null;
+              if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+                nextIndex = (index + 1) % options.length;
+              } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+                nextIndex = (index - 1 + options.length) % options.length;
+              } else if (event.key === "Home") {
+                nextIndex = 0;
+              } else if (event.key === "End") {
+                nextIndex = options.length - 1;
+              }
+              if (nextIndex !== null) {
+                event.preventDefault();
+                onChange(options[nextIndex].value);
+                optionRefs.current[nextIndex]?.focus();
+              }
+            }}
             whileTap={{ scale: 0.98 }}
             className={cn(
               "relative rounded-sm border p-5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",

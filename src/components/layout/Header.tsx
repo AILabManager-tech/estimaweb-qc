@@ -1,17 +1,18 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export function Header() {
   const t = useTranslations("common");
+  const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
 
-  const currentLocale = pathname.startsWith("/en") ? "en" : "fr";
+  const currentLocale = locale === "en" ? "en" : "fr";
   const targetLocale = currentLocale === "fr" ? "en" : "fr";
 
   useEffect(() => {
@@ -37,14 +38,18 @@ export function Header() {
       }`}
     >
       <div className="section-container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-2">
+        <a href={`/${currentLocale}`} className="flex min-h-11 items-center gap-3">
           <span className="text-lg font-bold tracking-tight text-text-primary">
-            Mark<span className="text-gradient-accent">Systems</span>
+            EstimaWeb <span className="text-accent">QC</span>
           </span>
-        </div>
+          <span className="hidden border-l border-surface-border pl-3 text-xs text-text-tertiary sm:inline">
+            Auxo Systems
+          </span>
+        </a>
         <button
           onClick={switchLocale}
-          className="rounded-sm border border-surface-border px-3 py-1.5 font-mono text-xs text-text-secondary transition-colors hover:border-accent/50 hover:text-accent"
+          aria-label={t("switchLanguage")}
+          className="min-h-11 rounded-sm border border-surface-border bg-surface px-4 py-2 font-mono text-xs font-semibold text-text-secondary transition-colors hover:border-accent/50 hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           {t("langSwitch")}
         </button>

@@ -1,95 +1,49 @@
-# EstimaWeb QC — Estimateur de coûts web pour PME québécoises
+# EstimaWeb QC
 
-Outil gratuit permettant aux PME du Québec d'obtenir une estimation détaillée du coût de leur projet web en quelques minutes. Basé sur les données du marché québécois.
+Estimateur web bilingue et gratuit publié par [Auxo Systems](https://auxosystems.ca). L’outil compare trois scénarios indicatifs en dollars canadiens et génère un rapport PDF localement dans le navigateur.
 
-> Développé par [Mark Systems](https://github.com/AILabManager-tech/mark-systems).
+Les montants proviennent d’une grille interne créée le 27 février 2026 avec une année de référence déclarée 2025. Aucune source externe n’est conservée dans le dépôt; les valeurs doivent être validées humainement avant d’être présentées comme des données de marché actuelles. Le résultat n’est pas une soumission contractuelle.
 
-## Fonctionnalités
+## Fonctionnement
 
-- Assistant pas-à-pas (wizard) pour définir le projet
-- Estimation détaillée basée sur les données du marché QC
-- Export PDF du rapport d'estimation
-- Interface bilingue FR / EN
-- Animations fluides (Framer Motion)
+Parcours réel : secteur → type de site → fonctionnalités et modules sectoriels → langues et urgence → trois scénarios → PDF, modification ou nouvelle estimation.
 
-## Stack technique
+Aucune réponse ni donnée personnelle n’est transmise ou conservée. Le calcul et le PDF sont exécutés côté client.
 
-| Couche | Technologie |
-|--------|-------------|
-| Framework | Next.js 14 (App Router) |
-| Langage | TypeScript |
-| CSS | Tailwind CSS |
-| i18n | next-intl (FR / EN) |
-| PDF | @react-pdf/renderer |
-| Animations | Framer Motion |
-| Validation | Zod |
-| Tests | Vitest + @testing-library/react |
-| Déploiement | Vercel |
+## Stack
 
-## Démarrage
+- Next.js 16, React 19 et TypeScript
+- Tailwind CSS et Framer Motion
+- next-intl (FR/EN)
+- Zod pour les entrées du calculateur
+- `@react-pdf/renderer`
+- Vitest et Playwright
+
+## Commandes
 
 ```bash
-npm install
-npm run dev        # http://localhost:3000
-npm run build      # Build production
-npm test           # Tests
+npm ci
+npm run dev -- --port 20003  # choisir le premier port libre de 20000-20099
+npm run lint
+npm run typecheck
+npm test
+npm run test:e2e
+npm run build
+npm audit
 ```
 
-## Déploiement
+URL publique existante : [estimaweb-qc.vercel.app](https://estimaweb-qc.vercel.app)
 
-Hébergé sur Vercel.
-
-URL : [estimaweb-qc.vercel.app](https://estimaweb-qc.vercel.app)
-
-## Licence
-
-Propriétaire — Mark Systems © 2026
+Propriétaire — Auxo Systems © 2026
 
 ---
 
-# EstimaWeb QC — Web Cost Estimator for Quebec SMEs
+## English
 
-Free tool for Quebec SMEs to get a detailed estimate of their web project cost in minutes. Based on Quebec market data.
+EstimaWeb QC is a free bilingual web estimator by [Auxo Systems](https://auxosystems.ca). It compares three indicative scenarios in Canadian dollars and generates the PDF report locally in the browser.
 
-> Built by [Mark Systems](https://github.com/AILabManager-tech/mark-systems).
+The amounts come from an internal grid created on February 27, 2026 with a stated 2025 reference year. No external source is retained in the repository; a human must validate the values before they are presented as current market data. The result is not a contractual quote.
 
-## Features
+Actual flow: sector → site type → features and sector modules → languages and urgency → three scenarios → PDF, edit, or new estimate. No answer or personal data is transmitted or stored.
 
-- Step-by-step wizard to define the project
-- Detailed estimate based on QC market data
-- PDF export of the estimation report
-- Bilingual interface FR / EN
-- Smooth animations (Framer Motion)
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript |
-| CSS | Tailwind CSS |
-| i18n | next-intl (FR / EN) |
-| PDF | @react-pdf/renderer |
-| Animations | Framer Motion |
-| Validation | Zod |
-| Testing | Vitest + @testing-library/react |
-| Deployment | Vercel |
-
-## Getting Started
-
-```bash
-npm install
-npm run dev        # http://localhost:3000
-npm run build      # Production build
-npm test           # Tests
-```
-
-## Deployment
-
-Hosted on Vercel.
-
-URL: [estimaweb-qc.vercel.app](https://estimaweb-qc.vercel.app)
-
-## License
-
-Proprietary — Mark Systems © 2026
+See the commands above for local development and validation.

@@ -11,6 +11,13 @@ import type {
   PriceRange,
 } from "./types";
 
+export const MARKET_DATA_METADATA = {
+  createdAt: "2026-02-27",
+  claimedReferenceYear: 2025,
+  sourceStatus: "unsourced-internal",
+  requiresHumanReview: true,
+} as const;
+
 // ══════════════════════════════════════════════════════════════════
 // COUCHE 1 — SOCLE COMMUN (Réalisation initiale)
 // ══════════════════════════════════════════════════════════════════

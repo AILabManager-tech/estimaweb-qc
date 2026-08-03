@@ -1,274 +1,305 @@
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-} from "@react-pdf/renderer";
-import type { Style } from "@react-pdf/types";
-import type { EstimationResult, ScenarioBreakdown } from "@/lib/engine/types";
+import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
+import frMessages from "../../../messages/fr.json";
+import enMessages from "../../../messages/en.json";
+import type {
+  EstimationResult,
+  ScenarioBreakdown,
+} from "@/lib/engine/types";
+
+export type PdfLocale = "fr" | "en";
 
 const styles = StyleSheet.create({
   page: {
-    padding: 40,
+    paddingTop: 40,
+    paddingHorizontal: 40,
+    paddingBottom: 64,
     fontFamily: "Helvetica",
-    fontSize: 10,
-    color: "#1F2937",
+    fontSize: 9,
+    color: "#202725",
+    backgroundColor: "#FBF8F1",
   },
   header: {
-    marginBottom: 20,
-    borderBottom: "2 solid #F59E0B",
+    marginBottom: 18,
+    borderBottom: "2 solid #1F4A3A",
     paddingBottom: 12,
   },
+  eyebrow: {
+    color: "#165A63",
+    fontSize: 8,
+    fontWeight: "bold",
+    letterSpacing: 1.2,
+    textTransform: "uppercase",
+  },
   title: {
-    fontSize: 22,
+    marginTop: 3,
+    fontSize: 23,
     fontWeight: "bold",
-    color: "#0B1120",
+    color: "#1F4A3A",
   },
-  subtitle: {
-    fontSize: 11,
-    color: "#6B7280",
-    marginTop: 4,
-  },
-  section: { marginBottom: 16 },
+  subtitle: { marginTop: 4, fontSize: 10, color: "#53615D" },
+  section: { marginBottom: 15 },
   sectionTitle: {
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "#0B1120",
-    marginBottom: 8,
-    borderBottom: "1 solid #E5E7EB",
+    marginBottom: 7,
+    borderBottom: "1 solid #D8D1C5",
     paddingBottom: 4,
+    fontSize: 12,
+    fontWeight: "bold",
+    color: "#1F4A3A",
+  },
+  inputRow: { flexDirection: "row", paddingVertical: 2 },
+  inputLabel: { width: 118, color: "#69736F" },
+  inputValue: { flex: 1, fontWeight: "bold", color: "#202725" },
+  scenarioContainer: { flexDirection: "row", gap: 10, marginTop: 7 },
+  scenarioCard: {
+    flex: 1,
+    border: "1 solid #D8D1C5",
+    borderRadius: 5,
+    padding: 9,
+    backgroundColor: "#FFFFFF",
+  },
+  scenarioHeader: {
+    marginBottom: 5,
+    borderBottom: "1 solid #E4DED3",
+    paddingBottom: 4,
+    fontSize: 11,
+    fontWeight: "bold",
+    color: "#165A63",
   },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: 4,
     paddingVertical: 2,
   },
-  label: { fontSize: 9, color: "#6B7280" },
-  value: { fontSize: 9, fontWeight: "bold" },
-  scenarioContainer: {
-    flexDirection: "row",
-    gap: 12,
-    marginTop: 8,
-  },
-  scenarioCard: {
-    flex: 1,
-    border: "1 solid #E5E7EB",
-    borderRadius: 6,
-    padding: 10,
-  },
-  scenarioHeader: {
-    fontSize: 12,
-    fontWeight: "bold",
-    marginBottom: 6,
-    paddingBottom: 4,
-    borderBottom: "1 solid #E5E7EB",
-  },
-  ecoHeader: { color: "#10B981" },
-  recHeader: { color: "#F59E0B" },
-  premiumHeader: { color: "#EF4444" },
+  label: { flex: 1, fontSize: 7.5, color: "#69736F" },
+  value: { fontSize: 7.5, fontWeight: "bold" },
   totalRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 3,
-    borderTop: "1 solid #E5E7EB",
+    gap: 4,
     marginTop: 4,
+    borderTop: "1 solid #D8D1C5",
+    paddingTop: 5,
   },
-  totalLabel: { fontSize: 10, fontWeight: "bold" },
-  totalValue: { fontSize: 10, fontWeight: "bold", color: "#F59E0B" },
-  inputsSection: { marginBottom: 16 },
-  inputRow: {
-    flexDirection: "row",
-    paddingVertical: 2,
+  totalLabel: { flex: 1, fontSize: 8.5, fontWeight: "bold" },
+  totalValue: { fontSize: 8.5, fontWeight: "bold", color: "#1F4A3A" },
+  notes: {
+    marginTop: 3,
+    border: "1 solid #D8D1C5",
+    borderRadius: 4,
+    padding: 10,
+    backgroundColor: "#F4F0E7",
   },
-  inputLabel: { fontSize: 9, color: "#6B7280", width: 120 },
-  inputValue: { fontSize: 9, fontWeight: "bold" },
+  noteTitle: { marginBottom: 4, fontWeight: "bold", color: "#1F4A3A" },
+  noteText: { marginBottom: 3, fontSize: 8, color: "#53615D" },
+  warning: { marginTop: 2, fontSize: 8, fontWeight: "bold", color: "#202725" },
   footer: {
     position: "absolute",
-    bottom: 30,
+    bottom: 28,
     left: 40,
     right: 40,
+    borderTop: "1 solid #D8D1C5",
+    paddingTop: 7,
     textAlign: "center",
-    fontSize: 8,
-    color: "#9CA3AF",
-    borderTop: "1 solid #E5E7EB",
-    paddingTop: 8,
-  },
-  notes: {
-    marginTop: 12,
-    padding: 10,
-    backgroundColor: "#F9FAFB",
-    borderRadius: 4,
-  },
-  noteText: {
-    fontSize: 8,
-    color: "#6B7280",
-    marginBottom: 3,
+    fontSize: 7.5,
+    color: "#69736F",
   },
 });
 
-function fmt(n: number): string {
-  return new Intl.NumberFormat("fr-CA", {
+const messages = { fr: frMessages, en: enMessages } as const;
+
+const copy = {
+  fr: {
+    eyebrow: "Un outil gratuit par Auxo Systems",
+    subtitle: "Estimation indicative des coûts d’un projet web",
+    generated: "Généré le",
+    summary: "Résumé du projet",
+    sector: "Secteur",
+    siteType: "Type de site",
+    features: "Fonctionnalités",
+    sectorModules: "Modules sectoriels",
+    language: "Langues",
+    oneLanguage: "Une langue",
+    bilingual: "Bilingue (FR/EN)",
+    multilingual: "Multilingue (3+ langues)",
+    urgent: "Livraison urgente",
+    yes: "Oui",
+    no: "Non",
+    none: "Aucune",
+    scenarios: "Trois scénarios",
+    base: "Socle de base",
+    complexity: "Complexité et fonctionnalités",
+    modules: "Modules sectoriels",
+    contingency: "Imprévus (15 %)",
+    initial: "Réalisation",
+    maintenance: "Maintenance / mois",
+    thirdParty: "Coûts tiers / mois",
+    month: "Total mensuel",
+    year1: "Total — année 1",
+    recurring: "Récurrent annuel",
+    notes: "Notes de transparence",
+    noteThirdParty:
+      "Les coûts tiers sont des estimations et sont normalement payés directement par le client.",
+    noteSource:
+      "La grille interne a été créée le 27 février 2026 avec une année de référence déclarée 2025. Aucune source externe n’est conservée; une validation humaine du marché est requise.",
+    warning:
+      "Ce rapport est indicatif. Il ne constitue ni une soumission, ni une offre contractuelle.",
+    footer: "EstimaWeb QC — Auxo Systems — auxosystems.ca — Montants en dollars canadiens",
+  },
+  en: {
+    eyebrow: "A free tool by Auxo Systems",
+    subtitle: "Indicative web project cost estimate",
+    generated: "Generated on",
+    summary: "Project summary",
+    sector: "Sector",
+    siteType: "Site type",
+    features: "Features",
+    sectorModules: "Sector modules",
+    language: "Languages",
+    oneLanguage: "One language",
+    bilingual: "Bilingual (FR/EN)",
+    multilingual: "Multilingual (3+ languages)",
+    urgent: "Urgent delivery",
+    yes: "Yes",
+    no: "No",
+    none: "None",
+    scenarios: "Three scenarios",
+    base: "Base cost",
+    complexity: "Complexity and features",
+    modules: "Sector modules",
+    contingency: "Contingency (15%)",
+    initial: "Initial build",
+    maintenance: "Maintenance / month",
+    thirdParty: "Third-party costs / month",
+    month: "Monthly total",
+    year1: "Year 1 total",
+    recurring: "Annual recurring",
+    notes: "Transparency notes",
+    noteThirdParty:
+      "Third-party costs are estimates and are normally paid directly by the client.",
+    noteSource:
+      "The internal grid was created on February 27, 2026 with a stated 2025 reference year. No external source is retained; a human market review is required.",
+    warning:
+      "This report is indicative. It is neither a quote nor a contractual offer.",
+    footer: "EstimaWeb QC — Auxo Systems — auxosystems.ca — Amounts in Canadian dollars",
+  },
+} as const;
+
+function getMessage(locale: PdfLocale, path: string): string {
+  let current: unknown = messages[locale];
+  for (const key of path.split(".")) {
+    if (!current || typeof current !== "object" || !(key in current)) {
+      return path;
+    }
+    current = (current as Record<string, unknown>)[key];
+  }
+  return typeof current === "string" ? current : path;
+}
+
+export function formatPdfCurrency(amount: number, locale: PdfLocale): string {
+  return new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA", {
     style: "currency",
     currency: "CAD",
+    currencyDisplay: "narrowSymbol",
     minimumFractionDigits: 0,
-  }).format(n);
+    maximumFractionDigits: 0,
+  }).format(amount);
 }
 
 function ScenarioColumn({
   name,
-  headerStyle,
   breakdown,
+  locale,
 }: {
   name: string;
-  headerStyle: Style;
   breakdown: ScenarioBreakdown;
+  locale: PdfLocale;
 }) {
+  const t = copy[locale];
+  const fmt = (amount: number) => formatPdfCurrency(amount, locale);
   return (
     <View style={styles.scenarioCard}>
-      <Text style={[styles.scenarioHeader, headerStyle]}>{name}</Text>
-      <View style={styles.row}>
-        <Text style={styles.label}>Socle</Text>
-        <Text style={styles.value}>{fmt(breakdown.baseCost)}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Multiplicateurs</Text>
-        <Text style={styles.value}>{fmt(breakdown.multipliersCost)}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Modules sectoriels</Text>
-        <Text style={styles.value}>{fmt(breakdown.sectorModulesCost)}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Imprévus (15%)</Text>
-        <Text style={styles.value}>{fmt(breakdown.contingency)}</Text>
-      </View>
-      <View style={styles.totalRow}>
-        <Text style={styles.totalLabel}>Réalisation</Text>
-        <Text style={styles.totalValue}>{fmt(breakdown.initialTotal)}</Text>
-      </View>
-      <View style={[styles.row, { marginTop: 6 }]}>
-        <Text style={styles.label}>Maintenance/mois</Text>
-        <Text style={styles.value}>{fmt(breakdown.maintenanceMonthly)}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Tiers/mois</Text>
-        <Text style={styles.value}>{fmt(breakdown.thirdPartyMonthly)}</Text>
-      </View>
-      <View style={styles.totalRow}>
-        <Text style={styles.totalLabel}>Année 1</Text>
-        <Text style={styles.totalValue}>{fmt(breakdown.year1Total)}</Text>
-      </View>
-      <View style={styles.row}>
-        <Text style={styles.label}>Récurrent annuel</Text>
-        <Text style={styles.value}>{fmt(breakdown.annualRecurring)}</Text>
-      </View>
+      <Text style={styles.scenarioHeader}>{name}</Text>
+      <View style={styles.row}><Text style={styles.label}>{t.base}</Text><Text style={styles.value}>{fmt(breakdown.baseCost)}</Text></View>
+      <View style={styles.row}><Text style={styles.label}>{t.complexity}</Text><Text style={styles.value}>{fmt(breakdown.multipliersCost)}</Text></View>
+      <View style={styles.row}><Text style={styles.label}>{t.modules}</Text><Text style={styles.value}>{fmt(breakdown.sectorModulesCost)}</Text></View>
+      <View style={styles.row}><Text style={styles.label}>{t.contingency}</Text><Text style={styles.value}>{fmt(breakdown.contingency)}</Text></View>
+      <View style={styles.totalRow}><Text style={styles.totalLabel}>{t.initial}</Text><Text style={styles.totalValue}>{fmt(breakdown.initialTotal)}</Text></View>
+      <View style={[styles.row, { marginTop: 5 }]}><Text style={styles.label}>{t.maintenance}</Text><Text style={styles.value}>{fmt(breakdown.maintenanceMonthly)}</Text></View>
+      <View style={styles.row}><Text style={styles.label}>{t.thirdParty}</Text><Text style={styles.value}>{fmt(breakdown.thirdPartyMonthly)}</Text></View>
+      <View style={styles.row}><Text style={styles.label}>{t.month}</Text><Text style={styles.value}>{fmt(breakdown.monthlyTotal)}</Text></View>
+      <View style={styles.totalRow}><Text style={styles.totalLabel}>{t.year1}</Text><Text style={styles.totalValue}>{fmt(breakdown.year1Total)}</Text></View>
+      <View style={styles.row}><Text style={styles.label}>{t.recurring}</Text><Text style={styles.value}>{fmt(breakdown.annualRecurring)}</Text></View>
     </View>
   );
 }
 
-interface EstimationPDFProps {
+export interface EstimationPDFProps {
   result: EstimationResult;
-  contactName?: string;
-  contactCompany?: string;
+  locale: PdfLocale;
+  generatedAt?: Date;
 }
 
 export function EstimationPDF({
   result,
-  contactName,
-  contactCompany,
+  locale,
+  generatedAt = new Date(),
 }: EstimationPDFProps) {
   const { inputs } = result;
+  const t = copy[locale];
+  const formattedDate = new Intl.DateTimeFormat(
+    locale === "fr" ? "fr-CA" : "en-CA",
+    { dateStyle: "long" }
+  ).format(generatedAt);
+  const featureLabels = inputs.multipliers.map((id) =>
+    getMessage(locale, `steps.features.${id}.label`)
+  );
+  const sectorModuleLabels = inputs.sectorModules.map((id) =>
+    getMessage(locale, `steps.sectorModules.${id}.label`)
+  );
+  const languages = inputs.isMultilingual
+    ? t.multilingual
+    : inputs.isBilingual
+      ? t.bilingual
+      : t.oneLanguage;
 
   return (
-    <Document>
+    <Document title="EstimaWeb QC" author="Auxo Systems" language={locale}>
       <Page size="A4" style={styles.page}>
-        {/* Header */}
         <View style={styles.header}>
+          <Text style={styles.eyebrow}>{t.eyebrow}</Text>
           <Text style={styles.title}>EstimaWeb QC</Text>
-          <Text style={styles.subtitle}>
-            Estimation de coûts web — {contactCompany || ""}
-          </Text>
+          <Text style={styles.subtitle}>{t.subtitle}</Text>
+          <Text style={styles.subtitle}>{t.generated} {formattedDate}</Text>
         </View>
 
-        {/* Inputs summary */}
-        <View style={styles.inputsSection}>
-          <Text style={styles.sectionTitle}>Résumé du projet</Text>
-          {contactName && (
-            <View style={styles.inputRow}>
-              <Text style={styles.inputLabel}>Contact</Text>
-              <Text style={styles.inputValue}>{contactName}</Text>
-            </View>
-          )}
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>Secteur</Text>
-            <Text style={styles.inputValue}>{inputs.sector}</Text>
-          </View>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>Type de site</Text>
-            <Text style={styles.inputValue}>{inputs.siteType}</Text>
-          </View>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>Bilingue</Text>
-            <Text style={styles.inputValue}>
-              {inputs.isBilingual ? "Oui" : "Non"}
-            </Text>
-          </View>
-          <View style={styles.inputRow}>
-            <Text style={styles.inputLabel}>Urgence</Text>
-            <Text style={styles.inputValue}>
-              {inputs.isUrgent ? "Oui" : "Non"}
-            </Text>
-          </View>
-        </View>
-
-        {/* 3 Scenarios */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Trois scénarios</Text>
-          <View style={styles.scenarioContainer}>
-            <ScenarioColumn
-              name="Économique"
-              headerStyle={styles.ecoHeader}
-              breakdown={result.eco}
-            />
-            <ScenarioColumn
-              name="Recommandé"
-              headerStyle={styles.recHeader}
-              breakdown={result.rec}
-            />
-            <ScenarioColumn
-              name="Premium"
-              headerStyle={styles.premiumHeader}
-              breakdown={result.premium}
-            />
+          <Text style={styles.sectionTitle}>{t.summary}</Text>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.sector}</Text><Text style={styles.inputValue}>{getMessage(locale, `steps.sector.${inputs.sector}.label`)}</Text></View>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.siteType}</Text><Text style={styles.inputValue}>{getMessage(locale, `steps.siteType.${inputs.siteType}.label`)}</Text></View>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.features}</Text><Text style={styles.inputValue}>{featureLabels.join(", ") || t.none}</Text></View>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.sectorModules}</Text><Text style={styles.inputValue}>{sectorModuleLabels.join(", ") || t.none}</Text></View>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.language}</Text><Text style={styles.inputValue}>{languages}</Text></View>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.urgent}</Text><Text style={styles.inputValue}>{inputs.isUrgent ? t.yes : t.no}</Text></View>
+        </View>
+
+        <View style={styles.section} minPresenceAhead={190}>
+          <Text style={styles.sectionTitle}>{t.scenarios}</Text>
+          <View style={styles.scenarioContainer} wrap={false}>
+            <ScenarioColumn name={getMessage(locale, "scenarios.eco.name")} breakdown={result.eco} locale={locale} />
+            <ScenarioColumn name={getMessage(locale, "scenarios.rec.name")} breakdown={result.rec} locale={locale} />
+            <ScenarioColumn name={getMessage(locale, "scenarios.premium.name")} breakdown={result.premium} locale={locale} />
           </View>
         </View>
 
-        {/* Notes */}
-        <View style={styles.notes}>
-          <Text style={[styles.noteText, { fontWeight: "bold" }]}>
-            Notes de transparence
-          </Text>
-          <Text style={styles.noteText}>
-            • Ces montants sont des fourchettes indicatives, pas un devis ferme.
-          </Text>
-          <Text style={styles.noteText}>
-            • Le marché web québécois est variable (±40-50% selon le
-            prestataire).
-          </Text>
-          <Text style={styles.noteText}>
-            • Les coûts tiers sont payés directement par le client.
-          </Text>
-          <Text style={styles.noteText}>
-            • Le ROI d’un site professionnel se mesure sur 2-3 ans.
-          </Text>
+        <View style={styles.notes} wrap={false}>
+          <Text style={styles.noteTitle}>{t.notes}</Text>
+          <Text style={styles.noteText}>• {t.noteThirdParty}</Text>
+          <Text style={styles.noteText}>• {t.noteSource}</Text>
+          <Text style={styles.warning}>{t.warning}</Text>
         </View>
 
-        {/* Footer */}
-        <Text style={styles.footer}>
-          EstimaWeb QC — Propulsé par Mark Systems | marksystems.ca | Données
-          calibrées marché QC 2025
-        </Text>
+        <Text style={styles.footer} fixed>{t.footer}</Text>
       </Page>
     </Document>
   );

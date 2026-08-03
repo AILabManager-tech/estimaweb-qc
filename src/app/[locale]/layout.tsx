@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing, type Locale } from "@/i18n/routing";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SITE_URL } from "@/lib/site";
 import "@/styles/globals.css";
 
 const inter = Inter({
@@ -31,15 +32,29 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "metadata" });
+  const canonicalPath = `/${locale}`;
 
   return {
+    metadataBase: new URL(SITE_URL),
     title: t("title"),
     description: t("description"),
+    alternates: {
+      canonical: canonicalPath,
+      languages: { fr: "/fr", en: "/en", "x-default": "/fr" },
+    },
     openGraph: {
       title: t("title"),
       description: t("description"),
       type: "website",
-      locale,
+      url: canonicalPath,
+      siteName: "EstimaWeb QC",
+      locale: locale === "fr" ? "fr_CA" : "en_CA",
+      alternateLocale: locale === "fr" ? ["en_CA"] : ["fr_CA"],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t("title"),
+      description: t("description"),
     },
   };
 }
@@ -56,6 +71,7 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  setRequestLocale(locale);
   const messages = await getMessages();
 
   return (

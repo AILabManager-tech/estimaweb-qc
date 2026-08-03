@@ -11,7 +11,7 @@ import type {
 import { calculateEstimation } from "@/lib/engine/calculator";
 
 // ── Actions ─────────────────────────────────────────────────────
-type WizardAction =
+export type WizardAction =
   | { type: "SET_STEP"; step: number }
   | { type: "SET_SECTOR"; sector: Sector }
   | { type: "SET_SITE_TYPE"; siteType: SiteTypeId }
@@ -20,13 +20,13 @@ type WizardAction =
   | { type: "SET_BILINGUAL"; value: boolean }
   | { type: "SET_MULTILINGUAL"; value: boolean }
   | { type: "SET_URGENT"; value: boolean }
-  | { type: "SET_CONTACT"; field: keyof WizardState["contact"]; value: string }
   | { type: "COMPUTE_RESULT" }
+  | { type: "EDIT_ANSWERS" }
   | { type: "RESET" };
 
-const TOTAL_STEPS = 6;
+export const TOTAL_STEPS = 5;
 
-const initialState: WizardState = {
+export const initialState: WizardState = {
   currentStep: 0,
   sector: null,
   siteType: null,
@@ -35,12 +35,14 @@ const initialState: WizardState = {
   isBilingual: false,
   isMultilingual: false,
   isUrgent: false,
-  contact: { name: "", email: "", company: "", phone: "" },
   result: null,
 };
 
 // ── Reducer ─────────────────────────────────────────────────────
-function wizardReducer(state: WizardState, action: WizardAction): WizardState {
+export function wizardReducer(
+  state: WizardState,
+  action: WizardAction
+): WizardState {
   switch (action.type) {
     case "SET_STEP":
       return { ...state, currentStep: action.step };
@@ -85,12 +87,6 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
     case "SET_URGENT":
       return { ...state, isUrgent: action.value };
 
-    case "SET_CONTACT":
-      return {
-        ...state,
-        contact: { ...state.contact, [action.field]: action.value },
-      };
-
     case "COMPUTE_RESULT": {
       if (!state.sector || !state.siteType) return state;
       const result = calculateEstimation({
@@ -104,6 +100,9 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       });
       return { ...state, result };
     }
+
+    case "EDIT_ANSWERS":
+      return { ...state, currentStep: 0, result: null };
 
     case "RESET":
       return initialState;
@@ -128,22 +127,17 @@ export function useWizard() {
       case 3:
         return true; // extras are optional
       case 4:
-        return (
-          state.contact.name.trim().length > 0 &&
-          /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.contact.email)
-        );
-      case 5:
         return false; // results — no "next"
       default:
         return false;
     }
-  }, [state.currentStep, state.sector, state.siteType, state.contact]);
+  }, [state.currentStep, state.sector, state.siteType]);
 
   const goNext = useCallback(() => {
     if (state.currentStep < TOTAL_STEPS - 1) {
       const nextStep = state.currentStep + 1;
       // Auto-compute when reaching results
-      if (nextStep === 5) {
+      if (nextStep === 4) {
         dispatch({ type: "COMPUTE_RESULT" });
       }
       dispatch({ type: "SET_STEP", step: nextStep });
@@ -160,6 +154,10 @@ export function useWizard() {
     dispatch({ type: "RESET" });
   }, []);
 
+  const editAnswers = useCallback(() => {
+    dispatch({ type: "EDIT_ANSWERS" });
+  }, []);
+
   return {
     state,
     dispatch,
@@ -167,6 +165,7 @@ export function useWizard() {
     goNext,
     goPrev,
     reset,
+    editAnswers,
     totalSteps: TOTAL_STEPS,
     isFirstStep: state.currentStep === 0,
     isLastStep: state.currentStep === TOTAL_STEPS - 1,

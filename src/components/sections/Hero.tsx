@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { ArrowDown } from "lucide-react";
-import { GlowOrb } from "@/components/motion/GlowOrb";
 import { fadeInUp, staggerContainer } from "@/lib/animations";
 import { Button } from "@/components/ui/Button";
 
@@ -15,27 +14,19 @@ export function Hero() {
   };
 
   return (
-    <section className="relative flex min-h-[90vh] items-center overflow-hidden pt-16">
+    <section className="relative flex min-h-[82vh] items-center overflow-hidden border-b border-surface-border pt-16">
       {/* Background grid */}
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.03]"
+        className="pointer-events-none absolute inset-0 opacity-[0.045]"
         style={{
           backgroundImage:
-            "linear-gradient(rgba(248,250,252,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(248,250,252,0.5) 1px, transparent 1px)",
-          backgroundSize: "60px 60px",
+            "linear-gradient(rgba(32,39,37,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(32,39,37,0.35) 1px, transparent 1px)",
+          backgroundSize: "72px 72px",
         }}
       />
 
-      {/* Glow orbs */}
-      <GlowOrb className="-left-48 top-1/4" size="500px" delay={0} />
-      <GlowOrb className="-right-48 bottom-1/4" size="400px" delay={3} />
-
-      {/* Scan line */}
-      <motion.div
-        className="pointer-events-none absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent"
-        animate={{ top: ["0%", "100%"] }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-      />
+      <div className="pointer-events-none absolute -left-40 top-20 h-[28rem] w-[28rem] rounded-full bg-accent/5 blur-[100px]" />
+      <div className="pointer-events-none absolute -right-32 bottom-0 h-80 w-80 rounded-full bg-scenario-eco/10 blur-[100px]" />
 
       {/* Content */}
       <motion.div
@@ -47,7 +38,7 @@ export function Hero() {
         {/* Monospace badge */}
         <motion.span
           variants={fadeInUp}
-          className="inline-block font-mono text-xs uppercase tracking-widest text-accent"
+          className="inline-block rounded-full border border-accent/20 bg-surface px-4 py-2 font-mono text-xs uppercase tracking-widest text-accent shadow-subtle"
         >
           {t("badge")}
         </motion.span>
@@ -55,7 +46,7 @@ export function Hero() {
         {/* Title */}
         <motion.h1
           variants={fadeInUp}
-          className="mx-auto mt-6 max-w-4xl text-display font-bold text-balance text-text-primary sm:text-hero"
+          className="mx-auto mt-7 max-w-4xl text-display font-bold text-balance text-text-primary sm:text-hero"
         >
           {t("titlePre")}
           <span className="text-gradient-accent">{t("titleAccent")}</span>

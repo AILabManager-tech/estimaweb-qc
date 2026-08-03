@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { SOCLE_ITEMS } from "@/lib/engine/matrix";
 import { formatCurrency } from "@/lib/utils";
@@ -21,6 +21,7 @@ const SITE_TYPES_BY_SECTOR: Record<Sector, SiteTypeId[]> = {
 
 export function SiteTypeStep({ value, onChange, sector }: SiteTypeStepProps) {
   const t = useTranslations("steps.siteType");
+  const locale = useLocale() as "fr" | "en";
 
   const allowedTypes = SITE_TYPES_BY_SECTOR[sector];
   const options = allowedTypes.map((id) => {
@@ -29,7 +30,7 @@ export function SiteTypeStep({ value, onChange, sector }: SiteTypeStepProps) {
       value: id,
       label: t(`${id}.label`),
       description: t(`${id}.description`),
-      priceHint: `${formatCurrency(price.min)} – ${formatCurrency(price.max)}`,
+      priceHint: `${formatCurrency(price.min, locale)} – ${formatCurrency(price.max, locale)}`,
     };
   });
 
@@ -37,7 +38,6 @@ export function SiteTypeStep({ value, onChange, sector }: SiteTypeStepProps) {
     <div className="space-y-6">
       <div>
         <span className="font-mono text-xs uppercase tracking-widest text-accent">
-          {"// "}
           {t("title").split(" ")[0]}
         </span>
         <h2 className="mt-2 text-h3 font-bold text-text-primary">{t("title")}</h2>
@@ -48,6 +48,7 @@ export function SiteTypeStep({ value, onChange, sector }: SiteTypeStepProps) {
         value={value}
         onChange={(v) => onChange(v as SiteTypeId)}
         columns={2}
+        ariaLabel={t("title")}
       />
     </div>
   );

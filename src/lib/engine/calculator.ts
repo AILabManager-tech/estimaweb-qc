@@ -1,10 +1,7 @@
 import type {
-  SiteTypeId,
-  MultiplierId,
-  SectorModuleId,
-  Sector,
   ScenarioBreakdown,
   EstimationResult,
+  CalculatorInput,
 } from "./types";
 import {
   SOCLE_ITEMS,
@@ -16,17 +13,7 @@ import {
   SCENARIO_MAINTENANCE,
 } from "./matrix";
 import { lerp } from "../utils";
-
-// ── Types internes ──────────────────────────────────────────────
-interface CalculatorInput {
-  sector: Sector;
-  siteType: SiteTypeId;
-  selectedMultipliers: MultiplierId[];
-  selectedSectorModules: SectorModuleId[];
-  isBilingual: boolean;
-  isMultilingual: boolean;
-  isUrgent: boolean;
-}
+import { CalculatorInputSchema } from "./schema";
 
 type ScenarioKey = "eco" | "rec" | "premium";
 
@@ -49,9 +36,10 @@ const SCENARIO_PERCENTILES: Record<ScenarioKey, number> = {
  *
  */
 export function calculateEstimation(input: CalculatorInput): EstimationResult {
+  const validatedInput = CalculatorInputSchema.parse(input);
   const scenarios = (["eco", "rec", "premium"] as const).reduce(
     (acc, key) => {
-      acc[key] = computeScenario(key, input);
+      acc[key] = computeScenario(key, validatedInput);
       return acc;
     },
     {} as Record<ScenarioKey, ScenarioBreakdown>
@@ -60,13 +48,13 @@ export function calculateEstimation(input: CalculatorInput): EstimationResult {
   return {
     ...scenarios,
     inputs: {
-      sector: input.sector,
-      siteType: input.siteType,
-      multipliers: input.selectedMultipliers,
-      sectorModules: input.selectedSectorModules,
-      isBilingual: input.isBilingual,
-      isMultilingual: input.isMultilingual,
-      isUrgent: input.isUrgent,
+      sector: validatedInput.sector,
+      siteType: validatedInput.siteType,
+      multipliers: [...validatedInput.selectedMultipliers],
+      sectorModules: [...validatedInput.selectedSectorModules],
+      isBilingual: validatedInput.isBilingual,
+      isMultilingual: validatedInput.isMultilingual,
+      isUrgent: validatedInput.isUrgent,
     },
   };
 }

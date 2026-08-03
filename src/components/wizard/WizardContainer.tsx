@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useCallback, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useWizard } from "@/hooks/useWizard";
 import { usePdfDownload } from "@/hooks/usePdfDownload";
 import { ProgressBar } from "./ProgressBar";
@@ -10,19 +10,18 @@ import { SectorStep } from "./steps/SectorStep";
 import { SiteTypeStep } from "./steps/SiteTypeStep";
 import { FeaturesStep } from "./steps/FeaturesStep";
 import { BilingualStep } from "./steps/BilingualStep";
-import { LeadCaptureStep } from "./steps/LeadCaptureStep";
 import { ResultsStep } from "./steps/ResultsStep";
 import { Button } from "@/components/ui/Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { WizardState } from "@/lib/engine/types";
+import { cn } from "@/lib/utils";
 
 export function WizardContainer() {
-  const { state, dispatch, canProceed, goNext, goPrev, reset, totalSteps, isFirstStep, isLastStep } =
+  const { state, dispatch, canProceed, goNext, goPrev, reset, editAnswers, totalSteps, isFirstStep, isLastStep } =
     useWizard();
-  const { downloadPdf } = usePdfDownload();
+  const { downloadPdf, isGenerating: isPdfGenerating } = usePdfDownload();
+  const locale = useLocale() as "fr" | "en";
   const t = useTranslations("common");
   const tWizard = useTranslations("wizard");
-  const tValidation = useTranslations("validation");
   const [direction, setDirection] = useState(1);
   const prevStep = useRef(0);
 
@@ -43,22 +42,11 @@ export function WizardContainer() {
     reset();
   }, [reset]);
 
-  const contactErrors: Partial<Record<keyof WizardState["contact"], string>> = {};
-  if (state.currentStep === 4) {
-    if (!state.contact.name.trim()) contactErrors.name = tValidation("name");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.contact.email))
-      contactErrors.email = tValidation("email");
-  }
-
   const handleDownloadPdf = useCallback(() => {
     if (state.result) {
-      downloadPdf({
-        result: state.result,
-        contactName: state.contact.name,
-        contactCompany: state.contact.company,
-      });
+      void downloadPdf({ result: state.result, locale });
     }
-  }, [downloadPdf, state.result, state.contact]);
+  }, [downloadPdf, locale, state.result]);
 
   const renderStep = () => {
     switch (state.currentStep) {
@@ -107,21 +95,13 @@ export function WizardContainer() {
           />
         );
       case 4:
-        return (
-          <LeadCaptureStep
-            contact={state.contact}
-            onSetContact={(field, value) =>
-              dispatch({ type: "SET_CONTACT", field, value })
-            }
-            errors={contactErrors}
-          />
-        );
-      case 5:
         return state.result ? (
           <ResultsStep
             result={state.result}
             onRestart={handleReset}
+            onEdit={editAnswers}
             onDownloadPdf={handleDownloadPdf}
+            isPdfGenerating={isPdfGenerating}
           />
         ) : null;
       default:
@@ -130,14 +110,11 @@ export function WizardContainer() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl space-y-8 px-4">
+    <div className={cn("mx-auto w-full space-y-8 px-4", isLastStep ? "max-w-6xl" : "max-w-3xl")}>
       {!isLastStep && (
         <>
           <div className="text-center">
-            <span className="font-mono text-xs uppercase tracking-widest text-accent">
-              {"// "}
-              {tWizard("title")}
-            </span>
+            <span className="font-mono text-xs uppercase tracking-widest text-accent">{tWizard("title")}</span>
             <h2 className="mt-2 text-h2 font-bold text-text-primary">
               {t("appName")}
             </h2>
@@ -171,9 +148,9 @@ export function WizardContainer() {
           <Button
             onClick={handleNext}
             disabled={!canProceed}
-            aria-label={t("next")}
+            aria-label={state.currentStep === 3 ? t("getQuote") : t("next")}
           >
-            {state.currentStep === 4 ? t("getQuote") : t("next")}
+            {state.currentStep === 3 ? t("getQuote") : t("next")}
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

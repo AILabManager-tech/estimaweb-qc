@@ -1,9 +1,10 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 export function Footer() {
   const t = useTranslations("footer");
+  const locale = useLocale() as "fr" | "en";
   const year = new Date().getFullYear();
 
   return (
@@ -12,36 +13,33 @@ export function Footer() {
         <div className="flex flex-col items-center gap-6 sm:flex-row sm:justify-between">
           <div className="flex flex-col items-center gap-1 sm:items-start">
             <span className="text-sm font-bold tracking-tight text-text-primary">
-              Mark<span className="text-gradient-accent">Systems</span>
+              EstimaWeb <span className="text-accent">QC</span>
             </span>
             <span className="text-xs text-text-tertiary">{t("tagline")}</span>
           </div>
 
-          <div className="flex items-center gap-6 text-xs text-text-tertiary">
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-text-tertiary sm:gap-4">
             <a
-              href="https://marksystems.ca"
+              href="https://auxosystems.ca"
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-accent"
+              className="inline-flex min-h-11 items-center px-2 transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
-              marksystems.ca
+              {t("auxoSite")}
             </a>
             <a
-              href="https://marksystems.ca/privacy"
+              href={`https://auxosystems.ca/${locale}/privacy`}
               target="_blank"
               rel="noopener noreferrer"
-              className="transition-colors hover:text-accent"
+              className="inline-flex min-h-11 items-center px-2 transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               {t("privacy")}
             </a>
           </div>
 
           <div className="flex flex-col items-center gap-1 sm:items-end">
-            <span className="font-mono text-xs text-accent/60">
-              {"// estimaweb-qc"}
-            </span>
             <span className="text-xs text-text-tertiary">
-              &copy; {year} Mark Systems. {t("rights")}
+              &copy; {year} Auxo Systems. {t("rights")}
             </span>
           </div>
         </div>

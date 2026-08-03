@@ -33,7 +33,6 @@ export function SectorStep({ value, onChange }: SectorStepProps) {
     <div className="space-y-6">
       <div>
         <span className="font-mono text-xs uppercase tracking-widest text-accent">
-          {"// "}
           {t("title").split(" ")[0]}
         </span>
         <h2 className="mt-2 text-h3 font-bold text-text-primary">{t("title")}</h2>
@@ -44,6 +43,7 @@ export function SectorStep({ value, onChange }: SectorStepProps) {
         value={value}
         onChange={(v) => onChange(v as Sector)}
         columns={2}
+        ariaLabel={t("title")}
       />
     </div>
   );
