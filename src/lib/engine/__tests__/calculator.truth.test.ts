@@ -49,6 +49,40 @@ const controlledScenarios: Array<{
     },
   },
   {
+    name: "minimum landing page",
+    input: {
+      sector: "PME",
+      siteType: "S06",
+      selectedMultipliers: [],
+      selectedSectorModules: [],
+      isBilingual: false,
+      isMultilingual: false,
+      isUrgent: false,
+    },
+    expected: {
+      eco: { baseCost: 1200, multipliersCost: 0, sectorModulesCost: 0, contingency: 180, initialTotal: 1380, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 2472, annualRecurring: 1092 },
+      rec: { baseCost: 2350, multipliersCost: 0, sectorModulesCost: 0, contingency: 353, initialTotal: 2703, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 6879, annualRecurring: 4176 },
+      premium: { baseCost: 3500, multipliersCost: 0, sectorModulesCost: 0, contingency: 525, initialTotal: 4025, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 15173, annualRecurring: 11148 },
+    },
+  },
+  {
+    name: "unusual stacked bilingual, multilingual and urgent project",
+    input: {
+      sector: "PME",
+      siteType: "S06",
+      selectedMultipliers: [],
+      selectedSectorModules: [],
+      isBilingual: true,
+      isMultilingual: true,
+      isUrgent: true,
+    },
+    expected: {
+      eco: { baseCost: 1200, multipliersCost: 2731, sectorModulesCost: 0, contingency: 590, initialTotal: 4521, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 5613, annualRecurring: 1092 },
+      rec: { baseCost: 2350, multipliersCost: 7520, sectorModulesCost: 0, contingency: 1481, initialTotal: 11351, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 15527, annualRecurring: 4176 },
+      premium: { baseCost: 3500, multipliersCost: 14980, sectorModulesCost: 0, contingency: 2772, initialTotal: 21252, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 32400, annualRecurring: 11148 },
+    },
+  },
+  {
     name: "basic e-commerce with booking, payment and local search",
     input: {
       sector: "PME",

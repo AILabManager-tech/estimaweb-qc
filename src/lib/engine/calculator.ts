@@ -17,6 +17,10 @@ import { CalculatorInputSchema } from "./schema";
 
 type ScenarioKey = "eco" | "rec" | "premium";
 
+function normalizeDecimal(value: number): number {
+  return Number(value.toFixed(8));
+}
+
 // Percentile par scénario
 const SCENARIO_PERCENTILES: Record<ScenarioKey, number> = {
   eco: 0,      // min
@@ -85,7 +89,7 @@ function computeScenario(
     chainedMultiplier *= lerp(m.value.min, m.value.max, t);
   }
 
-  const costAfterMultipliers = baseCost * chainedMultiplier;
+  const costAfterMultipliers = normalizeDecimal(baseCost * chainedMultiplier);
   const multipliersCost = costAfterMultipliers - baseCost;
 
   // 3. Additifs (M03-M12) — seulement ceux sélectionnés
@@ -108,9 +112,11 @@ function computeScenario(
   }
 
   // 5. Sous-total + marge imprévus 15%
-  const subtotal = costAfterMultipliers + additiveCost + sectorModulesCost;
-  const contingency = subtotal * 0.15;
-  const initialTotal = subtotal + contingency;
+  const subtotal = normalizeDecimal(
+    costAfterMultipliers + additiveCost + sectorModulesCost
+  );
+  const contingency = normalizeDecimal(subtotal * 0.15);
+  const initialTotal = normalizeDecimal(subtotal + contingency);
 
   // 6. Coûts mensuels
   const maintenanceTierId = SCENARIO_MAINTENANCE[scenario];

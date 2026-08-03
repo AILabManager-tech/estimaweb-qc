@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "EstimaWeb QC — Un outil gratuit par Auxo Systems";
+export const alt = "EstimaWeb QC — Free web estimator by Auxo Systems";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -32,16 +32,16 @@ export default function OpenGraphImage() {
         }}
       >
         <div style={{ color: "#165A63", display: "flex", fontSize: 28, letterSpacing: 3, textTransform: "uppercase" }}>
-          Estimateur web gratuit
+          Auxo Systems
         </div>
         <div style={{ display: "flex", fontSize: 84, fontWeight: 700, marginTop: 26 }}>
           EstimaWeb <span style={{ color: "#165A63", marginLeft: 20 }}>QC</span>
         </div>
         <div style={{ color: "#53615D", display: "flex", fontSize: 34, marginTop: 22 }}>
-          Une estimation indicative et transparente de votre projet web
+          Estimation web indicative • Indicative web estimate
         </div>
         <div style={{ color: "#1F4A3A", display: "flex", fontSize: 26, fontWeight: 700, marginTop: 48 }}>
-          Un outil gratuit par Auxo Systems
+          Outil gratuit • Free tool
         </div>
       </div>
     </div>,
