@@ -260,7 +260,7 @@ export function EstimationPDF({
             • Les coûts tiers sont payés directement par le client.
           </Text>
           <Text style={styles.noteText}>
-            • Le ROI d'un site professionnel se mesure sur 2-3 ans.
+            • Le ROI d’un site professionnel se mesure sur 2-3 ans.
           </Text>
         </View>
 

@@ -7,7 +7,6 @@ import type {
   SiteTypeId,
   MultiplierId,
   SectorModuleId,
-  EstimationResult,
 } from "@/lib/engine/types";
 import { calculateEstimation } from "@/lib/engine/calculator";
 
