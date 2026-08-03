@@ -124,6 +124,15 @@ for (const viewport of [
 }
 
 test("direct navigation cannot fabricate an incomplete result", async ({ page }) => {
+  await page.goto("/fr");
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "https://estimaweb-qc.vercel.app/opengraph-image"
+  );
+  const socialImage = await page.request.get("/opengraph-image");
+  expect(socialImage.status()).toBe(200);
+  expect(socialImage.headers()["content-type"]).toContain("image/png");
+
   const response = await page.goto("/fr/results");
   expect(response?.status()).toBe(404);
 });

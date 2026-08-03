@@ -142,6 +142,7 @@ Les dépendances majeures ont été modernisées : Next 16.3, React 19.2, next-i
 | Hiérarchie de titres incomplète dans les cartes | Nom du scénario promu en `h3` |
 | En-têtes Next/Vercel dupliqués et CSP `unsafe-eval` en production | Configuration centralisée; `unsafe-eval` limité au développement |
 | Métadonnées partielles | Canonical, alternates, OG, Twitter, favicon, robots et sitemap ajoutés |
+| Image Open Graph redirigée par le middleware vers une route localisée 404 | Route sociale exclue du middleware et balises image testées en production |
 | Échafaudage documentaire généré par Next dev | `agentRules: false`; aucun fichier d’agent ajouté au projet |
 
 ## 6. Exactitude des calculs
