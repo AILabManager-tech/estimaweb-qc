@@ -69,6 +69,7 @@ export function WizardContainer() {
         return state.sector ? (
           <FeaturesStep
             sector={state.sector}
+            siteType={state.siteType!}
             selectedMultipliers={state.selectedMultipliers}
             selectedSectorModules={state.selectedSectorModules}
             onToggleMultiplier={(id) =>
@@ -82,14 +83,10 @@ export function WizardContainer() {
       case 3:
         return (
           <BilingualStep
-            isBilingual={state.isBilingual}
-            isMultilingual={state.isMultilingual}
+            languageMode={state.languageMode}
             isUrgent={state.isUrgent}
-            onSetBilingual={(v) =>
-              dispatch({ type: "SET_BILINGUAL", value: v })
-            }
-            onSetMultilingual={(v) =>
-              dispatch({ type: "SET_MULTILINGUAL", value: v })
+            onSetLanguageMode={(languageMode) =>
+              dispatch({ type: "SET_LANGUAGE_MODE", languageMode })
             }
             onSetUrgent={(v) => dispatch({ type: "SET_URGENT", value: v })}
           />

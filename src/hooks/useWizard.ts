@@ -7,8 +7,10 @@ import type {
   SiteTypeId,
   MultiplierId,
   SectorModuleId,
+  LanguageMode,
 } from "@/lib/engine/types";
 import { calculateEstimation } from "@/lib/engine/calculator";
+import { normalizeCompatibleSelection } from "@/lib/engine/compatibility";
 
 // ── Actions ─────────────────────────────────────────────────────
 export type WizardAction =
@@ -17,8 +19,7 @@ export type WizardAction =
   | { type: "SET_SITE_TYPE"; siteType: SiteTypeId }
   | { type: "TOGGLE_MULTIPLIER"; id: MultiplierId }
   | { type: "TOGGLE_SECTOR_MODULE"; id: SectorModuleId }
-  | { type: "SET_BILINGUAL"; value: boolean }
-  | { type: "SET_MULTILINGUAL"; value: boolean }
+  | { type: "SET_LANGUAGE_MODE"; languageMode: LanguageMode }
   | { type: "SET_URGENT"; value: boolean }
   | { type: "COMPUTE_RESULT" }
   | { type: "EDIT_ANSWERS" }
@@ -32,11 +33,25 @@ export const initialState: WizardState = {
   siteType: null,
   selectedMultipliers: [],
   selectedSectorModules: [],
-  isBilingual: false,
-  isMultilingual: false,
+  languageMode: "single",
   isUrgent: false,
   result: null,
 };
+
+function normalizeStateSelection(state: WizardState): WizardState {
+  if (!state.sector || !state.siteType) return state;
+  const normalized = normalizeCompatibleSelection({
+    sector: state.sector,
+    siteType: state.siteType,
+    selectedMultipliers: state.selectedMultipliers,
+    selectedSectorModules: state.selectedSectorModules,
+  });
+  return {
+    ...state,
+    selectedMultipliers: normalized.selectedMultipliers,
+    selectedSectorModules: normalized.selectedSectorModules,
+  };
+}
 
 // ── Reducer ─────────────────────────────────────────────────────
 export function wizardReducer(
@@ -56,33 +71,30 @@ export function wizardReducer(
       };
 
     case "SET_SITE_TYPE":
-      return { ...state, siteType: action.siteType };
+      return normalizeStateSelection({ ...state, siteType: action.siteType });
 
     case "TOGGLE_MULTIPLIER": {
       const has = state.selectedMultipliers.includes(action.id);
-      return {
+      return normalizeStateSelection({
         ...state,
         selectedMultipliers: has
           ? state.selectedMultipliers.filter((m) => m !== action.id)
           : [...state.selectedMultipliers, action.id],
-      };
+      });
     }
 
     case "TOGGLE_SECTOR_MODULE": {
       const has = state.selectedSectorModules.includes(action.id);
-      return {
+      return normalizeStateSelection({
         ...state,
         selectedSectorModules: has
           ? state.selectedSectorModules.filter((m) => m !== action.id)
           : [...state.selectedSectorModules, action.id],
-      };
+      });
     }
 
-    case "SET_BILINGUAL":
-      return { ...state, isBilingual: action.value };
-
-    case "SET_MULTILINGUAL":
-      return { ...state, isMultilingual: action.value };
+    case "SET_LANGUAGE_MODE":
+      return { ...state, languageMode: action.languageMode };
 
     case "SET_URGENT":
       return { ...state, isUrgent: action.value };
@@ -94,11 +106,15 @@ export function wizardReducer(
         siteType: state.siteType,
         selectedMultipliers: state.selectedMultipliers,
         selectedSectorModules: state.selectedSectorModules,
-        isBilingual: state.isBilingual,
-        isMultilingual: state.isMultilingual,
+        languageMode: state.languageMode,
         isUrgent: state.isUrgent,
       });
-      return { ...state, result };
+      return {
+        ...state,
+        selectedMultipliers: result.inputs.multipliers,
+        selectedSectorModules: result.inputs.sectorModules,
+        result,
+      };
     }
 
     case "EDIT_ANSWERS":

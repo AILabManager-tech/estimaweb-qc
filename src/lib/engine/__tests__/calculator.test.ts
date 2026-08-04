@@ -23,8 +23,7 @@ describe("calculateEstimation", () => {
     siteType: "S01" as const,
     selectedMultipliers: [],
     selectedSectorModules: [],
-    isBilingual: false,
-    isMultilingual: false,
+    languageMode: "single" as const,
     isUrgent: false,
   };
 
@@ -69,7 +68,7 @@ describe("calculateEstimation", () => {
   it("applies bilingual multiplier correctly", () => {
     const withBilingual = calculateEstimation({
       ...baseInput,
-      isBilingual: true,
+      languageMode: "bilingual",
     });
     const without = calculateEstimation(baseInput);
 
@@ -82,11 +81,11 @@ describe("calculateEstimation", () => {
   it("chains multiplicative multipliers (bilingual + urgent)", () => {
     const bilingualOnly = calculateEstimation({
       ...baseInput,
-      isBilingual: true,
+      languageMode: "bilingual",
     });
     const bothFlags = calculateEstimation({
       ...baseInput,
-      isBilingual: true,
+      languageMode: "bilingual",
       isUrgent: true,
     });
 

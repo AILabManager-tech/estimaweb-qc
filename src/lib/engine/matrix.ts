@@ -12,10 +12,13 @@ import type {
 } from "./types";
 
 export const MARKET_DATA_METADATA = {
-  createdAt: "2026-02-27",
-  claimedReferenceYear: 2025,
-  sourceStatus: "unsourced-internal",
-  requiresHumanReview: true,
+  owner: "Auxo Systems",
+  sourceStatus: "auxo-internal-rate-card",
+  revisedAt: "2026-08-03",
+  currency: "CAD",
+  taxTreatment: "before-tax",
+  contractual: false,
+  marketRepresentative: false,
 } as const;
 
 // ══════════════════════════════════════════════════════════════════

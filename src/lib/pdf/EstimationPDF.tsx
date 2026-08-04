@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
 
 const messages = { fr: frMessages, en: enMessages } as const;
 
-const copy = {
+export const PDF_COPY = {
   fr: {
     eyebrow: "Un outil gratuit par Auxo Systems",
     subtitle: "Estimation indicative des coûts d’un projet web",
@@ -138,15 +138,7 @@ const copy = {
     year1: "Total — année 1",
     recurring: "Récurrent annuel",
     notes: "Notes de transparence",
-    noteThirdParty:
-      "Les coûts tiers sont des estimations et sont normalement payés directement par le client.",
-    noteRecurring:
-      "Le forfait de maintenance et les coûts tiers de base sont assignés automatiquement selon le scénario.",
-    noteSource:
-      "La grille interne a été créée le 27 février 2026 avec une année de référence déclarée 2025. Aucune source externe n’est conservée; une validation humaine du marché est requise.",
-    warning:
-      "Ce rapport est indicatif. Il ne constitue ni une soumission, ni une offre contractuelle.",
-    footer: "EstimaWeb QC — Auxo Systems — auxosystems.ca — Montants en dollars canadiens",
+    footer: "EstimaWeb QC — Auxo Systems — auxosystems.ca — Dollars canadiens, avant taxes",
   },
   en: {
     eyebrow: "A free tool by Auxo Systems",
@@ -177,15 +169,7 @@ const copy = {
     year1: "Year 1 total",
     recurring: "Annual recurring",
     notes: "Transparency notes",
-    noteThirdParty:
-      "Third-party costs are estimates and are normally paid directly by the client.",
-    noteRecurring:
-      "The maintenance plan and baseline third-party costs are assigned automatically by scenario.",
-    noteSource:
-      "The internal grid was created on February 27, 2026 with a stated 2025 reference year. No external source is retained; a human market review is required.",
-    warning:
-      "This report is indicative. It is neither a quote nor a contractual offer.",
-    footer: "EstimaWeb QC — Auxo Systems — auxosystems.ca — Amounts in Canadian dollars",
+    footer: "EstimaWeb QC — Auxo Systems — auxosystems.ca — Canadian dollars, before taxes",
   },
 } as const;
 
@@ -198,6 +182,16 @@ function getMessage(locale: PdfLocale, path: string): string {
     current = (current as Record<string, unknown>)[key];
   }
   return typeof current === "string" ? current : path;
+}
+
+export function getPdfDisclosureCopy(locale: PdfLocale) {
+  return {
+    pricing: getMessage(locale, "transparency.notes.0"),
+    grid: getMessage(locale, "transparency.notes.1"),
+    taxes: getMessage(locale, "transparency.notes.2"),
+    thirdParty: getMessage(locale, "transparency.notes.3"),
+    recurring: getMessage(locale, "transparency.notes.5"),
+  };
 }
 
 export function formatPdfCurrency(amount: number, locale: PdfLocale): string {
@@ -219,7 +213,7 @@ function ScenarioColumn({
   breakdown: ScenarioBreakdown;
   locale: PdfLocale;
 }) {
-  const t = copy[locale];
+  const t = PDF_COPY[locale];
   const fmt = (amount: number) => formatPdfCurrency(amount, locale);
   return (
     <View style={styles.scenarioCard}>
@@ -250,7 +244,8 @@ export function EstimationPDF({
   generatedAt = new Date(),
 }: EstimationPDFProps) {
   const { inputs } = result;
-  const t = copy[locale];
+  const t = PDF_COPY[locale];
+  const disclosure = getPdfDisclosureCopy(locale);
   const formattedDate = new Intl.DateTimeFormat(
     locale === "fr" ? "fr-CA" : "en-CA",
     { dateStyle: "long" }
@@ -261,11 +256,12 @@ export function EstimationPDF({
   const sectorModuleLabels = inputs.sectorModules.map((id) =>
     getMessage(locale, `steps.sectorModules.${id}.label`)
   );
-  const languages = inputs.isMultilingual
-    ? t.multilingual
-    : inputs.isBilingual
-      ? t.bilingual
-      : t.oneLanguage;
+  const languages =
+    inputs.languageMode === "multilingual"
+      ? t.multilingual
+      : inputs.languageMode === "bilingual"
+        ? t.bilingual
+        : t.oneLanguage;
 
   return (
     <Document title="EstimaWeb QC" author="Auxo Systems" language={locale}>
@@ -298,10 +294,11 @@ export function EstimationPDF({
 
         <View style={styles.notes} wrap={false}>
           <Text style={styles.noteTitle}>{t.notes}</Text>
-          <Text style={styles.noteText}>• {t.noteThirdParty}</Text>
-          <Text style={styles.noteText}>• {t.noteRecurring}</Text>
-          <Text style={styles.noteText}>• {t.noteSource}</Text>
-          <Text style={styles.warning}>{t.warning}</Text>
+          <Text style={styles.noteText}>• {disclosure.grid}</Text>
+          <Text style={styles.noteText}>• {disclosure.taxes}</Text>
+          <Text style={styles.noteText}>• {disclosure.thirdParty}</Text>
+          <Text style={styles.noteText}>• {disclosure.recurring}</Text>
+          <Text style={styles.warning}>{disclosure.pricing}</Text>
         </View>
 
         <Text style={styles.footer} fixed>{t.footer}</Text>

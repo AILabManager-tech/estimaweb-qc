@@ -1,5 +1,10 @@
 import { z } from "zod";
 import { SECTOR_MODULES } from "./matrix";
+import {
+  isSiteTypeAllowed,
+  LANGUAGE_MODES,
+  normalizeCompatibleSelection,
+} from "./compatibility";
 
 const sectorSchema = z.enum(["JUR", "MED", "PRO", "PME"]);
 const siteTypeSchema = z.enum(["S01", "S02", "S03", "S04", "S05", "S06"]);
@@ -52,12 +57,19 @@ export const CalculatorInputSchema = z
     siteType: siteTypeSchema,
     selectedMultipliers: z.array(additiveMultiplierSchema),
     selectedSectorModules: z.array(sectorModuleSchema),
-    isBilingual: z.boolean(),
-    isMultilingual: z.boolean(),
+    languageMode: z.enum(LANGUAGE_MODES),
     isUrgent: z.boolean(),
   })
   .strict()
   .superRefine((input, context) => {
+    if (!isSiteTypeAllowed(input.sector, input.siteType)) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["siteType"],
+        message: `${input.siteType} is not available for sector ${input.sector}`,
+      });
+    }
+
     if (hasDuplicates(input.selectedMultipliers)) {
       context.addIssue({
         code: z.ZodIssueCode.custom,
@@ -86,4 +98,5 @@ export const CalculatorInputSchema = z
         });
       }
     }
-  });
+  })
+  .transform((input) => normalizeCompatibleSelection(input));

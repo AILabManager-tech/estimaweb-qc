@@ -21,6 +21,7 @@ export type SectorModuleId = JurModuleId | MedModuleId | ProModuleId | PmeModule
 export type MaintenanceTierId = "ABN00" | "ABN01" | "ABN02" | "ABN03" | "ABN04";
 export type RecurringServiceId = "REC01" | "REC02" | "REC03" | "REC04" | "REC05" | "REC06" | "REC07";
 export type ThirdPartyCostId = "TIR01" | "TIR02" | "TIR03" | "TIR04" | "TIR05" | "TIR06" | "TIR07" | "TIR08" | "TIR09";
+export type LanguageMode = "single" | "bilingual" | "multilingual";
 
 // ── Structures de données ───────────────────────────────────────
 export interface PriceRange {
@@ -56,8 +57,7 @@ export interface WizardState {
   siteType: SiteTypeId | null;
   selectedMultipliers: MultiplierId[];
   selectedSectorModules: SectorModuleId[];
-  isBilingual: boolean;
-  isMultilingual: boolean;
+  languageMode: LanguageMode;
   isUrgent: boolean;
   result: EstimationResult | null;
 }
@@ -67,8 +67,7 @@ export interface CalculatorInput {
   siteType: SiteTypeId;
   selectedMultipliers: MultiplierId[];
   selectedSectorModules: SectorModuleId[];
-  isBilingual: boolean;
-  isMultilingual: boolean;
+  languageMode: LanguageMode;
   isUrgent: boolean;
 }
 
@@ -95,8 +94,7 @@ export interface EstimationResult {
     siteType: SiteTypeId;
     multipliers: MultiplierId[];
     sectorModules: SectorModuleId[];
-    isBilingual: boolean;
-    isMultilingual: boolean;
+    languageMode: LanguageMode;
     isUrgent: boolean;
   };
 }

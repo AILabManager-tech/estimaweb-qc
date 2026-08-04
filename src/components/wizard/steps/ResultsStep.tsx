@@ -27,6 +27,16 @@ export function ResultsStep({
   const t = useTranslations("steps.results");
   const tCommon = useTranslations("common");
   const tCta = useTranslations("contact_cta");
+  const tSector = useTranslations("steps.sector");
+  const tSiteType = useTranslations("steps.siteType");
+  const tFeatures = useTranslations("steps.features");
+  const tModules = useTranslations("steps.sectorModules");
+  const featureLabels = result.inputs.multipliers.map((id) =>
+    tFeatures(`${id}.label`)
+  );
+  const moduleLabels = result.inputs.sectorModules.map((id) =>
+    tModules(`${id}.label`)
+  );
 
   return (
     <motion.div
@@ -40,6 +50,66 @@ export function ResultsStep({
         <h2 className="mt-2 text-h2 font-bold text-text-primary">{t("title")}</h2>
         <p className="mt-1 text-text-secondary">{t("subtitle")}</p>
       </motion.div>
+
+      <motion.section
+        variants={fadeInUp}
+        className="rounded-sm border border-surface-border bg-surface-light p-5"
+        aria-labelledby="normalized-selection-title"
+      >
+        <h3 id="normalized-selection-title" className="text-base font-bold text-text-primary">
+          {t("summary.title")}
+        </h3>
+        <dl className="mt-4 grid gap-4 text-sm sm:grid-cols-2">
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
+              {t("summary.sector")}
+            </dt>
+            <dd className="mt-1 font-medium text-text-primary">
+              {tSector(`${result.inputs.sector}.label`)}
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
+              {t("summary.siteType")}
+            </dt>
+            <dd className="mt-1 font-medium text-text-primary">
+              {tSiteType(`${result.inputs.siteType}.label`)}
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
+              {t("summary.features")}
+            </dt>
+            <dd className="mt-1 text-text-primary">
+              {featureLabels.join(", ") || t("summary.none")}
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
+              {t("summary.modules")}
+            </dt>
+            <dd className="mt-1 text-text-primary">
+              {moduleLabels.join(", ") || t("summary.none")}
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
+              {t("summary.language")}
+            </dt>
+            <dd className="mt-1 text-text-primary">
+              {t(`summary.languageModes.${result.inputs.languageMode}`)}
+            </dd>
+          </div>
+          <div>
+            <dt className="font-mono text-[10px] uppercase tracking-widest text-text-tertiary">
+              {t("summary.urgency")}
+            </dt>
+            <dd className="mt-1 text-text-primary">
+              {result.inputs.isUrgent ? t("summary.yes") : t("summary.no")}
+            </dd>
+          </div>
+        </dl>
+      </motion.section>
 
       <motion.div
         variants={fadeInUp}

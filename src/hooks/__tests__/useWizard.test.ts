@@ -37,4 +37,36 @@ describe("wizard reducer", () => {
   it("refuses to compute an incomplete state", () => {
     expect(wizardReducer(initialState, { type: "COMPUTE_RESULT" })).toBe(initialState);
   });
+
+  it("keeps exactly one language mode", () => {
+    let state = wizardReducer(initialState, {
+      type: "SET_LANGUAGE_MODE",
+      languageMode: "bilingual",
+    });
+    expect(state.languageMode).toBe("bilingual");
+    state = wizardReducer(state, {
+      type: "SET_LANGUAGE_MODE",
+      languageMode: "multilingual",
+    });
+    expect(state.languageMode).toBe("multilingual");
+  });
+
+  it("removes a generic feature when its specialized replacement is selected", () => {
+    let state = wizardReducer(initialState, { type: "SET_SECTOR", sector: "MED" });
+    state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S01" });
+    state = wizardReducer(state, { type: "TOGGLE_MULTIPLIER", id: "M03" });
+    state = wizardReducer(state, { type: "TOGGLE_SECTOR_MODULE", id: "MED01" });
+    expect(state.selectedMultipliers).not.toContain("M03");
+    expect(state.selectedSectorModules).toContain("MED01");
+  });
+
+  it("removes included commerce features when the site type changes", () => {
+    let state = wizardReducer(initialState, { type: "SET_SECTOR", sector: "PME" });
+    state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S01" });
+    state = wizardReducer(state, { type: "TOGGLE_MULTIPLIER", id: "M11" });
+    state = wizardReducer(state, { type: "TOGGLE_SECTOR_MODULE", id: "PME01" });
+    state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S03" });
+    expect(state.selectedMultipliers).not.toContain("M11");
+    expect(state.selectedSectorModules).not.toContain("PME01");
+  });
 });

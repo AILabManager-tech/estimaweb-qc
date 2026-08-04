@@ -2,22 +2,19 @@
 
 import { useTranslations } from "next-intl";
 import { RadioGroup } from "@/components/ui/RadioGroup";
+import type { LanguageMode } from "@/lib/engine/types";
 
 interface BilingualStepProps {
-  isBilingual: boolean;
-  isMultilingual: boolean;
+  languageMode: LanguageMode;
   isUrgent: boolean;
-  onSetBilingual: (v: boolean) => void;
-  onSetMultilingual: (v: boolean) => void;
+  onSetLanguageMode: (mode: LanguageMode) => void;
   onSetUrgent: (v: boolean) => void;
 }
 
 export function BilingualStep({
-  isBilingual,
-  isMultilingual,
+  languageMode,
   isUrgent,
-  onSetBilingual,
-  onSetMultilingual,
+  onSetLanguageMode,
   onSetUrgent,
 }: BilingualStepProps) {
   const t = useTranslations("steps.extras");
@@ -35,33 +32,30 @@ export function BilingualStep({
       <div className="space-y-6">
         <div>
           <h3 className="mb-3 text-sm font-semibold text-text-primary">
-            {t("bilingual.label")}
+            {t("language.label")}
           </h3>
           <RadioGroup
             options={[
-              { value: "yes", label: t("bilingual.yes") },
-              { value: "no", label: t("bilingual.no") },
+              {
+                value: "single",
+                label: t("language.single.label"),
+                description: t("language.single.description"),
+              },
+              {
+                value: "bilingual",
+                label: t("language.bilingual.label"),
+                description: t("language.bilingual.description"),
+              },
+              {
+                value: "multilingual",
+                label: t("language.multilingual.label"),
+                description: t("language.multilingual.description"),
+              },
             ]}
-            value={isBilingual ? "yes" : "no"}
-            onChange={(v) => onSetBilingual(v === "yes")}
-            columns={2}
-            ariaLabel={t("bilingual.label")}
-          />
-        </div>
-
-        <div>
-          <h3 className="mb-3 text-sm font-semibold text-text-primary">
-            {t("multilingual.label")}
-          </h3>
-          <RadioGroup
-            options={[
-              { value: "yes", label: t("multilingual.yes") },
-              { value: "no", label: t("multilingual.no") },
-            ]}
-            value={isMultilingual ? "yes" : "no"}
-            onChange={(v) => onSetMultilingual(v === "yes")}
-            columns={2}
-            ariaLabel={t("multilingual.label")}
+            value={languageMode}
+            onChange={(v) => onSetLanguageMode(v as LanguageMode)}
+            columns={3}
+            ariaLabel={t("language.label")}
           />
         </div>
 

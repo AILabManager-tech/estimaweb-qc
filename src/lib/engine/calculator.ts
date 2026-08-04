@@ -56,8 +56,7 @@ export function calculateEstimation(input: CalculatorInput): EstimationResult {
       siteType: validatedInput.siteType,
       multipliers: [...validatedInput.selectedMultipliers],
       sectorModules: [...validatedInput.selectedSectorModules],
-      isBilingual: validatedInput.isBilingual,
-      isMultilingual: validatedInput.isMultilingual,
+      languageMode: validatedInput.languageMode,
       isUrgent: validatedInput.isUrgent,
     },
   };
@@ -74,13 +73,13 @@ function computeScenario(
   const socle = SOCLE_ITEMS[input.siteType];
   const baseCost = lerp(socle.min, socle.max, t);
 
-  // 2. Multiplicateurs chaînés (bilingue × multilingue × urgence)
+  // 2. Multiplicateurs chaînés (choix linguistique × urgence)
   let chainedMultiplier = 1;
-  if (input.isBilingual) {
+  if (input.languageMode === "bilingual") {
     const m = MULTIPLIERS.M01;
     chainedMultiplier *= lerp(m.value.min, m.value.max, t);
   }
-  if (input.isMultilingual) {
+  if (input.languageMode === "multilingual") {
     const m = MULTIPLIERS.M02;
     chainedMultiplier *= lerp(m.value.min, m.value.max, t);
   }

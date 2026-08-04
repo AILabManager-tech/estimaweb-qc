@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useId } from "react";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +10,8 @@ interface CheckboxOption {
   label: string;
   description?: string;
   priceHint?: string;
+  disabled?: boolean;
+  disabledReason?: string;
 }
 
 interface CheckboxGroupProps {
@@ -26,7 +29,10 @@ export function CheckboxGroup({
   columns = 2,
   ariaLabel,
 }: CheckboxGroupProps) {
+  const groupId = useId();
   const toggle = (val: string) => {
+    const option = options.find((item) => item.value === val);
+    if (option?.disabled) return;
     onChange(
       values.includes(val)
         ? values.filter((v) => v !== val)
@@ -43,17 +49,22 @@ export function CheckboxGroup({
     <div className={cn("grid gap-3", gridCols[columns])} role="group" aria-label={ariaLabel}>
       {options.map((option) => {
         const isChecked = values.includes(option.value);
+        const reasonId = `${groupId}-${option.value}-reason`;
         return (
           <motion.button
             key={option.value}
             type="button"
             role="checkbox"
             aria-checked={isChecked}
+            aria-disabled={option.disabled || undefined}
+            aria-describedby={option.disabledReason ? reasonId : undefined}
             onClick={() => toggle(option.value)}
-            whileTap={{ scale: 0.98 }}
+            whileTap={option.disabled ? undefined : { scale: 0.98 }}
             className={cn(
               "relative rounded-sm border p-4 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-              isChecked
+              option.disabled
+                ? "cursor-not-allowed border-surface-border bg-surface-light opacity-65"
+                : isChecked
                 ? "border-accent bg-accent/5 ring-1 ring-accent/20"
                 : "border-surface-border bg-surface hover:border-accent/30 hover:-translate-y-px hover:shadow-subtle"
             )}
@@ -80,6 +91,11 @@ export function CheckboxGroup({
               {option.priceHint && (
                 <p className="mt-1.5 text-xs font-mono font-semibold text-accent">
                   {option.priceHint}
+                </p>
+              )}
+              {option.disabledReason && (
+                <p id={reasonId} className="mt-2 text-xs font-medium leading-relaxed text-accent">
+                  {option.disabledReason}
                 </p>
               )}
             </div>

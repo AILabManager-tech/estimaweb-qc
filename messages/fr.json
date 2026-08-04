@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "EstimaWeb QC — Estimateur web gratuit par Auxo Systems",
-    "description": "Estimez gratuitement et de façon indicative le coût d’un projet web au Québec avec une grille de calcul transparente."
+    "description": "Estimez gratuitement un projet web avec la grille tarifaire interne d’Auxo Systems. Montants indicatifs en dollars canadiens, avant taxes."
   },
   "common": {
     "appName": "EstimaWeb QC",
@@ -29,7 +29,7 @@
     "titlePre": "Combien coûte ",
     "titleAccent": "votre site web",
     "titlePost": "?",
-    "subtitle": "Une estimation indicative en moins de 2 minutes, calculée localement à partir d’une grille interne.",
+    "subtitle": "Une estimation indicative en moins de 2 minutes, calculée localement à partir de la grille tarifaire interne d’Auxo Systems.",
     "cta": "Démarrer l'estimation",
     "trust1": "Calcul transparent",
     "trust2": "Aucune donnée transmise",
@@ -97,11 +97,11 @@
       },
       "S03": {
         "label": "E-commerce basique",
-        "description": "Boutique en ligne, moins de 100 produits"
+        "description": "Boutique de moins de 100 produits, catalogue et paiement inclus"
       },
       "S04": {
         "label": "E-commerce avancé",
-        "description": "100+ produits, filtres, inventaire avancé"
+        "description": "100+ produits, filtres, inventaire, catalogue et paiement inclus"
       },
       "S05": {
         "label": "Plateforme sur mesure",
@@ -119,15 +119,15 @@
       "sectorModules": "Modules spécialisés pour votre secteur",
       "M03": {
         "label": "Réservation en ligne",
-        "description": "Système de prise de rendez-vous"
+        "description": "Prise de rendez-vous; un paiement éventuel reste distinct"
       },
       "M04": {
         "label": "Portail client",
-        "description": "Espace membre sécurisé"
+        "description": "Espace sécurisé distinct d’un compte de boutique"
       },
       "M05": {
         "label": "Intégration CRM",
-        "description": "HubSpot, Salesforce, etc."
+        "description": "CRM ventes ou marketing, comme HubSpot ou Salesforce"
       },
       "M06": {
         "label": "Chatbot IA",
@@ -143,7 +143,7 @@
       },
       "M09": {
         "label": "Formulaires complexes",
-        "description": "Workflows et logique conditionnelle"
+        "description": "Workflows autres qu’un module de soumission spécialisé"
       },
       "M10": {
         "label": "Migration de données",
@@ -151,7 +151,7 @@
       },
       "M11": {
         "label": "Paiement en ligne",
-        "description": "Stripe, Square, etc."
+        "description": "Flux autonome Stripe ou Square; inclus dans l’e-commerce et la commande"
       },
       "M12": {
         "label": "Animations avancées",
@@ -159,43 +159,39 @@
       }
     },
     "sectorModules": {
-      "JUR01": { "label": "Conformité Barreau du Québec" },
-      "JUR02": { "label": "Architecture domaines de pratique" },
-      "JUR03": { "label": "Portail client confidentiel" },
-      "JUR04": { "label": "Blog juridique + infolettres" },
-      "JUR05": { "label": "SEO juridique local" },
-      "JUR06": { "label": "Intégration Clio" },
-      "MED01": { "label": "Prise de RDV en ligne" },
-      "MED02": { "label": "Conformité Loi 25 (données santé)" },
-      "MED03": { "label": "Portail patient sécurisé" },
-      "MED04": { "label": "Intégration DME" },
-      "MED05": { "label": "Contenu éducatif patients" },
-      "MED06": { "label": "Multi-praticiens" },
-      "PRO01": { "label": "Conformité ordre professionnel" },
-      "PRO02": { "label": "Calculateurs / simulateurs" },
-      "PRO03": { "label": "Intégration logiciel métier" },
-      "PRO04": { "label": "Portail documents clients" },
-      "PRO05": { "label": "Système de soumission en ligne" },
-      "PME01": { "label": "Catalogue produits/services" },
-      "PME02": { "label": "Formulaire de soumission" },
-      "PME03": { "label": "Google Business / Maps / avis" },
-      "PME04": { "label": "Section carrières" },
-      "PME05": { "label": "Menu en ligne / commande" },
-      "PME06": { "label": "Galerie portfolio" },
-      "PME07": { "label": "Intégration réseaux sociaux" }
+      "JUR01": { "label": "Conformité Barreau du Québec", "description": "Exigences propres à la présentation des services juridiques" },
+      "JUR02": { "label": "Architecture domaines de pratique", "description": "Navigation et contenus structurés par domaine juridique" },
+      "JUR03": { "label": "Portail client confidentiel", "description": "Échanges juridiques sécurisés; remplace le portail générique" },
+      "JUR04": { "label": "Blog juridique + infolettres", "description": "Structure éditoriale et diffusion juridique initiale" },
+      "JUR05": { "label": "SEO juridique local", "description": "Visibilité locale propre aux services juridiques" },
+      "JUR06": { "label": "Intégration Clio", "description": "Gestion de pratique juridique, distincte d’un CRM marketing" },
+      "MED01": { "label": "Prise de RDV en ligne", "description": "Parcours de rendez-vous clinique; remplace la réservation générique" },
+      "MED02": { "label": "Conformité Loi 25 (données santé)", "description": "Mesures de confidentialité adaptées aux données de santé" },
+      "MED03": { "label": "Portail patient sécurisé", "description": "Espace patient protégé; remplace le portail générique" },
+      "MED04": { "label": "Intégration DME", "description": "Connexion au dossier médical, distincte d’un CRM marketing" },
+      "MED05": { "label": "Contenu éducatif patients", "description": "Contenu spécialisé destiné aux patients" },
+      "MED06": { "label": "Multi-praticiens", "description": "Profils, services et structure pour plusieurs praticiens" },
+      "PRO01": { "label": "Conformité ordre professionnel", "description": "Exigences de présentation propres à l’ordre concerné" },
+      "PRO02": { "label": "Calculateurs / simulateurs", "description": "Outils interactifs de calcul propres à la profession" },
+      "PRO03": { "label": "Intégration logiciel métier", "description": "ERP, comptabilité ou système métier autre qu’un CRM" },
+      "PRO04": { "label": "Portail documents clients", "description": "Échange sécurisé de documents; remplace le portail générique" },
+      "PRO05": { "label": "Système de soumission en ligne", "description": "Parcours complet de demande; remplace le formulaire complexe générique" },
+      "PME01": { "label": "Catalogue produits/services", "description": "Catalogue autonome; déjà compris dans un site e-commerce" },
+      "PME02": { "label": "Formulaire de soumission", "description": "Demande conditionnelle; remplace le formulaire complexe générique" },
+      "PME03": { "label": "Google Business / Maps / avis", "description": "Présence locale et signaux d’avis Google" },
+      "PME04": { "label": "Section carrières", "description": "Affichage des postes et parcours de candidature" },
+      "PME05": { "label": "Menu en ligne / commande", "description": "Menu, commande et paiement pour un même parcours" },
+      "PME06": { "label": "Galerie portfolio", "description": "Présentation visuelle structurée des réalisations" },
+      "PME07": { "label": "Intégration réseaux sociaux", "description": "Connexions et contenus issus des réseaux sociaux" }
     },
     "extras": {
       "title": "Langue et options supplémentaires",
       "subtitle": "Configurez les derniers détails de votre projet.",
-      "bilingual": {
-        "label": "Site bilingue (FR/EN)?",
-        "yes": "Oui, bilingue",
-        "no": "Non, une seule langue"
-      },
-      "multilingual": {
-        "label": "Multilingue (3+ langues)?",
-        "yes": "Oui, 3 langues ou plus",
-        "no": "Non"
+      "language": {
+        "label": "Combien de langues le site doit-il offrir?",
+        "single": { "label": "Une langue", "description": "Aucun supplément linguistique" },
+        "bilingual": { "label": "Bilingue", "description": "Exactement deux langues" },
+        "multilingual": { "label": "Multilingue", "description": "Trois langues ou plus" }
       },
       "urgency": {
         "label": "Livraison urgente (< 4 semaines)?",
@@ -205,8 +201,29 @@
     },
     "results": {
       "title": "Votre estimation personnalisée",
-      "subtitle": "Trois scénarios indicatifs, du périmètre minimal au plus complet"
+      "subtitle": "Trois scénarios indicatifs, du périmètre minimal au plus complet",
+      "summary": {
+        "title": "Sélection finale calculée",
+        "sector": "Secteur",
+        "siteType": "Type de site",
+        "features": "Fonctionnalités",
+        "modules": "Modules spécialisés",
+        "language": "Langues",
+        "urgency": "Livraison urgente",
+        "none": "Aucune",
+        "yes": "Oui",
+        "no": "Non",
+        "languageModes": {
+          "single": "Une langue",
+          "bilingual": "Bilingue, exactement deux langues",
+          "multilingual": "Multilingue, trois langues ou plus"
+        }
+      }
     }
+  },
+  "compatibility": {
+    "replacedBySpecialized": "Cette fonctionnalité est déjà comprise dans le module spécialisé sélectionné.",
+    "includedElsewhere": "Cette fonctionnalité est déjà comprise dans une autre sélection."
   },
   "scenarios": {
     "eco": {
@@ -237,8 +254,9 @@
   "transparency": {
     "title": "Notes de transparence",
     "notes": [
-      "Ces montants sont des estimations indicatives, pas un devis ferme. Un audit détaillé est nécessaire pour un prix exact.",
-      "La grille interne a été créée le 27 février 2026 avec une année de référence déclarée 2025. Aucune source externe n’est conservée; une validation humaine du marché est requise.",
+      "Estimations basées sur la grille tarifaire interne d’Auxo Systems. Montants indicatifs en dollars canadiens, avant taxes. Cette estimation ne constitue pas une soumission contractuelle.",
+      "La grille tarifaire interne d’Auxo Systems a été révisée le 3 août 2026. Elle n’est pas présentée comme une mesure du marché québécois.",
+      "Les taxes applicables seront déterminées lors d’une éventuelle soumission officielle selon le lieu du client.",
       "Les coûts tiers (hébergement, licences, etc.) sont payés directement par le client et peuvent varier.",
       "Vos réponses et les calculs restent dans votre navigateur. Le rapport PDF est généré localement sur votre appareil.",
       "Le forfait de maintenance et les coûts tiers de base sont assignés automatiquement selon le scénario; ils ne sont pas sélectionnés dans l’assistant."

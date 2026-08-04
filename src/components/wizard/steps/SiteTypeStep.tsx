@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import { SOCLE_ITEMS } from "@/lib/engine/matrix";
+import { SITE_TYPES_BY_SECTOR } from "@/lib/engine/compatibility";
 import { formatCurrency } from "@/lib/utils";
 import type { SiteTypeId, Sector } from "@/lib/engine/types";
 
@@ -11,13 +12,6 @@ interface SiteTypeStepProps {
   onChange: (siteType: SiteTypeId) => void;
   sector: Sector;
 }
-
-const SITE_TYPES_BY_SECTOR: Record<Sector, SiteTypeId[]> = {
-  JUR: ["S01", "S02", "S05", "S06"],
-  MED: ["S01", "S02", "S05", "S06"],
-  PRO: ["S01", "S02", "S05", "S06"],
-  PME: ["S01", "S02", "S03", "S04", "S05", "S06"],
-};
 
 export function SiteTypeStep({ value, onChange, sector }: SiteTypeStepProps) {
   const t = useTranslations("steps.siteType");

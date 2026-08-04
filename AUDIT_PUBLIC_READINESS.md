@@ -1,201 +1,212 @@
-# Audit de préparation publique — EstimaWeb QC
+# Rapport consolidé de préparation publique — EstimaWeb QC
 
 Date : 3 août 2026  
 Branche : `audit/estimaweb-public-readiness`  
-Verdict : **PRÊT AVEC RÉSERVES**
+Statut final : **PRÊT POUR LIVRAISON PUBLIQUE**
 
-L’application est techniquement présentable comme outil gratuit Auxo Systems, à condition de conserver partout son positionnement d’estimation indicative. La réserve bloquante pour toute affirmation de « données de marché actuelles » demeure la validation humaine de la grille tarifaire, qui n’a aucune source externe conservée.
+## 1. Fonctionnement réel
 
-## 1. Fonctionnement réel actuel
+Parcours :
 
-Parcours réel :
+`démarrage → secteur → type de site → fonctionnalités/modules → langue/urgence → validation et normalisation → calcul → résultat détaillé → PDF ou modification → nouvelle estimation`
 
-`démarrage → secteur → type de site → fonctionnalités/modules → langues/urgence → calcul → résultat détaillé → PDF ou modification → nouvelle estimation`
+- Le secteur détermine les modules disponibles et les types de site permis.
+- Le type de site est un choix unique; S03/S04 sont réservés au secteur PME.
+- Les fonctions génériques et modules sectoriels sont sélectionnables au clavier ou à la souris.
+- Les options redondantes restent explicites dans l’interface, mais sont désactivées avec une raison accessible lorsqu’elles sont déjà remplacées ou incluses.
+- Le mode linguistique est un enum unique : une langue, bilingue exactement deux langues, ou multilingue trois langues ou plus.
+- Le calculateur revalide et renormalise toute entrée, même lors d’un appel direct hors interface.
+- Le résultat montre la sélection finale normalisée et trois scénarios : économique, recommandé et premium.
+- Le PDF reçoit le même objet `EstimationResult`; il ne peut donc pas réintroduire une option retirée.
+- Un rafraîchissement efface l’état. Aucun résultat ni renseignement personnel n’est transmis ou persisté.
 
-- Le bouton de démarrage fait défiler jusqu’à l’assistant déjà rendu sur la page.
-- Le secteur limite les types de sites disponibles. Seul `PME` expose les types commerce électronique.
-- Le changement de secteur réinitialise le type de site et les modules sectoriels incompatibles.
-- Les fonctionnalités et modules sont optionnels et peuvent être sélectionnés/désélectionnés.
-- La dernière étape permet d’activer indépendamment bilingue, multilingue et urgence.
-- Le calcul produit trois points : économique (minimum), recommandé (milieu) et premium (maximum).
-- Le résultat détaille réalisation, maintenance, coûts tiers, année 1 et récurrent annuel.
-- « Modifier mes réponses » conserve les réponses et retourne au début; « Recommencer » efface tout.
-- Un rafraîchissement ou une nouvelle navigation efface l’état. Aucun résultat n’est persisté ni partageable par URL.
-- Le PDF est généré localement dans le navigateur. Aucune réponse ni donnée personnelle n’est transmise.
+## 2. Décisions métier appliquées
 
-## 2. Inventaire technique
+### Taxes et positionnement
 
-| Élément | État constaté |
+Formulation FR appliquée à l’interface, au PDF et à la documentation :
+
+> Estimations basées sur la grille tarifaire interne d’Auxo Systems. Montants indicatifs en dollars canadiens, avant taxes. Cette estimation ne constitue pas une soumission contractuelle.
+
+Équivalent EN :
+
+> Estimates based on Auxo Systems’ internal pricing grid. Indicative amounts in Canadian dollars, before taxes. This estimate does not constitute a contractual quote.
+
+- Aucune TPS, TVQ, TVH ou autre taxe n’est calculée.
+- Les taxes applicables sont renvoyées à une éventuelle soumission officielle selon le lieu du client.
+- `MARKET_DATA_METADATA` identifie maintenant la grille interne Auxo Systems, révisée le `2026-08-03`, en CAD, avant taxes et non contractuelle.
+- Toute affirmation de prix actuels du marché, de données 2025/2026 ou d’étude externe a été retirée.
+
+### Langues
+
+| Avant | Après |
 |---|---|
-| Architecture | Next.js 16 App Router, pages statiques `/fr` et `/en`, React 19, état local `useReducer` |
-| Assistant | 5 étapes, composants accessibles par rôles radio/checkbox, navigation précédent/suivant |
-| Modèle | 6 socles, 13 multiplicateurs, 24 modules sectoriels, 5 forfaits maintenance, 9 coûts tiers |
-| Validation | Schéma Zod strict à l’entrée du calculateur; IDs, doublons et appartenance sectorielle vérifiés |
-| Calcul | Fonction pure `calculateEstimation`; aucune dépendance réseau ou serveur |
-| Traductions | Deux catalogues complets FR/EN avec résolution de locale testée |
-| PDF | `@react-pdf/renderer`, A4, contenu localisé et généré côté client |
-| Tests | Vitest pour matrice/calcul/validation/wizard/PDF; Playwright pour les parcours réels |
-| Vercel | URL existante active; en-têtes centralisés dans Next, CSP sans `unsafe-eval` en production |
-| Données | Aucune API, base de données, analytics, cookie, stockage local ou formulaire de collecte |
+| Deux booléens indépendants | Un enum `languageMode` |
+| Bilingue et multilingue pouvaient coexister | Un seul mode est représentable |
+| M01 × M02 pouvait être chaîné | M01 ou M02, jamais les deux |
+| Test maximal avec les deux drapeaux | Test maximal multilingue seulement |
 
-### Règles de calcul
+## 3. Inventaire des chevauchements et décisions
 
-Pour chaque scénario, avec `t = 0 / 0,5 / 1` :
+Le registre `src/lib/engine/compatibility.ts` contient 3 groupes mutuellement exclusifs, 7 remplacements, 7 inclusions, 17 cumuls explicitement autorisés et 2 conflits métier.
 
-1. `socle = interpolation(plage du type de site, t)`;
-2. `chaîne = bilingue × multilingue × urgence` lorsque ces options sont actives;
-3. `fonctionnalités = coût de la chaîne + somme des ajouts fixes M03–M12`;
-4. `modules = somme des modules du secteur`;
-5. `imprévus = 15 % × (socle après chaîne + ajouts + modules)`;
-6. `réalisation = sous-total + imprévus`, arrondi au dollar;
-7. `mensuel = forfait maintenance du scénario + hébergement/domaine/CDN de base`;
-8. `année 1 = réalisation + 12 × mensuel`.
+### Remplacements
 
-Les montants sont en CAD, sans décimales. Le format numérique suit la langue (`fr-CA` ou `en-CA`), sans modifier le calcul.
+| Générique | Spécialisé conservé | Capacité | Décision |
+|---|---|---|---|
+| M03 Réservation | MED01 RDV médical | Prise de rendez-vous | REMPLACEMENT |
+| M04 Portail client | JUR03 Portail confidentiel | Portail juridique | REMPLACEMENT |
+| M04 Portail client | MED03 Portail patient | Portail santé | REMPLACEMENT |
+| M04 Portail client | PRO04 Portail documents | Portail professionnel | REMPLACEMENT |
+| M08 Loi 25 | MED02 Loi 25 santé | Protection des données santé | REMPLACEMENT |
+| M09 Formulaire complexe | PME02 Formulaire de soumission | Demande de soumission PME | REMPLACEMENT |
+| M09 Formulaire complexe | PRO05 Système de soumission | Soumission professionnelle | REMPLACEMENT |
 
-### Origine des valeurs
+### Inclusions
 
-- Les valeurs sont apparues avec le premier commit du projet le **27 février 2026**.
-- Le code déclarait une référence « marché QC 2025 », mais le dépôt ne contient aucune étude, facture, URL, note méthodologique ou date de collecte permettant de la vérifier.
-- Cette absence est maintenant explicitée dans l’interface, le PDF, le README et `MARKET_DATA_METADATA`.
-- Aucune valeur tarifaire ni formule métier n’a été changée pendant l’audit.
+| Élément porteur | Élément retiré | Capacité | Décision |
+|---|---|---|---|
+| S03 E-commerce basique | PME01 Catalogue | Catalogue boutique | INCLUSION |
+| S04 E-commerce avancé | PME01 Catalogue | Catalogue boutique | INCLUSION |
+| S03 E-commerce basique | M11 Paiement | Checkout boutique | INCLUSION |
+| S04 E-commerce avancé | M11 Paiement | Checkout boutique | INCLUSION |
+| S03 E-commerce basique | PME05 Menu/commande | Flux de commande | INCLUSION |
+| S04 E-commerce avancé | PME05 Menu/commande | Flux de commande | INCLUSION |
+| PME05 Menu/commande | M11 Paiement | Checkout du même parcours | INCLUSION |
 
-### Fonctions documentées ou modélisées mais absentes
+### Cumuls à risque conservés
 
-- Le README affirmait des données de marché réelles/calibrées : affirmation non démontrable, retirée.
-- Le formulaire de contact obligatoire ne transmettait rien : retiré plutôt que de demander des renseignements personnels sans usage.
-- `SOCLE_ADDONS` contient design, rédaction, SEO, photo, vidéo et identité, mais aucune étape ne les expose et le calculateur ne les utilise pas.
-- `RECURRING_SERVICES` est défini mais inutilisé.
-- Les coûts tiers optionnels TIR03–TIR07/TIR09 ne dépendent pas des fonctionnalités choisies.
-- L’ancien CTA promettait un devis gratuit et une réponse sous 24 h sans mécanisme associé : remplacé par un simple lien courriel Auxo.
+- réservation + paiement : agenda et passerelle de paiement distincts;
+- portail client + commerce : portail métier distinct du compte boutique;
+- CRM + Clio/DME/logiciel métier : CRM ventes/marketing distinct du système sectoriel;
+- migration + intégration : import ponctuel distinct d’une connexion active;
+- accessibilité + conformité Barreau/ordre : obligations différentes;
+- formulaire distinct + calculateur : parcours et implémentations différents;
+- RDV médical + multi-praticiens : agenda et architecture d’équipe distincts.
 
-## 3. Baseline technique
+Les libellés FR/EN ont été précisés pour rendre ces différences défendables. La liste complète, y compris les options sans chevauchement, figure dans `docs/OPTION_COMPATIBILITY_MATRIX.md`.
 
-État initial :
+### Conflits métier rejetés
 
-- `npm ci` : réussi;
-- `npm run lint` : échec, configuration ESLint absente et invite interactive;
-- `npx tsc --noEmit` : réussi;
-- `npm test` : 25 tests réussis;
-- `npm run build` : réussi sous Next 14;
-- `npm audit` : 17 vulnérabilités, dont 1 critique et 12 élevées.
+- S03/S04 avec JUR, MED ou PRO;
+- tout module sectoriel utilisé avec un autre secteur.
 
-État final :
+## 4. Comportement avant / après
 
-- `npm run lint` : réussi, zéro avertissement;
-- `npm run typecheck` : réussi;
-- `npm test` : 47 tests réussis;
-- `npm run test:e2e` : 6 parcours Playwright réussis;
-- `npm run build` : réussi, 8 pages/ressources statiques produites;
-- `npm audit` : zéro vulnérabilité connue.
+| Cas | Avant | Après |
+|---|---|---|
+| Sélection générique puis spécialisée | Deux identifiants et deux coûts | Générique retiré immédiatement |
+| Clic sur une générique déjà remplacée | Sélection possible | `aria-disabled`, aucun changement, raison visible |
+| Changement vers S03/S04 | Options commerce antérieures conservées | Catalogue, commande et paiement retirés |
+| Appel direct redondant | Somme brute | Entrée Zod transformée en sélection normalisée |
+| Appel direct incohérent | Certaines combinaisons passaient | Rejet explicite |
+| Résultat | Totaux seulement | Résumé complet de la sélection normalisée |
+| PDF | Reprenait l’entrée calculée | Reprend uniquement l’entrée normalisée |
 
-Les dépendances majeures ont été modernisées : Next 16.3, React 19.2, next-intl 4.13, React PDF 4.5 et Vitest 3.2.
+## 5. Exactitude des calculs
 
-## 4. Parcours testés
+- Les montants unitaires de `SOCLE_ITEMS`, `SOCLE_ADDONS`, `MULTIPLIERS`, `SECTOR_MODULES`, `MAINTENANCE_TIERS`, `RECURRING_SERVICES` et `THIRD_PARTY_COSTS` n’ont pas changé.
+- La formule générale, la marge de 15 %, les scénarios et les arrondis n’ont pas changé.
+- Les scénarios sans redondance gardent leurs résultats codés en dur : petit vitrine, bilingue, minimum et application/intégrations.
+- Le commerce contrôlé passe de `16 330 / 36 800 / 59 225 $` à `15 755 / 35 363 / 56 925 $` parce que M11 est désormais inclus dans S03.
+- Le maximum médical brut retire M03, M04 et M08, déjà remplacés par MED01, MED03 et MED02.
+- Les 14 règles de remplacement/inclusion produisent exactement le même objet que la sélection spécialisée/incluse seule.
+- Les 17 cumuls autorisés conservent les deux capacités.
+- Les 18 combinaisons secteur × type valides au maximum normalisé restent finies, non négatives et cohérentes.
 
-### Français
+Voir `CALCULATION_TEST_MATRIX.md` pour les entrées, résultats attendus, résultats observés et statuts.
 
-- Scénario contrôlé PME, commerce basique, réservation, paiement, Google Business, bilingue.
-- Sélection/désélection d’une fonctionnalité.
-- Bouton suivant désactivé sans secteur ou type de site.
-- Navigation précédent/suivant et conservation des réponses.
-- Modification depuis le résultat, retrait du paiement et recalcul exact.
-- Téléchargement PDF réel.
-- Rafraîchissement depuis le résultat et retour à un état vide.
+## 6. Interface FR/EN
 
-### Anglais
+- Les deux catalogues exposent les mêmes trois modes linguistiques et la même logique de compatibilité.
+- Les 24 modules sectoriels ont maintenant un objectif fonctionnel FR et EN.
+- Les descriptions du commerce précisent que catalogue et paiement sont inclus.
+- Les descriptions CRM, Clio, DME et logiciel métier distinguent les systèmes.
+- Les explications d’option désactivée sont visibles et reliées par `aria-describedby`.
+- Les boutons à rôle checkbox restent atteignables au clavier; Entrée/Espace ne peuvent pas réactiver une option bloquée.
+- Le résultat présente secteur, type, fonctions, modules, langue et urgence normalisés.
+- Les parcours 375×812, 768×1024 et 1440×900 n’ont aucun débordement horizontal.
 
-- Scénario professions réglementées, plateforme sur mesure, portail client, CRM et intégration métier.
-- Totaux et format monétaire anglais vérifiés.
-- Téléchargement PDF anglais réel.
-- Libellés, progression, CTA, avertissements et lien de confidentialité vérifiés.
+## 7. PDF
 
-### États et formats
+Trois rapports ont été générés après les changements :
 
-- Parcours de tous les écrans à 375×812, 768×1024 et 1440×900.
-- Aucun débordement horizontal détecté.
-- Navigation clavier des radios avec flèches, Home et End; activation native Entrée/Espace.
-- Navigation directe `/fr/results` : 404, aucun résultat incomplet fabriqué.
-- Console : aucune erreur pendant les parcours finaux.
-- Chargement local de développement observé : 778 ms; aucune mesure de production n’a été simulée.
+| Scénario | Locale | Taille | Pages | Sélection normalisée vérifiée |
+|---|---:|---:|---:|---|
+| Commerce redondant en entrée | FR | 6 424 octets | 1 A4 | M03 + PME03; M11 absent |
+| Application/intégrations | EN | 6 362 octets | 1 A4 | M04 + M05 + PRO03 |
+| Maximum médical | FR | 6 692 octets | 1 A4 | M03/M04/M08 absents |
 
-## 5. Bogues trouvés et corrections appliquées
+- `pdftotext` confirme les accents, dates, libellés, montants et mentions fiscales FR/EN.
+- Les réalisations recommandées extraites sont `35 363 $`, `$81,363` et `238 625 $`.
+- Le scénario maximal a été rasterisé et inspecté : aucune coupure, aucun chevauchement et aucune seconde page vide.
+- Le pied de page précise maintenant « avant taxes » / “before taxes”.
+- Les tests PDF génèrent les locales FR/EN et le scénario maximal à partir d’un scénario valide.
 
-| Problème | Correction |
+## 8. Éléments inactifs
+
+- `SOCLE_ADDONS` S07-S12 restent non exposés et non calculés.
+- `RECURRING_SERVICES` REC01-REC07 restent non exposés et non calculés.
+- TIR03-TIR07/TIR09 restent inactifs; aucun fournisseur ou coût n’a été ajouté.
+- ABN00/ABN04 restent inutilisés; ABN01-ABN03 demeurent assignés automatiquement aux trois scénarios.
+- S07 et REC07 sont classés CONFLIT MÉTIER avant activation, faute de périmètre distinct du socle ou de la maintenance.
+
+## 9. Fichiers modifiés
+
+### Moteur et modèle
+
+- `src/lib/engine/compatibility.ts`
+- `src/lib/engine/types.ts`
+- `src/lib/engine/schema.ts`
+- `src/lib/engine/calculator.ts`
+- `src/lib/engine/matrix.ts`
+
+### Interface et textes
+
+- `src/hooks/useWizard.ts`
+- `src/components/wizard/WizardContainer.tsx`
+- `src/components/wizard/steps/BilingualStep.tsx`
+- `src/components/wizard/steps/FeaturesStep.tsx`
+- `src/components/wizard/steps/ResultsStep.tsx`
+- `src/components/wizard/steps/SiteTypeStep.tsx`
+- `src/components/ui/CheckboxGroup.tsx`
+- `src/components/ui/RadioGroup.tsx`
+- `src/components/results/TransparencyNotes.tsx`
+- `messages/fr.json`
+- `messages/en.json`
+
+### PDF, tests et documentation
+
+- `src/lib/pdf/EstimationPDF.tsx`
+- tests Vitest sous `src/lib/**/__tests__` et `src/hooks/__tests__`
+- `e2e/wizard.spec.ts`
+- `playwright.config.ts`
+- `README.md`
+- `CALCULATION_TEST_MATRIX.md`
+- `KNOWN_LIMITATIONS.md`
+- `docs/OPTION_COMPATIBILITY_MATRIX.md`
+- `AUDIT_PUBLIC_READINESS.md`
+
+## 10. Validations exécutées
+
+| Commande / contrôle | Résultat final |
 |---|---|
-| Lint non exécutable | ESLint 9 configuré avec une commande non interactive |
-| Dépendances vulnérables/obsolètes | Mise à niveau contrôlée; audit final à zéro |
-| Zod déclaré mais inutilisé | Validation stricte branchée à l’entrée du calculateur |
-| Collecte obligatoire de nom/courriel sans transmission | Étape et composants supprimés |
-| Progression partiellement française en anglais | Libellés courts traduits |
-| `/en` retombait en français après migration next-intl | Résolution via `requestLocale` et `setRequestLocale` |
-| Devise formatée en français dans l’interface EN | Format `en-CA` ajouté |
-| Aucun retour éditable depuis les résultats | Ajout « Modifier mes réponses » avec recalcul |
-| Cartes résultat trop étroites et montants collés | Conteneur élargi, grille responsive et valeurs non sécables |
-| PDF toujours français, ancien éditeur, sans date ni options complètes | PDF FR/EN Auxo, date, options, avertissement et source ajoutés |
-| Nom PDF opaque par timestamp | Nom stable avec locale et date ISO |
-| Promesses et statistiques sans preuve | Retirées ou remplacées par des faits vérifiables |
-| Liens Mark Systems et vieux courriel | Remplacés par Auxo Systems et `info@auxosystems.ca` |
-| Radios sans navigation par flèches | Modèle clavier de radiogroupe ajouté |
-| Nom accessible du bouton final différent du texte visible | Libellé ARIA synchronisé |
-| Produit `1,5 × 2 × 1,4` évalué à `4,199999…`, causant un arrondi 1 $ trop bas | Décimales normalisées avant les arrondis monétaires |
-| Hiérarchie de titres incomplète dans les cartes | Nom du scénario promu en `h3` |
-| En-têtes Next/Vercel dupliqués et CSP `unsafe-eval` en production | Configuration centralisée; `unsafe-eval` limité au développement |
-| Métadonnées partielles | Canonical, alternates, OG, Twitter, favicon, robots et sitemap ajoutés |
-| Image Open Graph redirigée par le middleware vers une route localisée 404 | Route sociale exclue du middleware et balises image testées en production |
-| Échafaudage documentaire généré par Next dev | `agentRules: false`; aucun fichier d’agent ajouté au projet |
+| `npm ci` | Réussi, 580 paquets installés, 0 vulnérabilité |
+| `npm run lint` | Réussi, 0 avertissement |
+| `npm run typecheck` | Réussi |
+| `npm test` | 97 tests réussis, 7 fichiers |
+| `npm run test:e2e` | 7 parcours réussis |
+| `npm run build` | Réussi, 8 pages/ressources statiques |
+| `npm audit` | 0 vulnérabilité |
+| PDF réels | 3/3 générés et inspectés |
+| Console navigateur | Aucune erreur dans les parcours finaux |
 
-## 6. Exactitude des calculs
+## 11. Ambiguïtés et limites restantes
 
-- Sept scénarios contrôlés à valeurs codées en dur comparent chaque composante attendue à la sortie observée.
-- Les scénarios couvrent minimum, petit vitrine, bilingue, combinaison inhabituelle, commerce, intégrations/application et maximum.
-- Les 24 combinaisons secteur × type de site au maximum d’options ont été vérifiées pour valeurs finies, non négatives et cohérence des récurrents.
-- `année 1 = réalisation + récurrent annuel`, `récurrent annuel = mensuel × 12` et `mensuel = maintenance + tiers` sont garantis par tests.
-- L’interface FR contrôlée a produit exactement `16 330 / 36 800 / 59 225 $` de réalisation.
-- L’interface EN contrôlée a produit exactement `81,363 $` pour le scénario recommandé de l’application sur mesure.
+Aucune ambiguïté bloquante ne demeure dans les options actuellement sélectionnables. Les limites produit restantes sont documentées dans `KNOWN_LIMITATIONS.md` : absence de persistance, récurrents fixes, options inactives, coûts tiers statiques, pas d’audit WCAG certifié et aucune mesure de production après déploiement.
 
-Voir `CALCULATION_TEST_MATRIX.md` pour la table de vérité complète.
-
-## 7. État du PDF
-
-Trois PDF ont été réellement téléchargés et inspectés : commerce FR, application EN et projet maximal FR.
-
-- noms téléchargés : `estimaweb-qc-{fr|en}-AAAA-MM-JJ.pdf`;
-- A4, une page dans les trois cas, y compris le maximum;
-- accents, apostrophes, montants et dates extraits correctement avec `pdftotext`;
-- rendu visuel contrôlé après rasterisation;
-- secteur, type, fonctionnalités, modules, langues et urgence présents;
-- montants identiques à l’interface et à la matrice;
-- avertissement non contractuel, limite des sources et identité Auxo présents;
-- tests automatisés FR, EN et maximum garantissant un fichier `%PDF` valide.
-
-## 8. État FR/EN et changements visuels
-
-- Les deux locales ont un parcours complet et un PDF propre.
-- Les textes visibles Mark Systems ont été remplacés lorsqu’ils représentaient l’éditeur.
-- Palette : ivoire minéral, vert forêt, bleu pétrole et charbon.
-- Surfaces claires avec relief discret, boutons solides, hiérarchie simplifiée.
-- Le produit reste autonome; Auxo est visible dans l’en-tête, le pied de page, le PDF et le lien « Un outil gratuit par Auxo Systems ».
-- Le visuel Open Graph est volontairement bilingue; les titres et descriptions sociales restent localisés par route.
-
-## 9. Préparation publique
-
-- URL existante EstimaWeb et liens Auxo FR/EN vérifiés HTTP 200 le 3 août 2026.
-- Aucun faux volume d’utilisateurs ni promesse de délai ne subsiste.
-- Aucun analytics, cookie ou stockage de réponses; aucune bannière de consentement requise dans l’état actuel.
-- La politique de confidentialité Auxo est liée même si l’outil ne collecte rien.
-- Favicon, Open Graph, Twitter, robots, sitemap, canonical et alternates sont présents.
-- Les cibles tactiles principales font au moins 44 px; un lien d’évitement et des focus visibles sont présents.
-- Aucun déploiement, push ou fusion n’a été effectué.
-
-## 10. Décisions humaines requises
-
-1. Faire valider et sourcer la grille tarifaire par une personne responsable avant toute affirmation de représentativité du marché.
-2. Décider du traitement des options qui se chevauchent, notamment bilingue + multilingue et portail/réservation génériques + sectoriels.
-3. Décider si les ajouts design/contenu et services récurrents inutilisés doivent être exposés ou retirés du modèle.
-4. Décider si le commerce électronique doit ajouter automatiquement un coût de plateforme tiers.
-5. Préciser le traitement des taxes, actuellement absent.
+La grille est une décision interne Auxo Systems. Le produit ne prétend plus représenter le marché québécois. Toute activation future d’une option inactive doit ajouter sa règle au registre avant exposition.
 
 ## Verdict
 
-**PRÊT AVEC RÉSERVES.** Le produit est fonctionnel, bilingue, testable, cohérent visuellement et suffisamment transparent pour une présentation publique gratuite Auxo Systems. Il ne doit pas être présenté comme un devis ni comme un reflet validé du marché 2026 tant que la grille n’a pas été revue et sourcée humainement.
+**PRÊT.** EstimaWeb QC peut être livré publiquement comme outil gratuit Auxo Systems avec son positionnement actuel : grille tarifaire interne, montants indicatifs en dollars canadiens avant taxes, aucune soumission contractuelle. Aucun double comptage sémantique connu ne subsiste parmi les options sélectionnables.

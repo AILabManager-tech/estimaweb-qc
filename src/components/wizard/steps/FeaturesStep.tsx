@@ -3,11 +3,13 @@
 import { useLocale, useTranslations } from "next-intl";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { MULTIPLIERS, SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
+import { getOptionAvailability } from "@/lib/engine/compatibility";
 import { formatCurrency } from "@/lib/utils";
-import type { MultiplierId, SectorModuleId, Sector } from "@/lib/engine/types";
+import type { MultiplierId, SectorModuleId, Sector, SiteTypeId } from "@/lib/engine/types";
 
 interface FeaturesStepProps {
   sector: Sector;
+  siteType: SiteTypeId;
   selectedMultipliers: MultiplierId[];
   selectedSectorModules: SectorModuleId[];
   onToggleMultiplier: (id: MultiplierId) => void;
@@ -16,6 +18,7 @@ interface FeaturesStepProps {
 
 export function FeaturesStep({
   sector,
+  siteType,
   selectedMultipliers,
   selectedSectorModules,
   onToggleMultiplier,
@@ -23,26 +26,47 @@ export function FeaturesStep({
 }: FeaturesStepProps) {
   const tFeatures = useTranslations("steps.features");
   const tModules = useTranslations("steps.sectorModules");
+  const tCompatibility = useTranslations("compatibility");
   const locale = useLocale() as "fr" | "en";
 
   const totalSelected = selectedMultipliers.length + selectedSectorModules.length;
 
+  const selection = {
+    sector,
+    siteType,
+    selectedMultipliers,
+    selectedSectorModules,
+  };
+
   const multiplierOptions = ADDITIVE_IDS.map((id) => {
     const m = MULTIPLIERS[id];
+    const availability = getOptionAvailability(selection, "multiplier", id);
     return {
       value: id,
       label: tFeatures(`${id}.label`),
       description: tFeatures(`${id}.description`),
       priceHint: `+ ${formatCurrency(m.value.min, locale)} – ${formatCurrency(m.value.max, locale)}`,
+      disabled: availability.disabled,
+      disabledReason: availability.reason
+        ? tCompatibility(availability.reason)
+        : undefined,
     };
   });
 
   const sectorModules = SECTOR_MODULES[sector] ?? [];
-  const sectorOptions = sectorModules.map((mod) => ({
-    value: mod.id,
-    label: tModules(`${mod.id}.label`),
-    priceHint: `+ ${formatCurrency(mod.price.min, locale)} – ${formatCurrency(mod.price.max, locale)}`,
-  }));
+  const sectorOptions = sectorModules.map((mod) => {
+    const availability = getOptionAvailability(selection, "sectorModule", mod.id);
+    return {
+      value: mod.id,
+      label: tModules(`${mod.id}.label`),
+      description: tModules(`${mod.id}.description`),
+      priceHint: `+ ${formatCurrency(mod.price.min, locale)} – ${formatCurrency(mod.price.max, locale)}`,
+      disabled: availability.disabled,
+      disabledReason: availability.reason
+        ? tCompatibility(availability.reason)
+        : undefined,
+    };
+  });
 
   return (
     <div className="space-y-8">

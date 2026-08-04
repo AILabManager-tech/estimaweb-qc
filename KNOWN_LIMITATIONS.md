@@ -2,35 +2,35 @@
 
 Date : 3 août 2026
 
-## À décider avant de qualifier les prix de « marché actuel »
+## Positionnement tarifaire définitif
 
-1. **Grille non sourcée.** Les valeurs ont été ajoutées le 27 février 2026 avec une référence déclarée 2025, sans source externe conservée. Elles doivent être validées et documentées humainement.
-2. **Taxes absentes.** TPS/TVQ ne sont ni calculées ni explicitement incluses/exclues dans le modèle. Le positionnement public doit être clarifié.
-3. **Points, pas fourchettes affichées.** Économique/recommandé/premium représentent min/milieu/max de la grille, pas une soumission ni un intervalle de confiance.
+1. **Grille interne, pas une mesure du marché.** La grille tarifaire appartient à Auxo Systems et a été révisée le 3 août 2026. Elle n’est pas issue d’une étude externe et ne doit pas être présentée comme représentative de l’ensemble du marché québécois.
+2. **Montants avant taxes.** EstimaWeb ne calcule ni TPS, ni TVQ, ni TVH, ni autre taxe. Les taxes applicables seront déterminées dans une éventuelle soumission officielle selon le lieu du client.
+3. **Points indicatifs.** Économique, recommandé et premium représentent le minimum, le milieu et le maximum de la grille interne. Ce ne sont ni des intervalles de confiance, ni une soumission contractuelle.
 
-## Logique métier volontairement inchangée
+## Logique active
 
-4. **Bilingue et multilingue peuvent être cumulés.** Le moteur multiplie M01 × M02 si les deux sont cochés. Cette combinaison peut représenter un double comptage, mais aucune preuve ne permettait de changer la formule.
-5. **Options génériques et sectorielles peuvent se chevaucher.** Exemples : réservation + prise de RDV médicale, portail client + portail patient. Les deux coûts sont additionnés sans déduplication.
-6. **Commerce réservé au secteur PME.** Les secteurs juridique, médical et professions réglementées ne peuvent pas choisir S03/S04.
-7. **Coûts tiers non liés aux choix.** Le calcul inclut toujours hébergement, domaine et CDN seulement. Shopify/TIR07, CRM, courriel, réservation et stockage restent absents même si une fonctionnalité correspondante est cochée.
-8. **Récurrents fixes.** Maintenance et coûts tiers sont assignés par scénario; l’utilisateur ne peut pas les choisir ni les retirer.
+4. **Normalisation conservatrice.** Les remplacements et inclusions définis dans `src/lib/engine/compatibility.ts` retirent le coût générique. Les cumuls conservés sont limités à des travaux dont la différence fonctionnelle est explicitée dans l’interface et `docs/OPTION_COMPATIBILITY_MATRIX.md`.
+5. **Commerce réservé au secteur PME.** Les secteurs juridique, médical et professions réglementées ne peuvent ni sélectionner ni soumettre directement S03/S04 au calculateur.
+6. **Coûts tiers non liés aux choix.** Le calcul inclut toujours hébergement, domaine et CDN seulement. Les licences Shopify, CRM, courriel, réservation et stockage ne sont pas ajoutées automatiquement.
+7. **Récurrents fixes.** Maintenance et coûts tiers de base sont assignés par scénario; l’utilisateur ne peut pas les choisir ni les retirer.
 
 ## Données présentes mais inactives
 
-9. `SOCLE_ADDONS` S07–S12 : design par page, rédaction, SEO, photo, vidéo et identité visuelle ne sont ni exposés ni calculés.
-10. `RECURRING_SERVICES` REC01–REC07 : SEO continu, réseaux sociaux, publicité, infolettre, chatbot, analytics et support ne sont jamais calculés.
-11. La matrice conserve plusieurs coûts tiers optionnels qui ne sont jamais utilisés.
+8. `SOCLE_ADDONS` S07-S12 : design par page, rédaction, SEO, photo, vidéo et identité ne sont ni exposés ni calculés.
+9. `RECURRING_SERVICES` REC01-REC07 : SEO continu, réseaux sociaux, publicité, infolettre, chatbot, analytics et support ne sont jamais calculés.
+10. TIR03-TIR07 et TIR09 restent inactifs. Aucun fournisseur ni coût tiers additionnel n’est imposé.
+11. S07 et REC07 conservent un conflit de périmètre documenté avec les socles et la maintenance. Ils ne doivent pas être activés avant une décision métier.
 
 ## Produit et exploitation
 
 12. **Aucune persistance.** Un rafraîchissement efface les réponses; il n’existe ni sauvegarde, ni partage par URL, ni historique.
-13. **Aucune collecte.** C’est favorable à la vie privée, mais aucun lead ni rapport n’arrive chez Auxo. Le CTA ouvre seulement le client courriel de l’utilisateur.
-14. **Pas de devis.** Le PDF et l’écran sont indicatifs et non contractuels; un cadrage humain reste nécessaire.
-15. **Performance production non rebaselinée.** Le build et le chargement local sont sains, mais aucun déploiement n’a été fait et les Core Web Vitals de l’URL publique actuelle n’ont pas été comparés après ces changements.
-16. **Accessibilité non certifiée.** Navigation clavier, rôles, focus, titres, cibles tactiles et responsive ont été testés; il ne s’agit pas d’un audit WCAG formel avec technologies d’assistance réelles.
-17. **Domaine produit à confirmer.** L’URL existante `estimaweb-qc.vercel.app` répond, mais une éventuelle URL Auxo personnalisée demeure une décision de publication.
+13. **Aucune collecte.** Aucun lead ni rapport n’arrive chez Auxo. Le CTA ouvre seulement le client courriel de l’utilisateur.
+14. **Pas de soumission.** Un cadrage humain reste nécessaire pour confirmer le périmètre, les taxes et le prix contractuel.
+15. **Performance production non rebaselinée.** Le build et les parcours locaux sont sains; aucun déploiement n’a été effectué dans cette mission.
+16. **Accessibilité non certifiée.** Navigation clavier, rôles, focus, explications des options désactivées et responsive sont testés, sans constituer un audit WCAG formel avec technologies d’assistance réelles.
+17. **Domaine produit à confirmer.** `estimaweb-qc.vercel.app` existe; une éventuelle URL Auxo personnalisée demeure une décision de publication.
 
-## Recommandation
+## Ambiguïtés restantes
 
-Publier seulement avec les avertissements actuels. La prochaine intervention utile n’est pas un changement de code : c’est une revue humaine documentée de la grille, des chevauchements d’options, des taxes et des coûts tiers.
+Aucune ambiguïté bloquante ne demeure parmi les options actuellement sélectionnables. Les périmètres CRM, Clio, DME et logiciel métier ont été rendus distincts dans les textes; toute activation future des éléments inactifs doit repasser par le registre de compatibilité avant publication.

@@ -1,7 +1,7 @@
 {
   "metadata": {
     "title": "EstimaWeb QC — Free web estimator by Auxo Systems",
-    "description": "Get a free, indicative estimate for a Quebec web project using a transparent internal calculation grid."
+    "description": "Estimate a web project using Auxo Systems’ internal pricing grid. Indicative amounts in Canadian dollars, before taxes."
   },
   "common": {
     "appName": "EstimaWeb QC",
@@ -29,7 +29,7 @@
     "titlePre": "How much does ",
     "titleAccent": "your website",
     "titlePost": " cost?",
-    "subtitle": "An indicative estimate in under 2 minutes, calculated locally from an internal pricing grid.",
+    "subtitle": "An indicative estimate in under 2 minutes, calculated locally from Auxo Systems’ internal pricing grid.",
     "cta": "Start the estimate",
     "trust1": "Transparent calculation",
     "trust2": "No data transmitted",
@@ -97,11 +97,11 @@
       },
       "S03": {
         "label": "Basic e-commerce",
-        "description": "Online store, under 100 products"
+        "description": "Store under 100 products, with catalog and payment included"
       },
       "S04": {
         "label": "Advanced e-commerce",
-        "description": "100+ products, filters, advanced inventory"
+        "description": "100+ products, filters, inventory, catalog and payment included"
       },
       "S05": {
         "label": "Custom platform",
@@ -119,15 +119,15 @@
       "sectorModules": "Specialized modules for your sector",
       "M03": {
         "label": "Online booking",
-        "description": "Appointment scheduling system"
+        "description": "Appointment scheduling; any payment remains separate"
       },
       "M04": {
         "label": "Client portal",
-        "description": "Secure member area"
+        "description": "Secure area distinct from an online store account"
       },
       "M05": {
         "label": "CRM integration",
-        "description": "HubSpot, Salesforce, etc."
+        "description": "Sales or marketing CRM such as HubSpot or Salesforce"
       },
       "M06": {
         "label": "AI Chatbot",
@@ -143,7 +143,7 @@
       },
       "M09": {
         "label": "Complex forms",
-        "description": "Workflows and conditional logic"
+        "description": "Workflows other than a specialized quote module"
       },
       "M10": {
         "label": "Data migration",
@@ -151,7 +151,7 @@
       },
       "M11": {
         "label": "Online payment",
-        "description": "Stripe, Square, etc."
+        "description": "Standalone Stripe or Square flow; included in commerce and ordering"
       },
       "M12": {
         "label": "Advanced animations",
@@ -159,43 +159,39 @@
       }
     },
     "sectorModules": {
-      "JUR01": { "label": "Quebec Bar compliance" },
-      "JUR02": { "label": "Practice areas architecture" },
-      "JUR03": { "label": "Confidential client portal" },
-      "JUR04": { "label": "Legal blog + newsletters" },
-      "JUR05": { "label": "Local legal SEO" },
-      "JUR06": { "label": "Clio integration" },
-      "MED01": { "label": "Online appointment booking" },
-      "MED02": { "label": "Law 25 Compliance (health data)" },
-      "MED03": { "label": "Secure patient portal" },
-      "MED04": { "label": "EMR integration" },
-      "MED05": { "label": "Patient educational content" },
-      "MED06": { "label": "Multi-practitioner" },
-      "PRO01": { "label": "Professional order compliance" },
-      "PRO02": { "label": "Calculators / simulators" },
-      "PRO03": { "label": "Business software integration" },
-      "PRO04": { "label": "Client document portal" },
-      "PRO05": { "label": "Online quote system" },
-      "PME01": { "label": "Product/service catalog" },
-      "PME02": { "label": "Quote request form" },
-      "PME03": { "label": "Google Business / Maps / reviews" },
-      "PME04": { "label": "Careers section" },
-      "PME05": { "label": "Online menu / ordering" },
-      "PME06": { "label": "Portfolio gallery" },
-      "PME07": { "label": "Social media integration" }
+      "JUR01": { "label": "Quebec Bar compliance", "description": "Requirements specific to presenting legal services" },
+      "JUR02": { "label": "Practice areas architecture", "description": "Navigation and content structured by legal practice area" },
+      "JUR03": { "label": "Confidential client portal", "description": "Secure legal exchanges; replaces the generic portal" },
+      "JUR04": { "label": "Legal blog + newsletters", "description": "Initial legal publishing and newsletter structure" },
+      "JUR05": { "label": "Local legal SEO", "description": "Local visibility specific to legal services" },
+      "JUR06": { "label": "Clio integration", "description": "Legal practice management, distinct from a marketing CRM" },
+      "MED01": { "label": "Online appointment booking", "description": "Clinical appointment journey; replaces generic booking" },
+      "MED02": { "label": "Law 25 Compliance (health data)", "description": "Privacy measures adapted to health data" },
+      "MED03": { "label": "Secure patient portal", "description": "Protected patient area; replaces the generic portal" },
+      "MED04": { "label": "EMR integration", "description": "Clinical-record connection, distinct from a marketing CRM" },
+      "MED05": { "label": "Patient educational content", "description": "Specialized educational content for patients" },
+      "MED06": { "label": "Multi-practitioner", "description": "Profiles, services and structure for multiple practitioners" },
+      "PRO01": { "label": "Professional order compliance", "description": "Presentation requirements specific to the relevant order" },
+      "PRO02": { "label": "Calculators / simulators", "description": "Interactive calculations specific to the profession" },
+      "PRO03": { "label": "Business software integration", "description": "ERP, accounting or line-of-business software other than CRM" },
+      "PRO04": { "label": "Client document portal", "description": "Secure document exchange; replaces the generic portal" },
+      "PRO05": { "label": "Online quote system", "description": "Complete request journey; replaces the generic complex form" },
+      "PME01": { "label": "Product/service catalog", "description": "Standalone catalog; already included in an e-commerce site" },
+      "PME02": { "label": "Quote request form", "description": "Conditional request; replaces the generic complex form" },
+      "PME03": { "label": "Google Business / Maps / reviews", "description": "Local presence and Google review signals" },
+      "PME04": { "label": "Careers section", "description": "Job postings and application journey" },
+      "PME05": { "label": "Online menu / ordering", "description": "Menu, ordering and payment for the same journey" },
+      "PME06": { "label": "Portfolio gallery", "description": "Structured visual presentation of completed work" },
+      "PME07": { "label": "Social media integration", "description": "Connections and content from social networks" }
     },
     "extras": {
       "title": "Language and additional options",
       "subtitle": "Configure the final details of your project.",
-      "bilingual": {
-        "label": "Bilingual site (FR/EN)?",
-        "yes": "Yes, bilingual",
-        "no": "No, one language only"
-      },
-      "multilingual": {
-        "label": "Multilingual (3+ languages)?",
-        "yes": "Yes, 3 languages or more",
-        "no": "No"
+      "language": {
+        "label": "How many languages should the site offer?",
+        "single": { "label": "One language", "description": "No language surcharge" },
+        "bilingual": { "label": "Bilingual", "description": "Exactly two languages" },
+        "multilingual": { "label": "Multilingual", "description": "Three languages or more" }
       },
       "urgency": {
         "label": "Urgent delivery (< 4 weeks)?",
@@ -205,8 +201,29 @@
     },
     "results": {
       "title": "Your personalized estimate",
-      "subtitle": "Three indicative scenarios, from the minimum scope to the most complete"
+      "subtitle": "Three indicative scenarios, from the minimum scope to the most complete",
+      "summary": {
+        "title": "Final calculated selection",
+        "sector": "Sector",
+        "siteType": "Site type",
+        "features": "Features",
+        "modules": "Specialized modules",
+        "language": "Languages",
+        "urgency": "Urgent delivery",
+        "none": "None",
+        "yes": "Yes",
+        "no": "No",
+        "languageModes": {
+          "single": "One language",
+          "bilingual": "Bilingual, exactly two languages",
+          "multilingual": "Multilingual, three languages or more"
+        }
+      }
     }
+  },
+  "compatibility": {
+    "replacedBySpecialized": "This feature is already included in the selected specialized module.",
+    "includedElsewhere": "This feature is already included in another selection."
   },
   "scenarios": {
     "eco": {
@@ -237,8 +254,9 @@
   "transparency": {
     "title": "Transparency notes",
     "notes": [
-      "These amounts are indicative estimates, not a firm quote. A detailed audit is needed for an exact price.",
-      "The internal grid was created on February 27, 2026 with a stated 2025 reference year. No external source is retained; a human market review is required.",
+      "Estimates based on Auxo Systems’ internal pricing grid. Indicative amounts in Canadian dollars, before taxes. This estimate does not constitute a contractual quote.",
+      "Auxo Systems’ internal pricing grid was revised on August 3, 2026. It is not presented as a benchmark for the Quebec market.",
+      "Applicable taxes will be determined in any official quote based on the client’s location.",
       "Third-party costs (hosting, licenses, etc.) are paid directly by the client and may vary.",
       "Your answers and calculations stay in your browser. The PDF report is generated locally on your device.",
       "The maintenance plan and baseline third-party costs are assigned automatically by scenario; they are not selected in the wizard."

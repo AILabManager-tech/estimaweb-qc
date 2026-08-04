@@ -48,14 +48,21 @@ test("complete French flow supports keyboard, back, editing, recalculation, PDF 
   await booking.click();
   await expect(booking).toHaveAttribute("aria-checked", "false");
   await booking.click();
-  await page.getByRole("checkbox", { name: /Paiement en ligne/ }).click();
+  const payment = page.getByRole("checkbox", { name: /Paiement en ligne/ });
+  await expect(payment).toHaveAttribute("aria-disabled", "true");
+  await expect(page.getByText("Cette fonctionnalité est déjà comprise dans une autre sélection.").first()).toBeVisible();
+  await payment.focus();
+  await page.keyboard.press("Space");
+  await expect(payment).toHaveAttribute("aria-checked", "false");
   await page.getByRole("checkbox", { name: /Google Business/ }).click();
   await next.click();
 
-  await page.getByRole("radio", { name: "Oui, bilingue" }).click();
+  await page.getByRole("radio", { name: /Bilingue.*Exactement deux langues/ }).click();
   await page.getByRole("button", { name: "Voir mon estimation" }).click();
   await expect(page.getByRole("heading", { name: "Votre estimation personnalisée" })).toBeVisible();
-  await expect(page.getByText(/16.?330/).first()).toBeVisible();
+  await expect(page.getByText(/15.?755/).first()).toBeVisible();
+  await expect(page.getByText("Bilingue, exactement deux langues")).toBeVisible();
+  await expect(page.getByText(/Estimations basées sur la grille tarifaire interne d’Auxo Systems/)).toBeVisible();
 
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Télécharger le PDF" }).click();
@@ -65,10 +72,10 @@ test("complete French flow supports keyboard, back, editing, recalculation, PDF 
   await expect(page.getByRole("radio", { name: /PME générale/ })).toHaveAttribute("aria-checked", "true");
   await next.click();
   await next.click();
-  await page.getByRole("checkbox", { name: /Paiement en ligne/ }).click();
+  await page.getByRole("checkbox", { name: /Réservation en ligne/ }).click();
   await next.click();
   await page.getByRole("button", { name: "Voir mon estimation" }).click();
-  await expect(page.getByText(/15.?755/).first()).toBeVisible();
+  await expect(page.getByText(/13.?455/).first()).toBeVisible();
 
   await page.reload();
   await expect(page.getByRole("heading", { name: "Quel est votre secteur d'activité?" })).toBeVisible();
@@ -92,9 +99,44 @@ test("complete English flow produces the independent custom-app total and an Eng
   await expect(page.getByRole("heading", { name: "Your personalized estimate" })).toBeVisible();
   await expect(page.getByText(/81,363/).first()).toBeVisible();
   await expect(page.getByText("A free tool by Auxo Systems")).toBeVisible();
+  await expect(page.getByText("One language", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Estimates based on Auxo Systems’ internal pricing grid/)).toBeVisible();
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "Download PDF" }).click();
   await expectValidPdf(await downloadPromise, "en");
+});
+
+test("specialized medical options replace generic features and the language mode stays exclusive", async ({ page }) => {
+  await page.goto("/fr");
+  await page.getByRole("button", { name: "Démarrer l'estimation" }).click();
+  const next = page.getByRole("button", { name: "Suivant" });
+  await page.getByRole("radio", { name: /Médical/ }).click();
+  await next.click();
+  await page.getByRole("radio", { name: /Site vitrine \(1-5 pages\)/ }).click();
+  await next.click();
+
+  const genericBooking = page.getByRole("checkbox", { name: /Réservation en ligne/ });
+  await genericBooking.click();
+  await page.getByRole("checkbox", { name: /Prise de RDV en ligne/ }).click();
+  await expect(genericBooking).toHaveAttribute("aria-checked", "false");
+  await expect(genericBooking).toHaveAttribute("aria-disabled", "true");
+  await expect(
+    page.getByText("Cette fonctionnalité est déjà comprise dans le module spécialisé sélectionné.").first()
+  ).toBeVisible();
+
+  await next.click();
+  const bilingual = page.getByRole("radio", { name: /Bilingue.*Exactement deux langues/ });
+  const multilingual = page.getByRole("radio", { name: /Multilingue.*Trois langues ou plus/ });
+  await bilingual.click();
+  await expect(bilingual).toHaveAttribute("aria-checked", "true");
+  await multilingual.click();
+  await expect(multilingual).toHaveAttribute("aria-checked", "true");
+  await expect(bilingual).toHaveAttribute("aria-checked", "false");
+  await page.getByRole("button", { name: "Voir mon estimation" }).click();
+
+  await expect(page.getByText("Prise de RDV en ligne", { exact: true })).toBeVisible();
+  await expect(page.getByText("Réservation en ligne", { exact: true })).toHaveCount(0);
+  await expect(page.getByText("Multilingue, trois langues ou plus")).toBeVisible();
 });
 
 for (const viewport of [
