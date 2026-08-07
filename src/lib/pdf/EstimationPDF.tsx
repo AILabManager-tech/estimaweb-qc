@@ -191,6 +191,8 @@ export function getPdfDisclosureCopy(locale: PdfLocale) {
     taxes: getMessage(locale, "transparency.notes.2"),
     thirdParty: getMessage(locale, "transparency.notes.3"),
     recurring: getMessage(locale, "transparency.notes.5"),
+    scope: getMessage(locale, "transparency.notes.6"),
+    maintenance: getMessage(locale, "transparency.notes.7"),
   };
 }
 
@@ -298,6 +300,8 @@ export function EstimationPDF({
           <Text style={styles.noteText}>• {disclosure.taxes}</Text>
           <Text style={styles.noteText}>• {disclosure.thirdParty}</Text>
           <Text style={styles.noteText}>• {disclosure.recurring}</Text>
+          <Text style={styles.noteText}>• {disclosure.scope}</Text>
+          <Text style={styles.noteText}>• {disclosure.maintenance}</Text>
           <Text style={styles.warning}>{disclosure.pricing}</Text>
         </View>
 

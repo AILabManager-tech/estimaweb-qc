@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { calculateEstimation } from "../calculator";
 import { CalculatorInputSchema } from "../schema";
-import { ADDITIVE_IDS, SECTOR_MODULES } from "../matrix";
+import { ADDITIVE_IDS, MULTIPLIERS, SECTOR_MODULES, SOCLE_ITEMS } from "../matrix";
 import { SITE_TYPES_BY_SECTOR } from "../compatibility";
 import type {
   CalculatorInput,
@@ -27,8 +27,8 @@ const controlledScenarios: Array<{
     },
     expected: {
       eco: { baseCost: 2500, multipliersCost: 0, sectorModulesCost: 0, contingency: 375, initialTotal: 2875, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 3967, annualRecurring: 1092 },
-      rec: { baseCost: 4250, multipliersCost: 0, sectorModulesCost: 0, contingency: 638, initialTotal: 4888, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 9064, annualRecurring: 4176 },
-      premium: { baseCost: 6000, multipliersCost: 0, sectorModulesCost: 0, contingency: 900, initialTotal: 6900, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 18048, annualRecurring: 11148 },
+      rec: { baseCost: 4250, multipliersCost: 0, sectorModulesCost: 0, contingency: 638, initialTotal: 4888, maintenanceMonthly: 113, thirdPartyMonthly: 98, monthlyTotal: 211, year1Total: 7420, annualRecurring: 2532 },
+      premium: { baseCost: 6000, multipliersCost: 0, sectorModulesCost: 0, contingency: 900, initialTotal: 6900, maintenanceMonthly: 150, thirdPartyMonthly: 179, monthlyTotal: 329, year1Total: 10848, annualRecurring: 3948 },
     },
   },
   {
@@ -42,9 +42,9 @@ const controlledScenarios: Array<{
       isUrgent: false,
     },
     expected: {
-      eco: { baseCost: 5000, multipliersCost: 2000, sectorModulesCost: 0, contingency: 1050, initialTotal: 8050, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 9142, annualRecurring: 1092 },
+      eco: { baseCost: 5000, multipliersCost: 2000, sectorModulesCost: 0, contingency: 1050, initialTotal: 8050, maintenanceMonthly: 150, thirdPartyMonthly: 16, monthlyTotal: 166, year1Total: 10042, annualRecurring: 1992 },
       rec: { baseCost: 10000, multipliersCost: 5000, sectorModulesCost: 0, contingency: 2250, initialTotal: 17250, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 21426, annualRecurring: 4176 },
-      premium: { baseCost: 15000, multipliersCost: 9000, sectorModulesCost: 0, contingency: 3600, initialTotal: 27600, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 38748, annualRecurring: 11148 },
+      premium: { baseCost: 15000, multipliersCost: 9000, sectorModulesCost: 0, contingency: 3600, initialTotal: 27600, maintenanceMonthly: 350, thirdPartyMonthly: 179, monthlyTotal: 529, year1Total: 33948, annualRecurring: 6348 },
     },
   },
   {
@@ -58,9 +58,9 @@ const controlledScenarios: Array<{
       isUrgent: false,
     },
     expected: {
-      eco: { baseCost: 1200, multipliersCost: 0, sectorModulesCost: 0, contingency: 180, initialTotal: 1380, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 2472, annualRecurring: 1092 },
-      rec: { baseCost: 2350, multipliersCost: 0, sectorModulesCost: 0, contingency: 353, initialTotal: 2703, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 6879, annualRecurring: 4176 },
-      premium: { baseCost: 3500, multipliersCost: 0, sectorModulesCost: 0, contingency: 525, initialTotal: 4025, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 15173, annualRecurring: 11148 },
+      eco: { baseCost: 1200, multipliersCost: 0, sectorModulesCost: 0, contingency: 180, initialTotal: 1380, maintenanceMonthly: 50, thirdPartyMonthly: 16, monthlyTotal: 66, year1Total: 2172, annualRecurring: 792 },
+      rec: { baseCost: 2350, multipliersCost: 0, sectorModulesCost: 0, contingency: 353, initialTotal: 2703, maintenanceMonthly: 63, thirdPartyMonthly: 98, monthlyTotal: 161, year1Total: 4635, annualRecurring: 1932 },
+      premium: { baseCost: 3500, multipliersCost: 0, sectorModulesCost: 0, contingency: 525, initialTotal: 4025, maintenanceMonthly: 75, thirdPartyMonthly: 179, monthlyTotal: 254, year1Total: 7073, annualRecurring: 3048 },
     },
   },
   {
@@ -74,9 +74,9 @@ const controlledScenarios: Array<{
       isUrgent: true,
     },
     expected: {
-      eco: { baseCost: 1200, multipliersCost: 1608, sectorModulesCost: 0, contingency: 421, initialTotal: 3229, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 4321, annualRecurring: 1092 },
-      rec: { baseCost: 2350, multipliersCost: 4230, sectorModulesCost: 0, contingency: 987, initialTotal: 7567, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 11743, annualRecurring: 4176 },
-      premium: { baseCost: 3500, multipliersCost: 8050, sectorModulesCost: 0, contingency: 1733, initialTotal: 13283, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 24431, annualRecurring: 11148 },
+      eco: { baseCost: 1200, multipliersCost: 1608, sectorModulesCost: 0, contingency: 421, initialTotal: 3229, maintenanceMonthly: 50, thirdPartyMonthly: 16, monthlyTotal: 66, year1Total: 4021, annualRecurring: 792 },
+      rec: { baseCost: 2350, multipliersCost: 4230, sectorModulesCost: 0, contingency: 987, initialTotal: 7567, maintenanceMonthly: 63, thirdPartyMonthly: 98, monthlyTotal: 161, year1Total: 9499, annualRecurring: 1932 },
+      premium: { baseCost: 3500, multipliersCost: 8050, sectorModulesCost: 0, contingency: 1733, initialTotal: 13283, maintenanceMonthly: 75, thirdPartyMonthly: 179, monthlyTotal: 254, year1Total: 16331, annualRecurring: 3048 },
     },
   },
   {
@@ -90,9 +90,9 @@ const controlledScenarios: Array<{
       isUrgent: false,
     },
     expected: {
-      eco: { baseCost: 8000, multipliersCost: 5200, sectorModulesCost: 500, contingency: 2055, initialTotal: 15755, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 16847, annualRecurring: 1092 },
+      eco: { baseCost: 8000, multipliersCost: 5200, sectorModulesCost: 500, contingency: 2055, initialTotal: 15755, maintenanceMonthly: 150, thirdPartyMonthly: 16, monthlyTotal: 166, year1Total: 17747, annualRecurring: 1992 },
       rec: { baseCost: 16500, multipliersCost: 13250, sectorModulesCost: 1000, contingency: 4613, initialTotal: 35363, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 39539, annualRecurring: 4176 },
-      premium: { baseCost: 25000, multipliersCost: 23000, sectorModulesCost: 1500, contingency: 7425, initialTotal: 56925, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 68073, annualRecurring: 11148 },
+      premium: { baseCost: 25000, multipliersCost: 23000, sectorModulesCost: 1500, contingency: 7425, initialTotal: 56925, maintenanceMonthly: 350, thirdPartyMonthly: 179, monthlyTotal: 529, year1Total: 63273, annualRecurring: 6348 },
     },
   },
   {
@@ -106,8 +106,8 @@ const controlledScenarios: Array<{
       isUrgent: false,
     },
     expected: {
-      eco: { baseCost: 25000, multipliersCost: 4500, sectorModulesCost: 2000, contingency: 4725, initialTotal: 36225, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 37317, annualRecurring: 1092 },
-      rec: { baseCost: 52500, multipliersCost: 12250, sectorModulesCost: 6000, contingency: 10613, initialTotal: 81363, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 85539, annualRecurring: 4176 },
+      eco: { baseCost: 25000, multipliersCost: 4500, sectorModulesCost: 2000, contingency: 4725, initialTotal: 36225, maintenanceMonthly: 350, thirdPartyMonthly: 16, monthlyTotal: 366, year1Total: 40617, annualRecurring: 4392 },
+      rec: { baseCost: 52500, multipliersCost: 12250, sectorModulesCost: 6000, contingency: 10613, initialTotal: 81363, maintenanceMonthly: 550, thirdPartyMonthly: 98, monthlyTotal: 648, year1Total: 89139, annualRecurring: 7776 },
       premium: { baseCost: 80000, multipliersCost: 20000, sectorModulesCost: 10000, contingency: 16500, initialTotal: 126500, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 137648, annualRecurring: 11148 },
     },
   },
@@ -122,8 +122,8 @@ const controlledScenarios: Array<{
       isUrgent: true,
     },
     expected: {
-      eco: { baseCost: 25000, multipliersCost: 42500, sectorModulesCost: 18000, contingency: 12825, initialTotal: 98325, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 99417, annualRecurring: 1092 },
-      rec: { baseCost: 52500, multipliersCost: 117000, sectorModulesCost: 38000, contingency: 31125, initialTotal: 238625, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 242801, annualRecurring: 4176 },
+      eco: { baseCost: 25000, multipliersCost: 42500, sectorModulesCost: 18000, contingency: 12825, initialTotal: 98325, maintenanceMonthly: 350, thirdPartyMonthly: 16, monthlyTotal: 366, year1Total: 102717, annualRecurring: 4392 },
+      rec: { baseCost: 52500, multipliersCost: 117000, sectorModulesCost: 38000, contingency: 31125, initialTotal: 238625, maintenanceMonthly: 550, thirdPartyMonthly: 98, monthlyTotal: 648, year1Total: 246401, annualRecurring: 7776 },
       premium: { baseCost: 80000, multipliersCost: 220000, sectorModulesCost: 58000, contingency: 53700, initialTotal: 411700, maintenanceMonthly: 750, thirdPartyMonthly: 179, monthlyTotal: 929, year1Total: 422848, annualRecurring: 11148 },
     },
   },
@@ -160,6 +160,104 @@ describe("controlled calculation truth table", () => {
         }
       }
     }
+  });
+});
+
+describe("plausibilité économique des récurrents", () => {
+  it("le récurrent annuel reste inférieur à la réalisation, sur tout le catalogue", () => {
+    const offenders: string[] = [];
+    for (const sector of Object.keys(SECTOR_MODULES) as Sector[]) {
+      for (const siteType of SITE_TYPES_BY_SECTOR[sector] as readonly SiteTypeId[]) {
+        const result = calculateEstimation({
+          sector,
+          siteType,
+          selectedMultipliers: [],
+          selectedSectorModules: [],
+          languageMode: "single",
+          isUrgent: false,
+        });
+        for (const [name, scenario] of Object.entries({
+          eco: result.eco,
+          rec: result.rec,
+          premium: result.premium,
+        })) {
+          const ratio = scenario.annualRecurring / scenario.initialTotal;
+          if (ratio >= 1) {
+            offenders.push(`${sector}/${siteType}/${name} = ${ratio.toFixed(2)}`);
+          }
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it("le forfait de maintenance suit l'ampleur du projet, pas le scénario", () => {
+    const landing = calculateEstimation({
+      sector: "PME",
+      siteType: "S06",
+      selectedMultipliers: [],
+      selectedSectorModules: [],
+      languageMode: "single",
+      isUrgent: false,
+    });
+    const platform = calculateEstimation({
+      sector: "PME",
+      siteType: "S05",
+      selectedMultipliers: [],
+      selectedSectorModules: [],
+      languageMode: "single",
+      isUrgent: false,
+    });
+    // ABN00 (50-75) pour une landing page, ABN03 (350-750) pour une plateforme
+    expect(landing.premium.maintenanceMonthly).toBe(75);
+    expect(platform.eco.maintenanceMonthly).toBe(350);
+    expect(landing.premium.maintenanceMonthly).toBeLessThan(
+      platform.eco.maintenanceMonthly
+    );
+  });
+});
+
+describe("intégrité arithmétique de la grille", () => {
+  it("chaque ligne affichée s'additionne exactement au total montré", () => {
+    for (const sector of Object.keys(SECTOR_MODULES) as Sector[]) {
+      for (const siteType of SITE_TYPES_BY_SECTOR[sector] as readonly SiteTypeId[]) {
+        for (const languageMode of ["single", "bilingual", "multilingual"] as const) {
+          for (const isUrgent of [false, true]) {
+            const result = calculateEstimation({
+              sector,
+              siteType,
+              selectedMultipliers: [...ADDITIVE_IDS],
+              selectedSectorModules: SECTOR_MODULES[sector].map((item) => item.id),
+              languageMode,
+              isUrgent,
+            });
+            for (const scenario of [result.eco, result.rec, result.premium]) {
+              expect(
+                scenario.baseCost +
+                  scenario.multipliersCost +
+                  scenario.sectorModulesCost +
+                  scenario.contingency
+              ).toBe(scenario.initialTotal);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  it("toute valeur de la grille produit un sous-total entier (prérequis de l'invariant)", () => {
+    const fractional: string[] = [];
+    const halves = [
+      ...Object.values(SOCLE_ITEMS),
+      ...Object.values(MULTIPLIERS).filter((m) => m.type === "ajout_fixe").map((m) => m.value),
+      ...Object.values(SECTOR_MODULES).flat().map((m) => m.price),
+    ];
+    for (const range of halves) {
+      if (!Number.isInteger((range.min + range.max) / 2)) {
+        fractional.push(`${range.min}-${range.max}`);
+      }
+    }
+    expect(fractional).toEqual([]);
   });
 });
 

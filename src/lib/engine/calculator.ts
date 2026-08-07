@@ -10,7 +10,7 @@ import {
   MAINTENANCE_TIERS,
   THIRD_PARTY_COSTS,
   BASELINE_THIRD_PARTY,
-  SCENARIO_MAINTENANCE,
+  SITE_TYPE_MAINTENANCE,
 } from "./matrix";
 import { lerp } from "../utils";
 import { CalculatorInputSchema } from "./schema";
@@ -37,6 +37,12 @@ const SCENARIO_PERCENTILES: Record<ScenarioKey, number> = {
  *   Réalisation = (Socle × Multiplicateurs_chaînés) + Ajouts_fixes + Modules_sectoriels + Marge_15%
  *   Mensuel = Maintenance + Coûts_tiers
  *   Année 1 = Réalisation + (Mensuel × 12)
+ *
+ * Les multiplicateurs chaînés (langue, urgence) portent sur le socle seul : ils
+ * majorent le travail de base, pas les ajouts fixes ni les modules sectoriels,
+ * déjà chiffrés pour le périmètre qu'ils couvrent.
+ * Le forfait de maintenance dépend du type de site; le scénario ne choisit que
+ * le percentile appliqué uniformément à tous les postes.
  *
  */
 export function calculateEstimation(input: CalculatorInput): EstimationResult {
@@ -117,8 +123,8 @@ function computeScenario(
   const contingency = normalizeDecimal(subtotal * 0.15);
   const initialTotal = normalizeDecimal(subtotal + contingency);
 
-  // 6. Coûts mensuels
-  const maintenanceTierId = SCENARIO_MAINTENANCE[scenario];
+  // 6. Coûts mensuels — le forfait dépend de l'ampleur du projet, pas du scénario
+  const maintenanceTierId = SITE_TYPE_MAINTENANCE[input.siteType];
   const maintenanceTier = MAINTENANCE_TIERS[maintenanceTierId];
   const maintenanceMonthly = lerp(maintenanceTier.price.min, maintenanceTier.price.max, t);
 

@@ -15,6 +15,7 @@ interface ResultsStepProps {
   onEdit: () => void;
   onDownloadPdf: () => void;
   isPdfGenerating: boolean;
+  pdfFailed?: boolean;
 }
 
 export function ResultsStep({
@@ -23,6 +24,7 @@ export function ResultsStep({
   onEdit,
   onDownloadPdf,
   isPdfGenerating,
+  pdfFailed = false,
 }: ResultsStepProps) {
   const t = useTranslations("steps.results");
   const tCommon = useTranslations("common");
@@ -141,6 +143,16 @@ export function ResultsStep({
           {tCommon("restart")}
         </Button>
       </motion.div>
+
+      {pdfFailed && (
+        <motion.p
+          variants={fadeInUp}
+          role="alert"
+          className="text-center text-sm text-scenario-premium"
+        >
+          {tCommon("pdfError")}
+        </motion.p>
+      )}
 
       {/* CTA persuasive */}
       <motion.div

@@ -22,7 +22,8 @@
     "recommended": "Recommandé",
     "poweredBy": "Un outil gratuit par Auxo Systems",
     "langSwitch": "EN",
-    "switchLanguage": "Afficher la version anglaise"
+    "switchLanguage": "Afficher la version anglaise",
+    "pdfError": "Le rapport PDF n’a pas pu être généré. Réessayez ou changez de navigateur."
   },
   "hero": {
     "badge": "Estimateur web gratuit",
@@ -159,39 +160,120 @@
       }
     },
     "sectorModules": {
-      "JUR01": { "label": "Conformité Barreau du Québec", "description": "Exigences propres à la présentation des services juridiques" },
-      "JUR02": { "label": "Architecture domaines de pratique", "description": "Navigation et contenus structurés par domaine juridique" },
-      "JUR03": { "label": "Portail client confidentiel", "description": "Échanges juridiques sécurisés; remplace le portail générique" },
-      "JUR04": { "label": "Blog juridique + infolettres", "description": "Structure éditoriale et diffusion juridique initiale" },
-      "JUR05": { "label": "SEO juridique local", "description": "Visibilité locale propre aux services juridiques" },
-      "JUR06": { "label": "Intégration Clio", "description": "Gestion de pratique juridique, distincte d’un CRM marketing" },
-      "MED01": { "label": "Prise de RDV en ligne", "description": "Parcours de rendez-vous clinique; remplace la réservation générique" },
-      "MED02": { "label": "Conformité Loi 25 (données santé)", "description": "Mesures de confidentialité adaptées aux données de santé" },
-      "MED03": { "label": "Portail patient sécurisé", "description": "Espace patient protégé; remplace le portail générique" },
-      "MED04": { "label": "Intégration DME", "description": "Connexion au dossier médical, distincte d’un CRM marketing" },
-      "MED05": { "label": "Contenu éducatif patients", "description": "Contenu spécialisé destiné aux patients" },
-      "MED06": { "label": "Multi-praticiens", "description": "Profils, services et structure pour plusieurs praticiens" },
-      "PRO01": { "label": "Conformité ordre professionnel", "description": "Exigences de présentation propres à l’ordre concerné" },
-      "PRO02": { "label": "Calculateurs / simulateurs", "description": "Outils interactifs de calcul propres à la profession" },
-      "PRO03": { "label": "Intégration logiciel métier", "description": "ERP, comptabilité ou système métier autre qu’un CRM" },
-      "PRO04": { "label": "Portail documents clients", "description": "Échange sécurisé de documents; remplace le portail générique" },
-      "PRO05": { "label": "Système de soumission en ligne", "description": "Parcours complet de demande; remplace le formulaire complexe générique" },
-      "PME01": { "label": "Catalogue produits/services", "description": "Catalogue autonome; déjà compris dans un site e-commerce" },
-      "PME02": { "label": "Formulaire de soumission", "description": "Demande conditionnelle; remplace le formulaire complexe générique" },
-      "PME03": { "label": "Google Business / Maps / avis", "description": "Présence locale et signaux d’avis Google" },
-      "PME04": { "label": "Section carrières", "description": "Affichage des postes et parcours de candidature" },
-      "PME05": { "label": "Menu en ligne / commande", "description": "Menu, commande et paiement pour un même parcours" },
-      "PME06": { "label": "Galerie portfolio", "description": "Présentation visuelle structurée des réalisations" },
-      "PME07": { "label": "Intégration réseaux sociaux", "description": "Connexions et contenus issus des réseaux sociaux" }
+      "JUR01": {
+        "label": "Conformité Barreau du Québec",
+        "description": "Exigences propres à la présentation des services juridiques"
+      },
+      "JUR02": {
+        "label": "Architecture domaines de pratique",
+        "description": "Navigation et contenus structurés par domaine juridique"
+      },
+      "JUR03": {
+        "label": "Portail client confidentiel",
+        "description": "Échanges juridiques sécurisés; remplace le portail générique"
+      },
+      "JUR04": {
+        "label": "Blog juridique + infolettres",
+        "description": "Structure éditoriale et diffusion juridique initiale"
+      },
+      "JUR05": {
+        "label": "SEO juridique local",
+        "description": "Visibilité locale propre aux services juridiques"
+      },
+      "JUR06": {
+        "label": "Intégration Clio",
+        "description": "Gestion de pratique juridique, distincte d’un CRM marketing"
+      },
+      "MED01": {
+        "label": "Prise de RDV en ligne",
+        "description": "Parcours de rendez-vous clinique; remplace la réservation générique"
+      },
+      "MED02": {
+        "label": "Conformité Loi 25 (données santé)",
+        "description": "Mesures de confidentialité adaptées aux données de santé"
+      },
+      "MED03": {
+        "label": "Portail patient sécurisé",
+        "description": "Espace patient protégé; remplace le portail générique"
+      },
+      "MED04": {
+        "label": "Intégration DME",
+        "description": "Connexion au dossier médical, distincte d’un CRM marketing"
+      },
+      "MED05": {
+        "label": "Contenu éducatif patients",
+        "description": "Contenu spécialisé destiné aux patients"
+      },
+      "MED06": {
+        "label": "Multi-praticiens",
+        "description": "Profils, services et structure pour plusieurs praticiens"
+      },
+      "PRO01": {
+        "label": "Conformité ordre professionnel",
+        "description": "Exigences de présentation propres à l’ordre concerné"
+      },
+      "PRO02": {
+        "label": "Calculateurs / simulateurs",
+        "description": "Outils interactifs de calcul propres à la profession"
+      },
+      "PRO03": {
+        "label": "Intégration logiciel métier",
+        "description": "ERP, comptabilité ou système métier autre qu’un CRM"
+      },
+      "PRO04": {
+        "label": "Portail documents clients",
+        "description": "Échange sécurisé de documents; remplace le portail générique"
+      },
+      "PRO05": {
+        "label": "Système de soumission en ligne",
+        "description": "Parcours complet de demande; remplace le formulaire complexe générique"
+      },
+      "PME01": {
+        "label": "Catalogue produits/services",
+        "description": "Catalogue autonome; déjà compris dans un site e-commerce"
+      },
+      "PME02": {
+        "label": "Formulaire de soumission",
+        "description": "Demande conditionnelle; remplace le formulaire complexe générique"
+      },
+      "PME03": {
+        "label": "Google Business / Maps / avis",
+        "description": "Présence locale et signaux d’avis Google"
+      },
+      "PME04": {
+        "label": "Section carrières",
+        "description": "Affichage des postes et parcours de candidature"
+      },
+      "PME05": {
+        "label": "Menu en ligne / commande",
+        "description": "Menu, commande et paiement pour un même parcours"
+      },
+      "PME06": {
+        "label": "Galerie portfolio",
+        "description": "Présentation visuelle structurée des réalisations"
+      },
+      "PME07": {
+        "label": "Intégration réseaux sociaux",
+        "description": "Connexions et contenus issus des réseaux sociaux"
+      }
     },
     "extras": {
       "title": "Langue et options supplémentaires",
       "subtitle": "Configurez les derniers détails de votre projet.",
       "language": {
         "label": "Combien de langues le site doit-il offrir?",
-        "single": { "label": "Une langue", "description": "Aucun supplément linguistique" },
-        "bilingual": { "label": "Bilingue", "description": "Exactement deux langues" },
-        "multilingual": { "label": "Multilingue", "description": "Trois langues ou plus" }
+        "single": {
+          "label": "Une langue",
+          "description": "Aucun supplément linguistique"
+        },
+        "bilingual": {
+          "label": "Bilingue",
+          "description": "Exactement deux langues"
+        },
+        "multilingual": {
+          "label": "Multilingue",
+          "description": "Trois langues ou plus"
+        }
       },
       "urgency": {
         "label": "Livraison urgente (< 4 semaines)?",
@@ -228,15 +310,15 @@
   "scenarios": {
     "eco": {
       "name": "Économique",
-      "description": "Solution fonctionnelle et accessible"
+      "description": "Bas de la grille tarifaire pour chaque poste"
     },
     "rec": {
       "name": "Recommandé",
-      "description": "Équilibre optimal qualité/prix"
+      "description": "Milieu de la grille tarifaire pour chaque poste"
     },
     "premium": {
       "name": "Premium",
-      "description": "Solution haut de gamme complète"
+      "description": "Haut de la grille tarifaire pour chaque poste"
     }
   },
   "results": {
@@ -259,7 +341,9 @@
       "Les taxes applicables seront déterminées lors d’une éventuelle soumission officielle selon le lieu du client.",
       "Les coûts tiers (hébergement, licences, etc.) sont payés directement par le client et peuvent varier.",
       "Vos réponses et les calculs restent dans votre navigateur. Le rapport PDF est généré localement sur votre appareil.",
-      "Le forfait de maintenance et les coûts tiers de base sont assignés automatiquement selon le scénario; ils ne sont pas sélectionnés dans l’assistant."
+      "Le forfait de maintenance et les coûts tiers de base sont assignés automatiquement; ils ne sont pas sélectionnés dans l’assistant.",
+      "Les suppléments de langue et d’urgence majorent le socle de base, non les fonctionnalités et modules, déjà chiffrés pour leur propre périmètre.",
+      "Le forfait de maintenance proposé suit l’ampleur du projet : une landing page et une plateforme sur mesure ne reçoivent pas le même forfait."
     ]
   },
   "contact_cta": {

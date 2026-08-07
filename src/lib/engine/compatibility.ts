@@ -184,6 +184,14 @@ export const INCLUSION_RULES = [
     capability: "online-ordering-checkout",
     justification: "The online ordering module includes checkout for that same ordering journey.",
   },
+  {
+    id: "online-ordering-includes-catalog",
+    relation: "INCLUSION",
+    source: { kind: "sectorModule", id: "PME05" },
+    target: { kind: "sectorModule", id: "PME01" },
+    capability: "commerce-catalog",
+    justification: "An online menu or ordering module already structures its own product catalog.",
+  },
 ] as const satisfies readonly PairRule[];
 
 export const EXPLICIT_ALLOWED_CUMULATIONS = [
@@ -250,26 +258,43 @@ export function normalizeCompatibleSelection<T extends CompatibilitySelection>(
   selection: T
 ): T {
   const rules = [...REPLACEMENT_RULES, ...INCLUSION_RULES];
-  const blockedMultipliers = new Set<MultiplierId>();
-  const blockedModules = new Set<SectorModuleId>();
+  let multipliers = ADDITIVE_IDS.filter((id) =>
+    selection.selectedMultipliers.includes(id)
+  ) as MultiplierId[];
+  let modules = SECTOR_MODULE_ORDER.filter((id) =>
+    selection.selectedSectorModules.includes(id)
+  ) as SectorModuleId[];
 
-  for (const rule of rules) {
-    if (!isReferenceSelected(selection, rule.source)) continue;
-    if (rule.target.kind === "multiplier") {
-      blockedMultipliers.add(rule.target.id as MultiplierId);
-    } else if (rule.target.kind === "sectorModule") {
-      blockedModules.add(rule.target.id as SectorModuleId);
+  // Point fixe : une option retirée ne peut plus en bloquer une autre, et une
+  // règle en cascade s'applique jusqu'à stabilisation de la sélection.
+  for (let pass = 0; pass < rules.length; pass++) {
+    const current = { ...selection, selectedMultipliers: multipliers, selectedSectorModules: modules };
+    const blockedMultipliers = new Set<MultiplierId>();
+    const blockedModules = new Set<SectorModuleId>();
+
+    for (const rule of rules) {
+      if (!isReferenceSelected(current, rule.source)) continue;
+      if (rule.target.kind === "multiplier") {
+        blockedMultipliers.add(rule.target.id as MultiplierId);
+      } else if (rule.target.kind === "sectorModule") {
+        blockedModules.add(rule.target.id as SectorModuleId);
+      }
     }
+
+    const nextMultipliers = multipliers.filter((id) => !blockedMultipliers.has(id));
+    const nextModules = modules.filter((id) => !blockedModules.has(id));
+    const stable =
+      nextMultipliers.length === multipliers.length &&
+      nextModules.length === modules.length;
+    multipliers = nextMultipliers;
+    modules = nextModules;
+    if (stable) break;
   }
 
   return {
     ...selection,
-    selectedMultipliers: ADDITIVE_IDS.filter(
-      (id) => selection.selectedMultipliers.includes(id) && !blockedMultipliers.has(id)
-    ),
-    selectedSectorModules: SECTOR_MODULE_ORDER.filter(
-      (id) => selection.selectedSectorModules.includes(id) && !blockedModules.has(id)
-    ),
+    selectedMultipliers: multipliers,
+    selectedSectorModules: modules,
   } as T;
 }
 

@@ -119,11 +119,17 @@ export const MAINTENANCE_TIERS: Record<MaintenanceTierId, MaintenanceTier> = {
   ABN04: { id: "ABN04", price: { min: 750, max: 2_000 } }, // Entreprise
 };
 
-// Mapping scénario → forfait maintenance
-export const SCENARIO_MAINTENANCE: Record<string, MaintenanceTierId> = {
-  eco: "ABN01",     // Essentiel
-  rec: "ABN02",     // Standard
-  premium: "ABN03", // Premium
+// Mapping type de site → forfait maintenance.
+// Le forfait suit l'ampleur du projet; le scénario ne choisit que le percentile
+// à l'intérieur du forfait, comme pour tous les autres postes.
+// ABN04 (entreprise) reste hors périmètre de l'estimateur.
+export const SITE_TYPE_MAINTENANCE: Record<SiteTypeId, MaintenanceTierId> = {
+  S06: "ABN00", // Landing page → Micro
+  S01: "ABN01", // Vitrine 1-5 pages → Essentiel
+  S02: "ABN02", // Vitrine 6-15 pages → Standard
+  S03: "ABN02", // E-commerce base → Standard
+  S04: "ABN03", // E-commerce avancé → Premium
+  S05: "ABN03", // Plateforme sur mesure → Premium
 };
 
 // ══════════════════════════════════════════════════════════════════

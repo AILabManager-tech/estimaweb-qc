@@ -62,7 +62,7 @@ describe("executable option compatibility registry", () => {
   it("defines every required relation class", () => {
     expect(MUTUALLY_EXCLUSIVE_GROUPS).toHaveLength(3);
     expect(REPLACEMENT_RULES).toHaveLength(7);
-    expect(INCLUSION_RULES).toHaveLength(7);
+    expect(INCLUSION_RULES).toHaveLength(8);
     expect(EXPLICIT_ALLOWED_CUMULATIONS).toHaveLength(17);
     expect(BUSINESS_CONFLICT_RULES).toHaveLength(2);
   });
@@ -140,6 +140,42 @@ describe("executable option compatibility registry", () => {
     });
     expect(normalized.selectedMultipliers).toEqual(["M03", "M05", "M12"]);
     expect(normalized.selectedSectorModules).toEqual(["PME02", "PME03", "PME07"]);
+  });
+
+  // Note d'honnêteté : le registre actuel ne contient aucune cascade réelle —
+  // toute cible d'une règle chaînée est aussi bloquée directement par la source
+  // amont. Ces tests verrouillent donc le résultat et l'idempotence, pas le
+  // nombre de passes. Le point fixe dans `normalizeCompatibleSelection` est une
+  // garantie structurelle pour les règles à venir, non un comportement observable
+  // aujourd'hui : une implémentation à passe unique les ferait encore passer.
+  it("normalizes commerce, ordering and payment down to a single charged option", () => {
+    const chained = normalizeCompatibleSelection({
+      sector: "PME",
+      siteType: "S03",
+      selectedMultipliers: ["M11"],
+      selectedSectorModules: ["PME01", "PME05"],
+    });
+    expect(chained.selectedMultipliers).toEqual([]);
+    expect(chained.selectedSectorModules).toEqual([]);
+
+    const orderingOnly = normalizeCompatibleSelection({
+      sector: "PME",
+      siteType: "S01",
+      selectedMultipliers: ["M11"],
+      selectedSectorModules: ["PME01", "PME05"],
+    });
+    expect(orderingOnly.selectedMultipliers).toEqual([]);
+    expect(orderingOnly.selectedSectorModules).toEqual(["PME05"]);
+  });
+
+  it("is idempotent: normalizing an already normalized selection changes nothing", () => {
+    const once = normalizeCompatibleSelection({
+      sector: "MED",
+      siteType: "S05",
+      selectedMultipliers: ["M03", "M04", "M08", "M12"],
+      selectedSectorModules: ["MED01", "MED02", "MED03"],
+    });
+    expect(normalizeCompatibleSelection(once)).toEqual(once);
   });
 
   it("removes an old redundant commerce payment without changing the commerce base", () => {

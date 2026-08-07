@@ -139,6 +139,40 @@ test("specialized medical options replace generic features and the language mode
   await expect(page.getByText("Multilingue, trois langues ou plus")).toBeVisible();
 });
 
+test("an option masked by the commerce site type comes back when the user leaves it", async ({ page }) => {
+  await page.goto("/fr");
+  await page.getByRole("button", { name: "Démarrer l'estimation" }).click();
+  const next = page.getByRole("button", { name: "Suivant" });
+  const prev = page.getByRole("button", { name: "Précédent" });
+
+  await page.getByRole("radio", { name: /PME générale/ }).click();
+  await next.click();
+  await page.getByRole("radio", { name: /Site vitrine \(1-5 pages\)/ }).click();
+  await next.click();
+
+  const payment = page.getByRole("checkbox", { name: /Paiement en ligne/ });
+  await payment.click();
+  await expect(payment).toHaveAttribute("aria-checked", "true");
+
+  // Le commerce comprend déjà le paiement : l'option se désactive.
+  await prev.click();
+  await page.getByRole("radio", { name: /E-commerce basique/ }).click();
+  await next.click();
+  await expect(payment).toHaveAttribute("aria-disabled", "true");
+  await expect(payment).toHaveAttribute("aria-checked", "false");
+
+  // De retour sur une vitrine, le choix initial de l'utilisateur est restitué.
+  await prev.click();
+  await page.getByRole("radio", { name: /Site vitrine \(1-5 pages\)/ }).click();
+  await next.click();
+  await expect(payment).toHaveAttribute("aria-checked", "true");
+  await expect(payment).not.toHaveAttribute("aria-disabled", "true");
+
+  await next.click();
+  await page.getByRole("button", { name: "Voir mon estimation" }).click();
+  await expect(page.getByText("Paiement en ligne")).toBeVisible();
+});
+
 for (const viewport of [
   { name: "mobile", width: 375, height: 812 },
   { name: "tablet", width: 768, height: 1024 },

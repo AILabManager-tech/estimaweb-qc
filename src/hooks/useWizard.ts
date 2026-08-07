@@ -10,7 +10,10 @@ import type {
   LanguageMode,
 } from "@/lib/engine/types";
 import { calculateEstimation } from "@/lib/engine/calculator";
-import { normalizeCompatibleSelection } from "@/lib/engine/compatibility";
+import {
+  isSiteTypeAllowed,
+  normalizeCompatibleSelection,
+} from "@/lib/engine/compatibility";
 
 // ── Actions ─────────────────────────────────────────────────────
 export type WizardAction =
@@ -38,8 +41,21 @@ export const initialState: WizardState = {
   result: null,
 };
 
-function normalizeStateSelection(state: WizardState): WizardState {
-  if (!state.sector || !state.siteType) return state;
+/**
+ * Sélection réellement facturée : l'état conserve l'intention de l'utilisateur,
+ * la normalisation n'est appliquée qu'à la projection. Une option masquée par un
+ * choix ultérieur redevient donc active si ce choix est annulé.
+ */
+export function getEffectiveSelection(state: WizardState): {
+  selectedMultipliers: MultiplierId[];
+  selectedSectorModules: SectorModuleId[];
+} {
+  if (!state.sector || !state.siteType) {
+    return {
+      selectedMultipliers: state.selectedMultipliers,
+      selectedSectorModules: state.selectedSectorModules,
+    };
+  }
   const normalized = normalizeCompatibleSelection({
     sector: state.sector,
     siteType: state.siteType,
@@ -47,7 +63,6 @@ function normalizeStateSelection(state: WizardState): WizardState {
     selectedSectorModules: state.selectedSectorModules,
   });
   return {
-    ...state,
     selectedMultipliers: normalized.selectedMultipliers,
     selectedSectorModules: normalized.selectedSectorModules,
   };
@@ -71,26 +86,30 @@ export function wizardReducer(
       };
 
     case "SET_SITE_TYPE":
-      return normalizeStateSelection({ ...state, siteType: action.siteType });
+      // Un type de site hors du catalogue du secteur ne peut pas entrer dans l'état.
+      if (!state.sector || !isSiteTypeAllowed(state.sector, action.siteType)) {
+        return state;
+      }
+      return { ...state, siteType: action.siteType };
 
     case "TOGGLE_MULTIPLIER": {
       const has = state.selectedMultipliers.includes(action.id);
-      return normalizeStateSelection({
+      return {
         ...state,
         selectedMultipliers: has
           ? state.selectedMultipliers.filter((m) => m !== action.id)
           : [...state.selectedMultipliers, action.id],
-      });
+      };
     }
 
     case "TOGGLE_SECTOR_MODULE": {
       const has = state.selectedSectorModules.includes(action.id);
-      return normalizeStateSelection({
+      return {
         ...state,
         selectedSectorModules: has
           ? state.selectedSectorModules.filter((m) => m !== action.id)
           : [...state.selectedSectorModules, action.id],
-      });
+      };
     }
 
     case "SET_LANGUAGE_MODE":
@@ -101,20 +120,17 @@ export function wizardReducer(
 
     case "COMPUTE_RESULT": {
       if (!state.sector || !state.siteType) return state;
+      const effective = getEffectiveSelection(state);
       const result = calculateEstimation({
         sector: state.sector,
         siteType: state.siteType,
-        selectedMultipliers: state.selectedMultipliers,
-        selectedSectorModules: state.selectedSectorModules,
+        selectedMultipliers: effective.selectedMultipliers,
+        selectedSectorModules: effective.selectedSectorModules,
         languageMode: state.languageMode,
         isUrgent: state.isUrgent,
       });
-      return {
-        ...state,
-        selectedMultipliers: result.inputs.multipliers,
-        selectedSectorModules: result.inputs.sectorModules,
-        result,
-      };
+      // L'intention reste dans l'état; seul le résultat porte la sélection normalisée.
+      return { ...state, result };
     }
 
     case "EDIT_ANSWERS":
@@ -131,6 +147,8 @@ export function wizardReducer(
 // ── Hook public ─────────────────────────────────────────────────
 export function useWizard() {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
+
+  const effectiveSelection = useMemo(() => getEffectiveSelection(state), [state]);
 
   const canProceed = useMemo((): boolean => {
     switch (state.currentStep) {
@@ -176,6 +194,7 @@ export function useWizard() {
 
   return {
     state,
+    effectiveSelection,
     dispatch,
     canProceed,
     goNext,

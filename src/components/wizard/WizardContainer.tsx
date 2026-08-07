@@ -16,9 +16,9 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function WizardContainer() {
-  const { state, dispatch, canProceed, goNext, goPrev, reset, editAnswers, totalSteps, isFirstStep, isLastStep } =
+  const { state, effectiveSelection, dispatch, canProceed, goNext, goPrev, reset, editAnswers, totalSteps, isFirstStep, isLastStep } =
     useWizard();
-  const { downloadPdf, isGenerating: isPdfGenerating } = usePdfDownload();
+  const { downloadPdf, isGenerating: isPdfGenerating, hasFailed: pdfFailed } = usePdfDownload();
   const locale = useLocale() as "fr" | "en";
   const t = useTranslations("common");
   const tWizard = useTranslations("wizard");
@@ -70,8 +70,8 @@ export function WizardContainer() {
           <FeaturesStep
             sector={state.sector}
             siteType={state.siteType!}
-            selectedMultipliers={state.selectedMultipliers}
-            selectedSectorModules={state.selectedSectorModules}
+            selectedMultipliers={effectiveSelection.selectedMultipliers}
+            selectedSectorModules={effectiveSelection.selectedSectorModules}
             onToggleMultiplier={(id) =>
               dispatch({ type: "TOGGLE_MULTIPLIER", id })
             }
@@ -99,6 +99,7 @@ export function WizardContainer() {
             onEdit={editAnswers}
             onDownloadPdf={handleDownloadPdf}
             isPdfGenerating={isPdfGenerating}
+            pdfFailed={pdfFailed}
           />
         ) : null;
       default:

@@ -1,6 +1,6 @@
 # Matrice de compatibilité des options
 
-Date de décision : 3 août 2026
+Date de décision : 3 août 2026 — révisée le 7 août 2026
 
 Source exécutable : `src/lib/engine/compatibility.ts`
 
@@ -14,7 +14,9 @@ Portée : toutes les options sélectionnables et tous les éléments tarifaires 
 - **CUMUL AUTORISÉ** : les travaux, systèmes ou obligations sont distincts et restent facturables ensemble.
 - **CONFLIT MÉTIER** : l’entrée est rejetée par le calculateur.
 
-La normalisation est déterministe. Elle s’exécute dans le reducer du wizard et de nouveau dans le schéma Zod à l’entrée du calculateur. Le résultat et le PDF reçoivent uniquement les identifiants normalisés. Aucun montant unitaire ni aucune formule générale n’a été modifié.
+La normalisation est déterministe et idempotente. Elle s’applique en point fixe : une option retirée ne peut plus en bloquer une autre, et une règle en cascade s’applique jusqu’à stabilisation.
+
+Depuis le 7 août 2026, l’état du wizard conserve l’**intention** de l’utilisateur : la normalisation n’est plus destructive. Une option masquée par un choix ultérieur — le paiement en ligne quand on bascule vers une boutique — est restituée si ce choix est abandonné. L’interface affiche et compte la sélection normalisée, le schéma Zod la renormalise à l’entrée du calculateur, et le résultat comme le PDF ne reçoivent que les identifiants normalisés. Aucun montant unitaire ni aucune formule générale n’a été modifié.
 
 ## Groupes de choix uniques
 
@@ -71,11 +73,11 @@ La normalisation est déterministe. Elle s’exécute dans le reducer du wizard 
 | PRO03 | Intégration logiciel métier | Business software integration | Module sectoriel | PRO | Connecter ERP/comptabilité/système métier non CRM | M05, M10 | CUMUL AUTORISÉ | Sélection libre; description exclut le CRM | Additionné | Systèmes et travaux différents |
 | PRO04 | Portail documents clients | Client document portal | Module sectoriel | PRO | Échange documentaire sécurisé | M04 | REMPLACEMENT | Sa sélection retire puis désactive M04 | M04 normalisé hors entrée | Même portail appliqué aux documents professionnels |
 | PRO05 | Système de soumission en ligne | Online quote system | Module sectoriel | PRO | Parcours complet de soumission | M09 | REMPLACEMENT | Sa sélection retire puis désactive M09 | M09 normalisé hors entrée | Le système comprend déjà son formulaire conditionnel |
-| PME01 | Catalogue produits/services | Product/service catalog | Module sectoriel | PME | Catalogue autonome hors boutique | S03, S04 | INCLUSION | Désactivé pour S03/S04 | Retiré pour S03/S04 | La boutique comprend déjà son catalogue |
+| PME01 | Catalogue produits/services | Product/service catalog | Module sectoriel | PME | Catalogue autonome hors boutique | S03, S04, PME05 | INCLUSION | Désactivé pour S03/S04 et pour PME05 | Retiré pour S03/S04 et pour PME05 | La boutique comme le module de commande structurent déjà leur catalogue |
 | PME02 | Formulaire de soumission | Quote request form | Module sectoriel | PME | Demande conditionnelle de soumission | M09 | REMPLACEMENT | Sa sélection retire puis désactive M09 | M09 normalisé hors entrée | Le module comprend son workflow de formulaire |
 | PME03 | Google Business / Maps / avis | Google Business / Maps / reviews | Module sectoriel | PME | Présence locale Google | Aucun | CUMUL AUTORISÉ | Sélection libre | Additionné | Capacité indépendante |
 | PME04 | Section carrières | Careers section | Module sectoriel | PME | Postes et candidatures | M09 | CUMUL AUTORISÉ | Sélection libre | Additionné | La section peut être informative; un autre formulaire complexe peut exister |
-| PME05 | Menu en ligne / commande | Online menu / ordering | Module sectoriel | PME | Menu, commande et checkout | S03, S04, M11 | INCLUSION dans S03/S04 et inclut M11 | Désactivé pour S03/S04; sa sélection désactive M11 | Retiré pour S03/S04; retire M11 ailleurs | Un seul parcours de commande et de paiement est facturé |
+| PME05 | Menu en ligne / commande | Online menu / ordering | Module sectoriel | PME | Menu, commande et checkout | S03, S04, M11, PME01 | INCLUSION dans S03/S04; inclut M11 et PME01 | Désactivé pour S03/S04; sa sélection désactive M11 et PME01 | Retiré pour S03/S04; retire M11 et PME01 ailleurs | Un seul parcours de commande, de catalogue et de paiement est facturé |
 | PME06 | Galerie portfolio | Portfolio gallery | Module sectoriel | PME | Présenter les réalisations | Aucun | CUMUL AUTORISÉ | Sélection libre | Additionné | Capacité indépendante |
 | PME07 | Intégration réseaux sociaux | Social media integration | Module sectoriel | PME | Connecter les réseaux sociaux | REC02 inactif | CUMUL AUTORISÉ | Sélection libre | Additionné | Intégration initiale et gestion mensuelle sont distinctes |
 
@@ -131,4 +133,5 @@ Ces éléments restent dans la matrice sans nouveau contrôle et sans nouveau co
 | M09 + PME02/PRO05 | Formulaire générique et soumission spécialisée | Module spécialisé seulement |
 | S03/S04 + PME01/M11/PME05 | Socle commerce et capacités de commerce refacturées | Socle commerce seulement pour ces capacités |
 | PME05 + M11 | Commande et checkout séparés pour le même parcours | PME05 seulement |
+| PME05 + PME01 | Catalogue facturé deux fois pour le même parcours de commande | PME05 seulement |
 | CRM + Clio/DME/logiciel métier | Ambiguïté non expliquée | Cumul conservé avec périmètres explicitement distincts |

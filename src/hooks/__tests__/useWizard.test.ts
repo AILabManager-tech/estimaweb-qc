@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { initialState, wizardReducer } from "../useWizard";
+import { getEffectiveSelection, initialState, wizardReducer } from "../useWizard";
 
 describe("wizard reducer", () => {
   it("resets dependent answers when the sector changes", () => {
@@ -56,8 +56,9 @@ describe("wizard reducer", () => {
     state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S01" });
     state = wizardReducer(state, { type: "TOGGLE_MULTIPLIER", id: "M03" });
     state = wizardReducer(state, { type: "TOGGLE_SECTOR_MODULE", id: "MED01" });
-    expect(state.selectedMultipliers).not.toContain("M03");
-    expect(state.selectedSectorModules).toContain("MED01");
+    const effective = getEffectiveSelection(state);
+    expect(effective.selectedMultipliers).not.toContain("M03");
+    expect(effective.selectedSectorModules).toContain("MED01");
   });
 
   it("removes included commerce features when the site type changes", () => {
@@ -66,7 +67,35 @@ describe("wizard reducer", () => {
     state = wizardReducer(state, { type: "TOGGLE_MULTIPLIER", id: "M11" });
     state = wizardReducer(state, { type: "TOGGLE_SECTOR_MODULE", id: "PME01" });
     state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S03" });
-    expect(state.selectedMultipliers).not.toContain("M11");
-    expect(state.selectedSectorModules).not.toContain("PME01");
+    const effective = getEffectiveSelection(state);
+    expect(effective.selectedMultipliers).not.toContain("M11");
+    expect(effective.selectedSectorModules).not.toContain("PME01");
+  });
+
+  it("restores an option masked by a site type once that site type is abandoned", () => {
+    let state = wizardReducer(initialState, { type: "SET_SECTOR", sector: "PME" });
+    state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S01" });
+    state = wizardReducer(state, { type: "TOGGLE_MULTIPLIER", id: "M11" });
+    state = wizardReducer(state, { type: "TOGGLE_MULTIPLIER", id: "M06" });
+
+    // Le commerce comprend le paiement : M11 disparaît de la sélection facturée…
+    state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S03" });
+    expect(getEffectiveSelection(state).selectedMultipliers).not.toContain("M11");
+    expect(state.selectedMultipliers).toContain("M11"); // …mais l'intention est conservée
+
+    // …et revient si l'utilisateur repart sur une vitrine.
+    state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S01" });
+    expect(getEffectiveSelection(state).selectedMultipliers).toEqual(["M06", "M11"]);
+
+    state = wizardReducer(state, { type: "COMPUTE_RESULT" });
+    expect(state.result?.inputs.multipliers).toEqual(["M06", "M11"]);
+    expect(state.result?.rec.initialTotal).toBe(13225);
+  });
+
+  it("refuses a site type that the sector does not offer", () => {
+    let state = wizardReducer(initialState, { type: "SET_SECTOR", sector: "JUR" });
+    state = wizardReducer(state, { type: "SET_SITE_TYPE", siteType: "S03" });
+    expect(state.siteType).toBeNull();
+    expect(() => wizardReducer(state, { type: "COMPUTE_RESULT" })).not.toThrow();
   });
 });

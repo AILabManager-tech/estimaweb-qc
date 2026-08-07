@@ -1,8 +1,8 @@
 # Rapport consolidé de préparation publique — EstimaWeb QC
 
-Date : 3 août 2026  
+Date : 3 août 2026, révisé le 7 août 2026  
 Branche : `audit/estimaweb-public-readiness`  
-Statut final : **PRÊT POUR LIVRAISON PUBLIQUE**
+Statut final : **PRÊT POUR LIVRAISON PUBLIQUE**, après correction des défauts relevés le 7 août 2026 (voir § 12).
 
 ## 1. Fonctionnement réel
 
@@ -48,7 +48,7 @@ Formulation FR appliquée à l’interface, au PDF et à la documentation :
 
 ## 3. Inventaire des chevauchements et décisions
 
-Le registre `src/lib/engine/compatibility.ts` contient 3 groupes mutuellement exclusifs, 7 remplacements, 7 inclusions, 17 cumuls explicitement autorisés et 2 conflits métier.
+Le registre `src/lib/engine/compatibility.ts` contient 3 groupes mutuellement exclusifs, 7 remplacements, 8 inclusions, 17 cumuls explicitement autorisés et 2 conflits métier.
 
 ### Remplacements
 
@@ -194,8 +194,8 @@ Trois rapports ont été générés après les changements :
 | `npm ci` | Réussi, 580 paquets installés, 0 vulnérabilité |
 | `npm run lint` | Réussi, 0 avertissement |
 | `npm run typecheck` | Réussi |
-| `npm test` | 97 tests réussis, 7 fichiers |
-| `npm run test:e2e` | 7 parcours réussis |
+| `npm test` | 108 tests réussis, 8 fichiers |
+| `npm run test:e2e` | 8 parcours réussis |
 | `npm run build` | Réussi, 8 pages/ressources statiques |
 | `npm audit` | 0 vulnérabilité |
 | PDF réels | 3/3 générés et inspectés |
@@ -207,6 +207,32 @@ Aucune ambiguïté bloquante ne demeure dans les options actuellement sélection
 
 La grille est une décision interne Auxo Systems. Le produit ne prétend plus représenter le marché québécois. Toute activation future d’une option inactive doit ajouter sa règle au registre avant exposition.
 
+## 12. Audit de fiabilité du 7 août 2026
+
+Un audit indépendant a réexaminé la chaîne complète, sans faire confiance au présent rapport. Méthode : reconstruction d'un **oracle en arithmétique exacte** écrit depuis la spécification et non depuis le code, confronté au moteur sur **31 332 combinaisons** (18 paires secteur × type, 3 modes linguistiques, urgence, tous les singletons, toutes les paires d'options, sous-ensembles aléatoires), puis test de mutation par suppression réelle de chaque règle.
+
+### Ce que l'audit a confirmé
+
+Aucun écart entre le moteur et l'oracle, aucune divergence de normalisation, aucune violation de l'invariant d'affichage. Chaque règle de compatibilité supprimée fait échouer la suite. Les affirmations de confidentialité sont exactes : aucun appel réseau, aucune télémétrie, aucun stockage, CSP `connect-src 'self'`. Le PDF consomme le même objet `EstimationResult` que l'écran : aucune divergence n'est structurellement possible.
+
+### Ce que l'audit a invalidé, et qui est corrigé
+
+| Défaut | Constat | Correction |
+|---|---|---|
+| Récurrents disproportionnés | Une landing page premium facturée 4 025 $ recevait 11 148 $ de récurrent annuel (ratio 2,77). Le chiffre était exact, la recommandation qu'il portait ne l'était pas. | Le forfait de maintenance suit désormais le type de site. Ratio maximal ramené à **0,76**, verrouillé par un test sur tout le catalogue. |
+| Perte silencieuse d'une option | Cocher le paiement en ligne, passer sur une boutique puis revenir à une vitrine faisait disparaître l'option sans avertissement : **1 437 $ de sous-estimation**. | L'état conserve l'intention; la normalisation devient une projection. Vérifié au niveau du reducer et dans un navigateur réel. |
+| Échec silencieux du PDF | `try/finally` sans `catch` : le bouton se réactivait sans fichier ni message. | `catch` explicite, message d'erreur affiché, chemin d'échec couvert par un test. |
+| Aucun filet d'erreur | Ni error boundary, ni garde sur le type de site : un état incohérent levait une `ZodError` non capturée. | `error.tsx` bilingue et garde dans le reducer. |
+| Catalogue facturé deux fois | `PME01` + `PME05` n'étaient classés par aucune règle alors qu'ils recouvrent le même catalogue. | Règle d'inclusion ajoutée (8 inclusions). |
+| Normalisation à passe unique | Une future règle en cascade aurait échoué silencieusement. | Normalisation en point fixe, idempotence testée. |
+| Étiquettes sur-affirmées | « Équilibre optimal qualité/prix » pour un simple milieu de grille. | Étiquettes calibrées sur ce qu'elles décrivent réellement. |
+
+### Ce qui reste non démontré
+
+La justesse de la grille tarifaire elle-même n'est ni auditée ni auditable : c'est une décision commerciale d'Auxo Systems. La marge de 15 %, le choix des trois points de la grille et la complétude du registre de compatibilité relèvent du même statut. Voir `KNOWN_LIMITATIONS.md`.
+
 ## Verdict
 
-**PRÊT.** EstimaWeb QC peut être livré publiquement comme outil gratuit Auxo Systems avec son positionnement actuel : grille tarifaire interne, montants indicatifs en dollars canadiens avant taxes, aucune soumission contractuelle. Aucun double comptage sémantique connu ne subsiste parmi les options sélectionnables.
+**PRÊT, avec un périmètre explicite.** EstimaWeb QC peut être livré publiquement comme outil gratuit Auxo Systems : grille tarifaire interne, montants indicatifs en dollars canadiens avant taxes, aucune soumission contractuelle. Aucun double comptage sémantique connu ne subsiste parmi les options sélectionnables, et les montants récurrents sont désormais proportionnés à l'ampleur du projet.
+
+L'outil est fiable comme **comparateur indicatif de scénarios sur la grille interne**. Il ne constitue pas une prévision du coût réel d'un projet : un cadrage humain reste nécessaire pour confirmer le périmètre, les taxes et le prix contractuel.
