@@ -2,12 +2,13 @@
 
 import { useRef, useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useWizard } from "@/hooks/useWizard";
+import { useWizard, NATURE_STEP, LAST_INPUT_STEP } from "@/hooks/useWizard";
 import { usePdfDownload } from "@/hooks/usePdfDownload";
 import { ProgressBar } from "./ProgressBar";
 import { StepTransition } from "./StepTransition";
 import { SectorStep } from "./steps/SectorStep";
 import { SiteTypeStep } from "./steps/SiteTypeStep";
+import { ProjectNatureStep } from "./steps/ProjectNatureStep";
 import { FeaturesStep } from "./steps/FeaturesStep";
 import { BilingualStep } from "./steps/BilingualStep";
 import { ResultsStep } from "./steps/ResultsStep";
@@ -65,7 +66,26 @@ export function WizardContainer() {
             sector={state.sector}
           />
         ) : null;
-      case 2:
+      case NATURE_STEP:
+        return (
+          <ProjectNatureStep
+            projectNature={state.projectNature}
+            codeAuthor={state.codeAuthor}
+            blocsNeufs={state.blocsNeufs}
+            blocsRhabilles={state.blocsRhabilles}
+            blocsConserves={state.blocsConserves}
+            onSetProjectNature={(projectNature) =>
+              dispatch({ type: "SET_PROJECT_NATURE", projectNature })
+            }
+            onSetCodeAuthor={(codeAuthor) =>
+              dispatch({ type: "SET_CODE_AUTHOR", codeAuthor })
+            }
+            onSetBlocCount={(kind, value) =>
+              dispatch({ type: "SET_BLOC_COUNT", kind, value })
+            }
+          />
+        );
+      case 3:
         return state.sector ? (
           <FeaturesStep
             sector={state.sector}
@@ -78,9 +98,14 @@ export function WizardContainer() {
             onToggleSectorModule={(id) =>
               dispatch({ type: "TOGGLE_SECTOR_MODULE", id })
             }
+            projectNature={state.projectNature}
+            optionStates={state.optionStates}
+            onSetOptionState={(id, optionState) =>
+              dispatch({ type: "SET_OPTION_STATE", id, state: optionState })
+            }
           />
         ) : null;
-      case 3:
+      case 4:
         return (
           <BilingualStep
             languageMode={state.languageMode}
@@ -91,7 +116,7 @@ export function WizardContainer() {
             onSetUrgent={(v) => dispatch({ type: "SET_URGENT", value: v })}
           />
         );
-      case 4:
+      case 5:
         return state.result ? (
           <ResultsStep
             result={state.result}
@@ -146,9 +171,9 @@ export function WizardContainer() {
           <Button
             onClick={handleNext}
             disabled={!canProceed}
-            aria-label={state.currentStep === 3 ? t("getQuote") : t("next")}
+            aria-label={state.currentStep === LAST_INPUT_STEP ? t("getQuote") : t("next")}
           >
-            {state.currentStep === 3 ? t("getQuote") : t("next")}
+            {state.currentStep === LAST_INPUT_STEP ? t("getQuote") : t("next")}
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

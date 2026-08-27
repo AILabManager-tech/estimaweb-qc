@@ -2,6 +2,8 @@ import type {
   ScenarioBreakdown,
   EstimationResult,
   CalculatorInput,
+  OptionState,
+  OptionStateMap,
 } from "./types";
 import {
   SOCLE_ITEMS,
@@ -11,6 +13,7 @@ import {
   THIRD_PARTY_COSTS,
   BASELINE_THIRD_PARTY,
   SITE_TYPE_MAINTENANCE,
+  REFONTE_FACTORS,
 } from "./matrix";
 import { lerp } from "../utils";
 import { CalculatorInputSchema } from "./schema";
@@ -28,6 +31,62 @@ const SCENARIO_PERCENTILES: Record<ScenarioKey, number> = {
   premium: 1,  // max
 };
 
+/**
+ * Part du prix de construction réellement due pour une option, selon son état.
+ * En construction neuve tout est `neuf`, donc le facteur vaut toujours 1 et la
+ * fonction est sans effet sur les résultats existants.
+ */
+function optionStateFactor(state: OptionState, t: number): number {
+  switch (state) {
+    case "existant":
+      // Règle d'exclusion : ce qui est conservé ne se refacture jamais.
+      return 0;
+    case "rhabille":
+      return lerp(REFONTE_FACTORS.blocRhabille.min, REFONTE_FACTORS.blocRhabille.max, t);
+    default:
+      return 1;
+  }
+}
+
+function stateOf(states: OptionStateMap | undefined, id: string): OptionState {
+  return states?.[id as keyof OptionStateMap] ?? "neuf";
+}
+
+/**
+ * Socle facturé pour le scénario.
+ *
+ * En neuf, c'est le montant du type de site. En refonte, ce montant sert de
+ * référence pour un coût par bloc, puis chaque bloc est facturé selon son état :
+ * neuf à plein tarif, rhabillé à une fraction, conservé à zéro. L'infrastructure
+ * (routing, i18n, hébergement, composants partagés) est portée par les blocs
+ * conservés et n'est donc jamais refacturée.
+ */
+function computeSocle(input: CalculatorInput, t: number): number {
+  const socle = SOCLE_ITEMS[input.siteType];
+  const fullBuild = lerp(socle.min, socle.max, t);
+  if (input.projectNature !== "refonte") return fullBuild;
+
+  const blocsNeufs = input.blocsNeufs ?? 0;
+  const blocsRhabilles = input.blocsRhabilles ?? 0;
+  const blocsConserves = input.blocsConserves ?? 0;
+  const totalBlocs = blocsNeufs + blocsRhabilles + blocsConserves;
+  // Le schéma refuse déjà une somme nulle; garde défensive contre un appel direct.
+  if (totalBlocs === 0) return 0;
+
+  const coutBloc = fullBuild / totalBlocs;
+  const rebuilt =
+    blocsNeufs * coutBloc +
+    blocsRhabilles * coutBloc * optionStateFactor("rhabille", t) +
+    blocsConserves * REFONTE_FACTORS.blocConserve;
+
+  const codeFactor =
+    input.codeAuthor === "tiers"
+      ? lerp(REFONTE_FACTORS.codeTiers.min, REFONTE_FACTORS.codeTiers.max, t)
+      : REFONTE_FACTORS.codeNous;
+
+  return rebuilt * codeFactor;
+}
+
 // ── Fonction principale ─────────────────────────────────────────
 
 /**
@@ -41,6 +100,10 @@ const SCENARIO_PERCENTILES: Record<ScenarioKey, number> = {
  * Les multiplicateurs chaînés (langue, urgence) portent sur le socle seul : ils
  * majorent le travail de base, pas les ajouts fixes ni les modules sectoriels,
  * déjà chiffrés pour le périmètre qu'ils couvrent.
+ *
+ * En refonte, seul le socle change de forme : il se décompose par bloc selon
+ * l'état de chacun (voir `computeSocle`), et chaque ajout ou module porte lui
+ * aussi un état. Le reste de la chaîne est identique au mode neuf.
  * Le forfait de maintenance dépend du type de site; le scénario ne choisit que
  * le percentile appliqué uniformément à tous les postes.
  *
@@ -64,6 +127,18 @@ export function calculateEstimation(input: CalculatorInput): EstimationResult {
       sectorModules: [...validatedInput.selectedSectorModules],
       languageMode: validatedInput.languageMode,
       isUrgent: validatedInput.isUrgent,
+      projectNature: validatedInput.projectNature,
+      ...(validatedInput.projectNature === "refonte"
+        ? {
+            refonte: {
+              codeAuthor: validatedInput.codeAuthor ?? "nous",
+              blocsNeufs: validatedInput.blocsNeufs ?? 0,
+              blocsRhabilles: validatedInput.blocsRhabilles ?? 0,
+              blocsConserves: validatedInput.blocsConserves ?? 0,
+              optionStates: { ...(validatedInput.optionStates ?? {}) },
+            },
+          }
+        : {}),
     },
   };
 }
@@ -75,9 +150,8 @@ function computeScenario(
 ): ScenarioBreakdown {
   const t = SCENARIO_PERCENTILES[scenario];
 
-  // 1. Coût de base (socle)
-  const socle = SOCLE_ITEMS[input.siteType];
-  const baseCost = lerp(socle.min, socle.max, t);
+  // 1. Coût de base (socle) — décomposé par bloc si le projet est une refonte
+  const baseCost = computeSocle(input, t);
 
   // 2. Multiplicateurs chaînés (choix linguistique × urgence)
   let chainedMultiplier = 1;
@@ -97,22 +171,24 @@ function computeScenario(
   const costAfterMultipliers = normalizeDecimal(baseCost * chainedMultiplier);
   const multipliersCost = costAfterMultipliers - baseCost;
 
-  // 3. Additifs (M03-M12) — seulement ceux sélectionnés
+  // 3. Additifs (M03-M12) — seulement ceux sélectionnés, au prorata de leur état
   let additiveCost = 0;
   for (const mId of input.selectedMultipliers) {
     const m = MULTIPLIERS[mId];
     if (m && m.type === "ajout_fixe") {
-      additiveCost += lerp(m.value.min, m.value.max, t);
+      const factor = optionStateFactor(stateOf(input.optionStates, mId), t);
+      additiveCost += lerp(m.value.min, m.value.max, t) * factor;
     }
   }
 
-  // 4. Modules sectoriels sélectionnés
+  // 4. Modules sectoriels sélectionnés, au prorata de leur état
   let sectorModulesCost = 0;
   const sectorModules = SECTOR_MODULES[input.sector] ?? [];
   for (const modId of input.selectedSectorModules) {
     const mod = sectorModules.find((m) => m.id === modId);
     if (mod) {
-      sectorModulesCost += lerp(mod.price.min, mod.price.max, t);
+      const factor = optionStateFactor(stateOf(input.optionStates, modId), t);
+      sectorModulesCost += lerp(mod.price.min, mod.price.max, t) * factor;
     }
   }
 

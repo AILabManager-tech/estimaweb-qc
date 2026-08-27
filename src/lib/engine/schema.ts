@@ -47,6 +47,18 @@ const sectorModuleSchema = z.enum([
   "PME07",
 ]);
 
+const optionStateSchema = z.enum(["neuf", "rhabille", "existant"]);
+const blocCountSchema = z.number().int().nonnegative();
+
+/** Champs exigés par le mode refonte, interdits en construction neuve. */
+const REFONTE_ONLY_FIELDS = [
+  "codeAuthor",
+  "blocsNeufs",
+  "blocsRhabilles",
+  "blocsConserves",
+  "optionStates",
+] as const;
+
 function hasDuplicates(values: readonly string[]): boolean {
   return new Set(values).size !== values.length;
 }
@@ -59,6 +71,19 @@ export const CalculatorInputSchema = z
     selectedSectorModules: z.array(sectorModuleSchema),
     languageMode: z.enum(LANGUAGE_MODES),
     isUrgent: z.boolean(),
+    // Absent équivaut à `neuf` : une entrée écrite avant le mode refonte reste
+    // valide et produit exactement le même résultat qu'auparavant.
+    projectNature: z.enum(["neuf", "refonte"]).default("neuf"),
+    codeAuthor: z.enum(["nous", "tiers"]).optional(),
+    blocsNeufs: blocCountSchema.optional(),
+    blocsRhabilles: blocCountSchema.optional(),
+    blocsConserves: blocCountSchema.optional(),
+    optionStates: z
+      .record(
+        z.union([additiveMultiplierSchema, sectorModuleSchema]),
+        optionStateSchema
+      )
+      .optional(),
   })
   .strict()
   .superRefine((input, context) => {
@@ -98,5 +123,70 @@ export const CalculatorInputSchema = z
         });
       }
     }
+
+    if (input.projectNature === "refonte") {
+      for (const field of REFONTE_ONLY_FIELDS) {
+        // `optionStates` reste facultatif : une refonte peut ne rhabiller aucune
+        // option et tout reconstruire à neuf.
+        if (field === "optionStates") continue;
+        if (input[field] === undefined) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [field],
+            message: `${field} is required when projectNature is "refonte"`,
+          });
+        }
+      }
+
+      const totalBlocs =
+        (input.blocsNeufs ?? 0) +
+        (input.blocsRhabilles ?? 0) +
+        (input.blocsConserves ?? 0);
+      if (totalBlocs === 0) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["blocsNeufs"],
+          message: "A refonte must describe at least one block",
+        });
+      }
+
+      // Un état ne peut porter que sur une option réellement sélectionnée.
+      const selected = new Set<string>([
+        ...input.selectedMultipliers,
+        ...input.selectedSectorModules,
+      ]);
+      for (const optionId of Object.keys(input.optionStates ?? {})) {
+        if (!selected.has(optionId)) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ["optionStates"],
+            message: `${optionId} carries a state but is not selected`,
+          });
+        }
+      }
+    } else {
+      for (const field of REFONTE_ONLY_FIELDS) {
+        if (input[field] !== undefined) {
+          context.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [field],
+            message: `${field} is only allowed when projectNature is "refonte"`,
+          });
+        }
+      }
+    }
   })
-  .transform((input) => normalizeCompatibleSelection(input));
+  .transform((input) => normalizeCompatibleSelection(input))
+  .transform((input) => {
+    // Une option retirée par la normalisation ne doit pas laisser d'état orphelin
+    // derrière elle : le résultat ne décrirait plus la sélection réellement facturée.
+    if (input.projectNature !== "refonte" || !input.optionStates) return input;
+    const billed = new Set<string>([
+      ...input.selectedMultipliers,
+      ...input.selectedSectorModules,
+    ]);
+    const optionStates = Object.fromEntries(
+      Object.entries(input.optionStates).filter(([id]) => billed.has(id))
+    );
+    return { ...input, optionStates };
+  });

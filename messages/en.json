@@ -51,6 +51,7 @@
     "steps": {
       "sector": "Sector",
       "siteType": "Site Type",
+      "nature": "Project Nature",
       "features": "Features",
       "extras": "Language & Extras",
       "results": "Results"
@@ -59,6 +60,7 @@
     "stepsShort": {
       "sector": "Sector",
       "siteType": "Type",
+      "nature": "Nature",
       "features": "Feat.",
       "extras": "Lang.",
       "results": "Result"
@@ -113,6 +115,49 @@
         "description": "Single page optimized for conversion"
       }
     },
+    "nature": {
+      "eyebrow": "YOUR",
+      "title": "Is your project starting from scratch?",
+      "subtitle": "An existing site is already partly paid for: we never re-bill what you keep.",
+      "nature": {
+        "neuf": {
+          "label": "New site",
+          "description": "Nothing exists yet, everything is to be built"
+        },
+        "refonte": {
+          "label": "Redesign of an existing site",
+          "description": "The site exists; some or all sections are reworked"
+        }
+      },
+      "blocs": {
+        "label": "Page sections",
+        "help": "Count your page sections: those rebuilt from scratch, those where only the look changes, and those you keep as is. A deleted section is not counted.",
+        "neufs": {
+          "label": "Rebuilt",
+          "description": "Entirely new sections"
+        },
+        "rhabilles": {
+          "label": "Restyled",
+          "description": "Content kept, look reworked"
+        },
+        "conserves": {
+          "label": "Kept as is",
+          "description": "Sections left untouched"
+        },
+        "required": "Enter at least one section to continue."
+      },
+      "codeAuthor": {
+        "label": "Who wrote the current site?",
+        "nous": {
+          "label": "We did",
+          "description": "We already know the codebase"
+        },
+        "tiers": {
+          "label": "Someone else",
+          "description": "The existing code must first be read and understood"
+        }
+      }
+    },
     "features": {
       "title": "What features do you need?",
       "subtitle": "Select all options that apply.",
@@ -140,7 +185,7 @@
       },
       "M08": {
         "label": "Law 25 Compliance",
-        "description": "Personal data protection"
+        "description": "Personal data protection — checked by default (Quebec legal obligation), uncheck for clients outside Quebec"
       },
       "M09": {
         "label": "Complex forms",
@@ -255,6 +300,22 @@
       "PME07": {
         "label": "Social media integration",
         "description": "Connections and content from social networks"
+      }
+    },
+    "optionStates": {
+      "title": "State of the selected features",
+      "subtitle": "For each feature, say whether it must be built, only restyled, or is already in place.",
+      "neuf": {
+        "label": "To build",
+        "description": "Does not exist yet"
+      },
+      "rhabille": {
+        "label": "To restyle",
+        "description": "Exists, look reworked"
+      },
+      "existant": {
+        "label": "Already in place",
+        "description": "Kept, never re-billed"
       }
     },
     "extras": {

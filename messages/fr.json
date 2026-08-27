@@ -51,6 +51,7 @@
     "steps": {
       "sector": "Secteur",
       "siteType": "Type de site",
+      "nature": "Nature du projet",
       "features": "Fonctionnalités",
       "extras": "Langue & extras",
       "results": "Résultats"
@@ -59,6 +60,7 @@
     "stepsShort": {
       "sector": "Sect.",
       "siteType": "Type",
+      "nature": "Nature",
       "features": "Fonc.",
       "extras": "Lang.",
       "results": "Rés."
@@ -113,6 +115,49 @@
         "description": "Page unique optimisée pour la conversion"
       }
     },
+    "nature": {
+      "eyebrow": "VOTRE",
+      "title": "Votre projet part-il de zéro?",
+      "subtitle": "Un site qui existe déjà est en partie payé : on ne refacture pas ce qui est conservé.",
+      "nature": {
+        "neuf": {
+          "label": "Nouveau site",
+          "description": "Rien n'existe encore, tout est à construire"
+        },
+        "refonte": {
+          "label": "Refonte d'un site existant",
+          "description": "Le site existe; on refait tout ou partie des sections"
+        }
+      },
+      "blocs": {
+        "label": "Sections de la page",
+        "help": "Comptez les sections de votre page : celles à refaire entièrement, celles dont seule l'apparence change, et celles que vous gardez telles quelles. Une section supprimée ne se compte pas.",
+        "neufs": {
+          "label": "À refaire",
+          "description": "Sections entièrement nouvelles"
+        },
+        "rhabilles": {
+          "label": "À rhabiller",
+          "description": "Contenu gardé, apparence revue"
+        },
+        "conserves": {
+          "label": "Gardées telles quelles",
+          "description": "Sections laissées intactes"
+        },
+        "required": "Indiquez au moins une section pour continuer."
+      },
+      "codeAuthor": {
+        "label": "Qui a écrit le site actuel?",
+        "nous": {
+          "label": "Nous",
+          "description": "Nous connaissons déjà le code"
+        },
+        "tiers": {
+          "label": "Quelqu'un d'autre",
+          "description": "Il faut d'abord lire et comprendre le code existant"
+        }
+      }
+    },
     "features": {
       "title": "Quelles fonctionnalités souhaitez-vous?",
       "subtitle": "Sélectionnez toutes les options qui s'appliquent.",
@@ -140,7 +185,7 @@
       },
       "M08": {
         "label": "Conformité Loi 25",
-        "description": "Protection des données personnelles"
+        "description": "Protection des données personnelles — cochée par défaut (obligation québécoise), décochez pour un client hors Québec"
       },
       "M09": {
         "label": "Formulaires complexes",
@@ -255,6 +300,22 @@
       "PME07": {
         "label": "Intégration réseaux sociaux",
         "description": "Connexions et contenus issus des réseaux sociaux"
+      }
+    },
+    "optionStates": {
+      "title": "État des fonctionnalités retenues",
+      "subtitle": "Pour chaque fonctionnalité, précisez si elle est à construire, seulement à rhabiller, ou déjà en place.",
+      "neuf": {
+        "label": "À construire",
+        "description": "N'existe pas encore"
+      },
+      "rhabille": {
+        "label": "À rhabiller",
+        "description": "Existe, apparence revue"
+      },
+      "existant": {
+        "label": "Déjà en place",
+        "description": "Conservée, non refacturée"
       }
     },
     "extras": {

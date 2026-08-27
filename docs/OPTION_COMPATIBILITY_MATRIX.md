@@ -135,3 +135,29 @@ Ces éléments restent dans la matrice sans nouveau contrôle et sans nouveau co
 | PME05 + M11 | Commande et checkout séparés pour le même parcours | PME05 seulement |
 | PME05 + PME01 | Catalogue facturé deux fois pour le même parcours de commande | PME05 seulement |
 | CRM + Clio/DME/logiciel métier | Ambiguïté non expliquée | Cumul conservé avec périmètres explicitement distincts |
+
+## Mode refonte (ajouté le 27 août 2026)
+
+Source exécutable : `REFONTE_DECISIONS` dans `src/lib/engine/compatibility.ts`.
+
+La nature du projet (`neuf` / `refonte`), l’auteur du code, les comptes de blocs et les états d’option ne sont **pas des options sélectionnables** : ils ne figurent dans aucun groupe d’exclusion et ne peuvent entrer en conflit avec une option. Ils modulent le coût, ils ne l’ajoutent ni ne le retirent. Ce qu’il faut déclarer, ce sont les recoupements que la refonte rend ambigus.
+
+| Règle | Relation | Décision |
+|---|---|---|
+| `migration-vs-refonte` | CUMUL AUTORISÉ | M10 déplace un contenu existant vers une nouvelle structure; la refonte décrit l’état des sections refaites. Distincts, cumulables sur un même mandat. |
+| `refonte-infrastructure-jamais-refacturee` | EXCLUSION | Routing, i18n, hébergement et composants partagés sont portés par les blocs conservés, facturés à zéro. Aucun ne peut réapparaître dans le socle d’une refonte. |
+| `refonte-option-existante` | EXCLUSION | Une option à l’état « existant » vaut zéro : une fonctionnalité déjà en place n’est jamais refacturée à son prix de construction. |
+
+### États d’option
+
+| État | Facteur appliqué au prix de construction |
+|---|---|
+| `neuf` | 1 — plein tarif |
+| `rhabille` | `REFONTE_FACTORS.blocRhabille`, soit 0,25 à 0,40 selon le scénario |
+| `existant` | 0 |
+
+Une option absente de la table d’états est traitée comme `neuf`. En construction neuve, le facteur vaut toujours 1 : le mode refonte est sans effet sur les résultats existants.
+
+### Portée du mode neuf
+
+`projectNature` est facultatif à l’entrée et vaut `neuf` par défaut. Une entrée écrite avant l’ajout du mode refonte reste donc valide et produit un résultat strictement identique. Le schéma refuse tout champ de refonte fourni en construction neuve, et exige l’ensemble de ces champs — ainsi qu’au moins un bloc — dès que la nature est `refonte`.

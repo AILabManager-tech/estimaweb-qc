@@ -214,6 +214,35 @@ export const EXPLICIT_ALLOWED_CUMULATIONS = [
   { id: "medical-booking-multi-practitioner", relation: "CUMUL AUTORISÉ", options: ["MED01", "MED06"], justification: "Booking and multi-practitioner information architecture are distinct." },
 ] as const;
 
+/**
+ * Décisions propres au mode refonte.
+ *
+ * La nature du projet et les états de blocs ne sont pas des options
+ * sélectionnables : ils ne peuvent pas entrer en conflit avec une option et ne
+ * relèvent donc pas des règles par paire ci-dessus. Ce qu'il faut déclarer, ce
+ * sont les recoupements que la refonte rend ambigus.
+ */
+export const REFONTE_DECISIONS = [
+  {
+    id: "migration-vs-refonte",
+    relation: "CUMUL AUTORISÉ",
+    justification:
+      "M10 Migration de données déplace un contenu existant vers une nouvelle structure; la refonte décrit l'état des sections refaites. Les deux peuvent coexister sur un même mandat.",
+  },
+  {
+    id: "refonte-infrastructure-jamais-refacturee",
+    relation: "EXCLUSION",
+    justification:
+      "Routing, i18n, hébergement et composants partagés sont portés par les blocs conservés, facturés à zéro. Aucun de ces postes ne peut réapparaître dans le socle d'une refonte.",
+  },
+  {
+    id: "refonte-option-existante",
+    relation: "EXCLUSION",
+    justification:
+      "Une option à l'état « existant » vaut zéro : une fonctionnalité déjà en place n'est jamais refacturée à son prix de construction.",
+  },
+] as const;
+
 export const BUSINESS_CONFLICT_RULES = [
   {
     id: "sector-site-type",

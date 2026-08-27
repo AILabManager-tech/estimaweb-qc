@@ -8,7 +8,7 @@ La grille tarifaire interne a été révisée le 3 août 2026; les règles de ca
 
 ## Fonctionnement
 
-Parcours réel : secteur → type de site → fonctionnalités et modules sectoriels → mode linguistique et urgence → trois scénarios → PDF, modification ou nouvelle estimation.
+Parcours réel : secteur → type de site → nature du projet → fonctionnalités et modules sectoriels → mode linguistique et urgence → trois scénarios → PDF, modification ou nouvelle estimation.
 
 - `single` : une langue, aucun supplément linguistique;
 - `bilingual` : exactement deux langues, multiplicateur M01;
@@ -16,10 +16,26 @@ Parcours réel : secteur → type de site → fonctionnalités et modules sector
 
 Le moteur valide puis normalise chaque sélection. Les modules spécialisés remplacent leurs équivalents génériques et les capacités déjà comprises dans un type de site ne sont pas refacturées. L’assistant conserve toutefois l’intention : une option masquée par un choix ultérieur est restituée si ce choix est abandonné. L’écran de résultat et le PDF présentent uniquement la sélection normalisée. Voir [la matrice de compatibilité](docs/OPTION_COMPATIBILITY_MATRIX.md).
 
-Deux règles de calcul méritent d’être connues avant de lire un montant :
+### Neuf ou refonte
+
+L’estimateur chiffre aussi bien une construction neuve qu’une **refonte**. Une refonte n’est pas un rabais appliqué au neuf : un facteur global surfacturerait les sections conservées et sous-facturerait les sections nouvelles. Le socle se décompose donc section par section, chacune portant son état :
+
+| État | Facturation |
+|---|---|
+| Neuve | plein coût d’une section neuve |
+| Rhabillée | 25-40 % de ce coût (contenu et logique déjà payés) |
+| Conservée | zéro |
+
+Le coût d’une section neuve est le socle du type de site divisé par le nombre total de sections décrites. Chaque fonctionnalité et chaque module sectoriel porte le même état, avec les mêmes conséquences : un module déjà en place n’est jamais refacturé à son prix de construction. Un code écrit par un tiers ajoute 20-40 % au socle refait, pour le temps de lecture et de compréhension.
+
+**L’infrastructure existante — routing, i18n, hébergement, composants partagés — n’est jamais refacturée en refonte** : elle est portée par les sections conservées, dont le coût est nul.
+
+Les facteurs de rhabillage et de code tiers sont des **conventions posées, pas des mesures**, au même titre que la marge d’imprévus de 15 %. Voir [les limites connues](KNOWN_LIMITATIONS.md).
+
+### Deux règles de calcul à connaître
 
 - les suppléments de langue et d’urgence majorent le **socle** seul, pas les fonctionnalités ni les modules, déjà chiffrés pour leur propre périmètre;
-- le **forfait de maintenance suit l’ampleur du projet** (une landing page et une plateforme sur mesure ne reçoivent pas le même forfait); le scénario ne choisit que le percentile appliqué uniformément à tous les postes.
+- le **forfait de maintenance suit l’ampleur du projet** (une landing page et une plateforme sur mesure ne reçoivent pas le même forfait), et non la nature du projet : une refonte reçoit le même forfait qu’une construction neuve du même type de site.
 
 Les trois scénarios sont le bas, le milieu et le haut de la grille interne appliqués simultanément à chaque poste. Ce ne sont ni des intervalles de confiance, ni une prévision du coût réel d’un projet.
 

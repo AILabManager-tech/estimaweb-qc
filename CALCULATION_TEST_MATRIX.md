@@ -99,3 +99,41 @@ Sur les 18 combinaisons secteur × type, projet nu, le récurrent annuel reste i
 - Le récurrent annuel reste inférieur à la réalisation sur tout le catalogue.
 - La normalisation est idempotente : renormaliser une sélection déjà normalisée ne change rien.
 - Une option masquée par un choix ultérieur est restituée si ce choix est abandonné; le wizard conserve l'intention de l'utilisateur et ne normalise qu'à l'affichage et au calcul.
+
+## Cas de refonte (ajoutés le 27 août 2026)
+
+Facteurs appliqués : rhabillage d’un bloc `0,25 / 0,325 / 0,40` (éco/rec/pre), bloc conservé `0`, code écrit par nous `1,0`, code tiers `1,20 / 1,30 / 1,40`. Le socle du type de site est divisé par le nombre total de blocs décrits pour obtenir le coût d’un bloc neuf.
+
+Cas de référence — une page d’accueil comptant 4 sections entièrement nouvelles, 5 sections rhabillées et 1 section supprimée (donc non comptée), avec un module « calculateurs/simulateurs » (PRO02) déjà en place et seulement rhabillé.
+
+Entrées : `PRO, S06, refonte, code écrit par nous, 4 neufs / 5 rhabillés / 0 conservés, PRO02 à l'état rhabillé, bilingue, non urgent`.
+
+| Niveau | Attendu | Observé réalisation | Statut |
+|---|---|---|---|
+| Éco | `800 + 120 + 500 + 81 = 1 501` | `1 501` | Conforme |
+| Rec | `1 469 + 294 + 1 625 + 508 = 3 896` | `3 896` | Conforme |
+| Pre | `2 333 + 583 + 3 200 + 917 = 7 034` | `7 034` | Conforme |
+
+Points de contrôle du mandat : au-dessus de `5 000 $` la refonte ne serait pas prise en compte; en dessous de `1 500 $` le facteur de rhabillage serait trop agressif. Le scénario recommandé observé (`3 896 $`) respecte ces deux bornes, mais dépasse la fenêtre de `3 000 – 3 500 $` annoncée dans le mandat — voir § Écart ci-dessous.
+
+### Comparaison neuf / refonte, à sélection identique
+
+| Cas | Réalisation recommandée | Écart |
+|---|---|---|
+| Même page construite à neuf | `8 993` | référence |
+| Refonte du cas de référence | `3 896` | −57 % |
+
+### Invariants vérifiés
+
+| Invariant | Résultat attendu | Statut |
+|---|---|---|
+| Tout conservé (9 blocs conservés, PRO02 existant) | `0` sur socle, modules, multiplicateurs et total | Conforme |
+| Rhabillé strictement entre conservé et neuf, à bloc égal | `0 < rhabillé < neuf` | Conforme |
+| Dix blocs tous neufs | reconstruit exactement le socle du type de site | Conforme |
+| Code tiers | socle supérieur au même cas écrit par nous | Conforme |
+| Forfait de maintenance | identique au neuf, suit le type de site | Conforme |
+| `projectNature: "neuf"` explicite | strictement identique à l’absence de champ, sur les 7 cas contrôlés | Conforme |
+
+### Écart avec la fenêtre annoncée dans le mandat
+
+Le mandat attendait `3 000 – 3 500 $` au scénario recommandé; le moteur produit `3 896 $` avec les facteurs qu’il spécifie. La cause est isolée : le module PRO02 rhabillé pèse `1 625 $`, soit plus que la totalité du socle refait (`1 469 $`). Le facteur de rhabillage est partagé entre les blocs de page et les modules, alors que rhabiller un calculateur interactif et rhabiller une section de contenu ne sont pas le même travail. Pour rentrer dans la fenêtre, le facteur de rhabillage devrait descendre à `0,20 – 0,30` (recommandé `3 329 $`). Les facteurs du mandat ont été conservés tels quels : ce sont des conventions déclarées, et les ajuster pour atteindre un chiffre unique n’est pas une validation.

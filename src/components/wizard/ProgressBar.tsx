@@ -12,6 +12,7 @@ interface ProgressBarProps {
 const STEP_KEYS = [
   "sector",
   "siteType",
+  "nature",
   "features",
   "extras",
   "results",

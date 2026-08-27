@@ -18,6 +18,23 @@ export type PmeModuleId = "PME01" | "PME02" | "PME03" | "PME04" | "PME05" | "PME
 export type SectorModuleId = JurModuleId | MedModuleId | ProModuleId | PmeModuleId;
 
 // ── Abonnements ─────────────────────────────────────────────────
+// ── Nature du projet (neuf vs refonte) ──────────────────────────
+export type ProjectNature = "neuf" | "refonte";
+export type CodeAuthor = "nous" | "tiers";
+
+/**
+ * État d'un bloc, d'un ajout fixe ou d'un module dans une refonte.
+ * - `neuf`     : à construire de zéro, facturé plein tarif;
+ * - `rhabille` : existe déjà, seule l'apparence change;
+ * - `existant` : conservé tel quel, jamais refacturé.
+ */
+export type OptionState = "neuf" | "rhabille" | "existant";
+
+/** État par option; toute option absente de la table est considérée `neuf`. */
+export type OptionStateMap = Partial<
+  Record<MultiplierId | SectorModuleId, OptionState>
+>;
+
 export type MaintenanceTierId = "ABN00" | "ABN01" | "ABN02" | "ABN03" | "ABN04";
 export type RecurringServiceId = "REC01" | "REC02" | "REC03" | "REC04" | "REC05" | "REC06" | "REC07";
 export type ThirdPartyCostId = "TIR01" | "TIR02" | "TIR03" | "TIR04" | "TIR05" | "TIR06" | "TIR07" | "TIR08" | "TIR09";
@@ -59,6 +76,12 @@ export interface WizardState {
   selectedSectorModules: SectorModuleId[];
   languageMode: LanguageMode;
   isUrgent: boolean;
+  projectNature: ProjectNature;
+  codeAuthor: CodeAuthor;
+  blocsNeufs: number;
+  blocsRhabilles: number;
+  blocsConserves: number;
+  optionStates: OptionStateMap;
   result: EstimationResult | null;
 }
 
@@ -69,6 +92,14 @@ export interface CalculatorInput {
   selectedSectorModules: SectorModuleId[];
   languageMode: LanguageMode;
   isUrgent: boolean;
+  /** Absent équivaut à `neuf` : une entrée écrite avant le mode refonte reste valide. */
+  projectNature?: ProjectNature;
+  // Les champs ci-dessous sont requis si et seulement si `projectNature === "refonte"`.
+  codeAuthor?: CodeAuthor;
+  blocsNeufs?: number;
+  blocsRhabilles?: number;
+  blocsConserves?: number;
+  optionStates?: OptionStateMap;
 }
 
 // ── Résultats ───────────────────────────────────────────────────
@@ -96,5 +127,14 @@ export interface EstimationResult {
     sectorModules: SectorModuleId[];
     languageMode: LanguageMode;
     isUrgent: boolean;
+    projectNature: ProjectNature;
+    /** Renseigné uniquement en refonte. */
+    refonte?: {
+      codeAuthor: CodeAuthor;
+      blocsNeufs: number;
+      blocsRhabilles: number;
+      blocsConserves: number;
+      optionStates: OptionStateMap;
+    };
   };
 }

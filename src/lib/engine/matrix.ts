@@ -44,6 +44,29 @@ export const SOCLE_ADDONS: Record<SocleAddonId, PriceRange> = {
 };
 
 // ══════════════════════════════════════════════════════════════════
+// COUCHE 1B — FACTEURS DE REFONTE
+// ══════════════════════════════════════════════════════════════════
+
+/**
+ * Conventions posées, non mesurées — au même titre que la marge d'imprévus de
+ * 15 %. À revalider dès qu'un volume de refontes réelles permet de les comparer
+ * aux heures effectivement passées.
+ *
+ * - `blocRhabille` : part du coût d'un bloc neuf pour un bloc dont seule
+ *   l'apparence change (contenu, structure et logique déjà payés);
+ * - `blocConserve` : un bloc laissé intact ne se refacture jamais;
+ * - `codeTiers`    : surcoût de lecture et de compréhension d'un code que nous
+ *   n'avons pas écrit;
+ * - `codeNous`     : aucun surcoût sur notre propre code.
+ */
+export const REFONTE_FACTORS = {
+  blocRhabille: { min: 0.25, max: 0.4 },
+  blocConserve: 0,
+  codeTiers: { min: 1.2, max: 1.4 },
+  codeNous: 1,
+} as const;
+
+// ══════════════════════════════════════════════════════════════════
 // COUCHE 2 — MULTIPLICATEURS DE COMPLEXITÉ
 // ══════════════════════════════════════════════════════════════════
 

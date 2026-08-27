@@ -163,6 +163,171 @@ describe("controlled calculation truth table", () => {
   });
 });
 
+describe("mode refonte", () => {
+  // Cas réel de référence : une page d'accueil comptant 4 sections entièrement
+  // nouvelles, 5 sections rhabillées et 1 section supprimée (donc non comptée),
+  // avec un module « calculateurs/simulateurs » qui existe déjà et n'est que
+  // rhabillé.
+  const referenceRefonte: CalculatorInput = {
+    sector: "PRO",
+    siteType: "S06",
+    selectedMultipliers: [],
+    selectedSectorModules: ["PRO02"],
+    languageMode: "bilingual",
+    isUrgent: false,
+    projectNature: "refonte",
+    codeAuthor: "nous",
+    blocsNeufs: 4,
+    blocsRhabilles: 5,
+    blocsConserves: 0,
+    optionStates: { PRO02: "rhabille" },
+  };
+
+  it("chiffre le cas de référence dans les bornes de contrôle du mandat", () => {
+    const { rec } = calculateEstimation(referenceRefonte);
+    // Au-dessus de 5 000 $, la refonte ne serait pas prise en compte; en dessous
+    // de 1 500 $, le facteur de rhabillage serait trop agressif.
+    expect(rec.initialTotal).toBeGreaterThan(1_500);
+    expect(rec.initialTotal).toBeLessThan(5_000);
+  });
+
+  it("garde le cas de référence stable au centime près", () => {
+    const { eco, rec, premium } = calculateEstimation(referenceRefonte);
+    expect(eco.initialTotal).toBe(1_501);
+    expect(rec.initialTotal).toBe(3_896);
+    expect(premium.initialTotal).toBe(7_034);
+  });
+
+  it("facture nettement moins qu'une construction neuve équivalente", () => {
+    const neuf = calculateEstimation({
+      sector: "PRO",
+      siteType: "S06",
+      selectedMultipliers: [],
+      selectedSectorModules: ["PRO02"],
+      languageMode: "bilingual",
+      isUrgent: false,
+    });
+    const refonte = calculateEstimation(referenceRefonte);
+    expect(refonte.rec.initialTotal).toBeLessThan(neuf.rec.initialTotal);
+    expect(refonte.rec.baseCost).toBeLessThan(neuf.rec.baseCost);
+  });
+
+  it("ne refacture jamais un bloc ni une option conservés", () => {
+    const toutConserve = calculateEstimation({
+      ...referenceRefonte,
+      blocsNeufs: 0,
+      blocsRhabilles: 0,
+      blocsConserves: 9,
+      optionStates: { PRO02: "existant" },
+    });
+    // Rien n'est refait : ni socle, ni module, donc aucune marge d'imprévus.
+    expect(toutConserve.rec.baseCost).toBe(0);
+    expect(toutConserve.rec.sectorModulesCost).toBe(0);
+    expect(toutConserve.rec.multipliersCost).toBe(0);
+    expect(toutConserve.rec.initialTotal).toBe(0);
+  });
+
+  it("place le rhabillage entre le conservé et le neuf, pour un même bloc", () => {
+    const base = {
+      ...referenceRefonte,
+      selectedSectorModules: [],
+      optionStates: {},
+      blocsNeufs: 0,
+      blocsRhabilles: 0,
+      blocsConserves: 0,
+    } satisfies CalculatorInput;
+
+    const conserve = calculateEstimation({ ...base, blocsConserves: 10 });
+    const rhabille = calculateEstimation({ ...base, blocsRhabilles: 10 });
+    const neuf = calculateEstimation({ ...base, blocsNeufs: 10 });
+
+    expect(conserve.rec.baseCost).toBe(0);
+    expect(rhabille.rec.baseCost).toBeGreaterThan(conserve.rec.baseCost);
+    expect(rhabille.rec.baseCost).toBeLessThan(neuf.rec.baseCost);
+    // Dix blocs tous neufs reconstruisent exactement le socle du type de site.
+    expect(neuf.rec.baseCost).toBe(
+      calculateEstimation({ ...base, projectNature: undefined, codeAuthor: undefined, blocsNeufs: undefined, blocsRhabilles: undefined, blocsConserves: undefined, optionStates: undefined }).rec.baseCost
+    );
+  });
+
+  it("majore le travail sur un code écrit par un tiers", () => {
+    const nous = calculateEstimation(referenceRefonte);
+    const tiers = calculateEstimation({ ...referenceRefonte, codeAuthor: "tiers" });
+    expect(tiers.rec.baseCost).toBeGreaterThan(nous.rec.baseCost);
+  });
+
+  it("laisse le forfait de maintenance suivre le type de site, pas la nature", () => {
+    const neuf = calculateEstimation({
+      sector: "PRO",
+      siteType: "S06",
+      selectedMultipliers: [],
+      selectedSectorModules: [],
+      languageMode: "single",
+      isUrgent: false,
+    });
+    const refonte = calculateEstimation({
+      ...referenceRefonte,
+      selectedSectorModules: [],
+      optionStates: {},
+      languageMode: "single",
+    });
+    expect(refonte.rec.maintenanceMonthly).toBe(neuf.rec.maintenanceMonthly);
+    expect(refonte.rec.thirdPartyMonthly).toBe(neuf.rec.thirdPartyMonthly);
+  });
+});
+
+describe("non-régression du mode neuf", () => {
+  it("produit exactement le même résultat avec ou sans nature explicite", () => {
+    for (const { input } of controlledScenarios) {
+      const implicite = calculateEstimation(input);
+      const explicite = calculateEstimation({ ...input, projectNature: "neuf" });
+      expect(explicite.eco).toEqual(implicite.eco);
+      expect(explicite.rec).toEqual(implicite.rec);
+      expect(explicite.premium).toEqual(implicite.premium);
+    }
+  });
+});
+
+describe("validation des entrées de refonte", () => {
+  const refonte: CalculatorInput = {
+    sector: "PRO",
+    siteType: "S06",
+    selectedMultipliers: [],
+    selectedSectorModules: ["PRO02"],
+    languageMode: "single",
+    isUrgent: false,
+    projectNature: "refonte",
+    codeAuthor: "nous",
+    blocsNeufs: 2,
+    blocsRhabilles: 1,
+    blocsConserves: 0,
+  };
+
+  it("accepts a coherent refonte input", () => {
+    expect(() => CalculatorInputSchema.parse(refonte)).not.toThrow();
+  });
+
+  it.each([
+    // Champs de refonte manquants.
+    { ...refonte, codeAuthor: undefined },
+    { ...refonte, blocsNeufs: undefined },
+    { ...refonte, blocsRhabilles: undefined },
+    { ...refonte, blocsConserves: undefined },
+    // Une refonte sans aucun bloc ne décrit rien.
+    { ...refonte, blocsNeufs: 0, blocsRhabilles: 0, blocsConserves: 0 },
+    // Comptes de blocs incohérents.
+    { ...refonte, blocsNeufs: -1 },
+    { ...refonte, blocsRhabilles: 1.5 },
+    // Un état porté par une option non sélectionnée.
+    { ...refonte, optionStates: { PRO05: "rhabille" } },
+    // Champs de refonte fournis en construction neuve.
+    { ...refonte, projectNature: "neuf" as const, codeAuthor: "nous" as const },
+  ])("rejects incoherent refonte inputs", (input) => {
+    expect(() => CalculatorInputSchema.parse(input)).toThrow();
+    expect(() => calculateEstimation(input as CalculatorInput)).toThrow();
+  });
+});
+
 describe("plausibilité économique des récurrents", () => {
   it("le récurrent annuel reste inférieur à la réalisation, sur tout le catalogue", () => {
     const offenders: string[] = [];
@@ -264,8 +429,11 @@ describe("intégrité arithmétique de la grille", () => {
 describe("calculator input validation", () => {
   const valid: CalculatorInput = controlledScenarios[0].input;
 
-  it("accepts a valid strict input", () => {
-    expect(CalculatorInputSchema.parse(valid)).toEqual(valid);
+  it("accepts a valid strict input and defaults its nature to neuf", () => {
+    expect(CalculatorInputSchema.parse(valid)).toEqual({
+      ...valid,
+      projectNature: "neuf",
+    });
   });
 
   it.each([

@@ -42,6 +42,13 @@ test("complete French flow supports keyboard, back, editing, recalculation, PDF 
   await page.getByRole("radio", { name: /E-commerce basique/ }).click();
   await next.click();
 
+  // Étape « nature du projet » : le neuf est le défaut, rien à saisir.
+  await expect(page.getByRole("radio", { name: /Nouveau site/ })).toHaveAttribute(
+    "aria-checked",
+    "true"
+  );
+  await next.click();
+
   const booking = page.getByRole("checkbox", { name: /Réservation en ligne/ });
   await booking.click();
   await expect(booking).toHaveAttribute("aria-checked", "true");
@@ -60,7 +67,7 @@ test("complete French flow supports keyboard, back, editing, recalculation, PDF 
   await page.getByRole("radio", { name: /Bilingue.*Exactement deux langues/ }).click();
   await page.getByRole("button", { name: "Voir mon estimation" }).click();
   await expect(page.getByRole("heading", { name: "Votre estimation personnalisée" })).toBeVisible();
-  await expect(page.getByText(/15.?755/).first()).toBeVisible();
+  await expect(page.getByText(/14.?605/).first()).toBeVisible();
   await expect(page.getByText("Bilingue, exactement deux langues")).toBeVisible();
   await expect(page.getByText(/Estimations basées sur la grille tarifaire interne d’Auxo Systems/)).toBeVisible();
 
@@ -72,10 +79,11 @@ test("complete French flow supports keyboard, back, editing, recalculation, PDF 
   await expect(page.getByRole("radio", { name: /PME générale/ })).toHaveAttribute("aria-checked", "true");
   await next.click();
   await next.click();
+  await next.click();
   await page.getByRole("checkbox", { name: /Réservation en ligne/ }).click();
   await next.click();
   await page.getByRole("button", { name: "Voir mon estimation" }).click();
-  await expect(page.getByText(/13.?455/).first()).toBeVisible();
+  await expect(page.getByText(/12.?305/).first()).toBeVisible();
 
   await page.reload();
   await expect(page.getByRole("heading", { name: "Quel est votre secteur d'activité?" })).toBeVisible();
@@ -90,6 +98,7 @@ test("complete English flow produces the independent custom-app total and an Eng
   await next.click();
   await page.getByRole("radio", { name: /Custom platform/ }).click();
   await next.click();
+  await next.click();
   await page.getByRole("checkbox", { name: /Client portal/ }).click();
   await page.getByRole("checkbox", { name: /CRM integration/ }).click();
   await page.getByRole("checkbox", { name: /Business software integration/ }).click();
@@ -97,7 +106,7 @@ test("complete English flow produces the independent custom-app total and an Eng
   await page.getByRole("button", { name: "See my estimate" }).click();
 
   await expect(page.getByRole("heading", { name: "Your personalized estimate" })).toBeVisible();
-  await expect(page.getByText(/81,363/).first()).toBeVisible();
+  await expect(page.getByText(/83,663/).first()).toBeVisible();
   await expect(page.getByText("A free tool by Auxo Systems")).toBeVisible();
   await expect(page.getByText("One language", { exact: true })).toBeVisible();
   await expect(page.getByText(/Estimates based on Auxo Systems’ internal pricing grid/)).toBeVisible();
@@ -113,6 +122,7 @@ test("specialized medical options replace generic features and the language mode
   await page.getByRole("radio", { name: /Médical/ }).click();
   await next.click();
   await page.getByRole("radio", { name: /Site vitrine \(1-5 pages\)/ }).click();
+  await next.click();
   await next.click();
 
   const genericBooking = page.getByRole("checkbox", { name: /Réservation en ligne/ });
@@ -149,6 +159,7 @@ test("an option masked by the commerce site type comes back when the user leaves
   await next.click();
   await page.getByRole("radio", { name: /Site vitrine \(1-5 pages\)/ }).click();
   await next.click();
+  await next.click(); // traverse l'étape « nature du projet »
 
   const payment = page.getByRole("checkbox", { name: /Paiement en ligne/ });
   await payment.click();
@@ -156,14 +167,18 @@ test("an option masked by the commerce site type comes back when the user leaves
 
   // Le commerce comprend déjà le paiement : l'option se désactive.
   await prev.click();
+  await prev.click();
   await page.getByRole("radio", { name: /E-commerce basique/ }).click();
+  await next.click();
   await next.click();
   await expect(payment).toHaveAttribute("aria-disabled", "true");
   await expect(payment).toHaveAttribute("aria-checked", "false");
 
   // De retour sur une vitrine, le choix initial de l'utilisateur est restitué.
   await prev.click();
+  await prev.click();
   await page.getByRole("radio", { name: /Site vitrine \(1-5 pages\)/ }).click();
+  await next.click();
   await next.click();
   await expect(payment).toHaveAttribute("aria-checked", "true");
   await expect(payment).not.toHaveAttribute("aria-disabled", "true");
@@ -171,6 +186,52 @@ test("an option masked by the commerce site type comes back when the user leaves
   await next.click();
   await page.getByRole("button", { name: "Voir mon estimation" }).click();
   await expect(page.getByText("Paiement en ligne")).toBeVisible();
+});
+
+test("a refonte only bills what is rebuilt, and stays cheaper than the same build from scratch", async ({ page }) => {
+  async function totalFor(nature: "neuf" | "refonte"): Promise<number> {
+    await page.goto("/fr");
+    await page.getByRole("button", { name: "Démarrer l'estimation" }).click();
+    const next = page.getByRole("button", { name: "Suivant" });
+    await page.getByRole("radio", { name: /Professions réglementées/ }).click();
+    await next.click();
+    await page.getByRole("radio", { name: /Landing page/ }).click();
+    await next.click();
+
+    if (nature === "refonte") {
+      await page.getByRole("radio", { name: /Refonte d'un site existant/ }).click();
+      // Le bouton reste bloqué tant qu'aucune section n'est décrite.
+      await expect(next).toBeDisabled();
+      await page.getByRole("spinbutton").nth(0).fill("4");
+      await page.getByRole("spinbutton").nth(1).fill("5");
+      await expect(next).toBeEnabled();
+    }
+    await next.click();
+
+    await page.getByRole("checkbox", { name: /Calculateurs/ }).click();
+    if (nature === "refonte") {
+      await page
+        .getByRole("radio", { name: /À rhabiller.*Existe, apparence revue/ })
+        .last()
+        .click();
+    }
+    await next.click();
+    await page.getByRole("radio", { name: /Bilingue.*Exactement deux langues/ }).click();
+    await page.getByRole("button", { name: "Voir mon estimation" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Votre estimation personnalisée" })
+    ).toBeVisible();
+
+    const recommended = await page
+      .getByText(/\d[\d\s ]*\$/)
+      .first()
+      .innerText();
+    return Number(recommended.replace(/[^\d]/g, ""));
+  }
+
+  const refonte = await totalFor("refonte");
+  const neuf = await totalFor("neuf");
+  expect(refonte).toBeLessThan(neuf);
 });
 
 for (const viewport of [
@@ -188,6 +249,8 @@ for (const viewport of [
     await expectNoHorizontalOverflow(page);
     await next.click();
     await page.getByRole("radio", { name: /Site vitrine \(1-5 pages\)/ }).click();
+    await expectNoHorizontalOverflow(page);
+    await next.click();
     await expectNoHorizontalOverflow(page);
     await next.click();
     await expectNoHorizontalOverflow(page);

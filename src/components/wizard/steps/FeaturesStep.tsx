@@ -5,7 +5,16 @@ import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { MULTIPLIERS, SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
 import { getOptionAvailability } from "@/lib/engine/compatibility";
 import { formatCurrency } from "@/lib/utils";
-import type { MultiplierId, SectorModuleId, Sector, SiteTypeId } from "@/lib/engine/types";
+import { RadioGroup } from "@/components/ui/RadioGroup";
+import type {
+  MultiplierId,
+  SectorModuleId,
+  Sector,
+  SiteTypeId,
+  OptionState,
+  OptionStateMap,
+  ProjectNature,
+} from "@/lib/engine/types";
 
 interface FeaturesStepProps {
   sector: Sector;
@@ -14,7 +23,12 @@ interface FeaturesStepProps {
   selectedSectorModules: SectorModuleId[];
   onToggleMultiplier: (id: MultiplierId) => void;
   onToggleSectorModule: (id: SectorModuleId) => void;
+  projectNature: ProjectNature;
+  optionStates: OptionStateMap;
+  onSetOptionState: (id: MultiplierId | SectorModuleId, state: OptionState) => void;
 }
+
+const OPTION_STATES = ["neuf", "rhabille", "existant"] as const;
 
 export function FeaturesStep({
   sector,
@@ -23,13 +37,33 @@ export function FeaturesStep({
   selectedSectorModules,
   onToggleMultiplier,
   onToggleSectorModule,
+  projectNature,
+  optionStates,
+  onSetOptionState,
 }: FeaturesStepProps) {
   const tFeatures = useTranslations("steps.features");
   const tModules = useTranslations("steps.sectorModules");
   const tCompatibility = useTranslations("compatibility");
   const locale = useLocale() as "fr" | "en";
 
+  const tStates = useTranslations("steps.optionStates");
   const totalSelected = selectedMultipliers.length + selectedSectorModules.length;
+
+  // En refonte, chaque option retenue porte un état : une fonctionnalité qui
+  // existe déjà ne doit pas être facturée à son prix de construction.
+  const statefulOptions =
+    projectNature === "refonte"
+      ? [
+          ...selectedMultipliers.map((id) => ({
+            id: id as MultiplierId | SectorModuleId,
+            label: tFeatures(`${id}.label`),
+          })),
+          ...selectedSectorModules.map((id) => ({
+            id: id as MultiplierId | SectorModuleId,
+            label: tModules(`${id}.label`),
+          })),
+        ]
+      : [];
 
   const selection = {
     sector,
@@ -118,6 +152,42 @@ export function FeaturesStep({
             ariaLabel={tFeatures("sectorModules")}
           />
         </>
+      )}
+
+      {statefulOptions.length > 0 && (
+        <div className="space-y-4 border-t border-surface-border pt-6">
+          <div>
+            <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
+              {tStates("title")}
+            </h3>
+            <p className="mt-1 text-xs text-text-secondary">
+              {tStates("subtitle")}
+            </p>
+          </div>
+          <div className="space-y-3">
+            {statefulOptions.map((option) => (
+              <div
+                key={option.id}
+                className="rounded-sm border border-surface-border bg-surface p-4"
+              >
+                <p className="mb-3 text-sm font-medium text-text-primary">
+                  {option.label}
+                </p>
+                <RadioGroup
+                  options={OPTION_STATES.map((value) => ({
+                    value,
+                    label: tStates(`${value}.label`),
+                    description: tStates(`${value}.description`),
+                  }))}
+                  value={optionStates[option.id] ?? "neuf"}
+                  onChange={(v) => onSetOptionState(option.id, v as OptionState)}
+                  columns={3}
+                  ariaLabel={`${option.label} — ${tStates("title")}`}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
