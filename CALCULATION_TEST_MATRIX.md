@@ -134,6 +134,10 @@ Points de contrôle du mandat : au-dessus de `5 000 $` la refonte ne serait pas 
 | Forfait de maintenance | identique au neuf, suit le type de site | Conforme |
 | `projectNature: "neuf"` explicite | strictement identique à l’absence de champ, sur les 7 cas contrôlés | Conforme |
 
-### Écart avec la fenêtre annoncée dans le mandat
+### Écart avec la fenêtre annoncée dans le mandat — arbitré, ne pas rouvrir
 
-Le mandat attendait `3 000 – 3 500 $` au scénario recommandé; le moteur produit `3 896 $` avec les facteurs qu’il spécifie. La cause est isolée : le module PRO02 rhabillé pèse `1 625 $`, soit plus que la totalité du socle refait (`1 469 $`). Le facteur de rhabillage est partagé entre les blocs de page et les modules, alors que rhabiller un calculateur interactif et rhabiller une section de contenu ne sont pas le même travail. Pour rentrer dans la fenêtre, le facteur de rhabillage devrait descendre à `0,20 – 0,30` (recommandé `3 329 $`). Les facteurs du mandat ont été conservés tels quels : ce sont des conventions déclarées, et les ajuster pour atteindre un chiffre unique n’est pas une validation.
+Le mandat attendait `3 000 – 3 500 $` au scénario recommandé; le moteur produit `3 896 $` avec les facteurs qu’il spécifie. La cause est isolée : le module PRO02 rhabillé pèse `1 625 $`, soit plus que la totalité du socle refait (`1 469 $`). Le facteur de rhabillage est partagé entre les blocs de page et les modules, alors que rhabiller un calculateur interactif et rhabiller une section de contenu ne sont pas le même travail.
+
+**Décision du 27 août 2026 : la fourchette `0,25 – 0,40` est conservée telle quelle.** Descendre à `0,20 – 0,30` ferait tomber le cas de référence à `3 329 $`, dans la fenêtre — mais régler une convention pour atteindre un chiffre unique est du calage sur un seul point de mesure, pas une validation. Le cas de référence reste dans les deux bornes de contrôle du mandat (`1 500` et `5 000`), qui sont le vrai critère.
+
+Si cet écart doit un jour être repris, la piste est un facteur de rhabillage **distinct pour les modules sectoriels**, pas un resserrement global de la fourchette actuelle.
