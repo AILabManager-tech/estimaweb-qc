@@ -32,6 +32,7 @@ Date : 7 août 2026 (révision après audit de fiabilité)
 17. **Performance production non rebaselinée.** Le build et les parcours locaux sont sains; aucun déploiement n’a été effectué dans cette mission.
 18. **Accessibilité non certifiée.** Navigation clavier, rôles, focus, explications des options désactivées et responsive sont testés, sans constituer un audit WCAG formel avec technologies d’assistance réelles.
 19. **Domaine produit à confirmer.** `estimaweb-qc.vercel.app` existe; une éventuelle URL Auxo personnalisée demeure une décision de publication.
+20. **PDF dépendant du WebAssembly.** Le rapport est mis en page par `@react-pdf/renderer`, qui compile un module WebAssembly. La CSP de production l’autorise par la directive étroite `wasm-unsafe-eval`, qui ne permet pas `eval()` sur du JavaScript. Un navigateur trop ancien pour connaître cette directive continue de bloquer la génération; l’interface affiche alors son message d’échec au lieu d’un bouton silencieusement inopérant.
 
 ## Ambiguïtés restantes
 
