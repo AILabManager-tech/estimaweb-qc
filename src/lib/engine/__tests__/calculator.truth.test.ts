@@ -26,9 +26,9 @@ const controlledScenarios: Array<{
       isUrgent: false,
     },
     expected: {
-      eco: { baseCost: 2500, multipliersCost: 0, sectorModulesCost: 0, contingency: 375, initialTotal: 2875, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 3967, annualRecurring: 1092 },
-      rec: { baseCost: 4250, multipliersCost: 0, sectorModulesCost: 0, contingency: 638, initialTotal: 4888, maintenanceMonthly: 113, thirdPartyMonthly: 98, monthlyTotal: 211, year1Total: 7420, annualRecurring: 2532 },
-      premium: { baseCost: 6000, multipliersCost: 0, sectorModulesCost: 0, contingency: 900, initialTotal: 6900, maintenanceMonthly: 150, thirdPartyMonthly: 179, monthlyTotal: 329, year1Total: 10848, annualRecurring: 3948 },
+      eco: { baseCost: 1500, multipliersCost: 0, sectorModulesCost: 0, contingency: 225, initialTotal: 1725, maintenanceMonthly: 75, thirdPartyMonthly: 16, monthlyTotal: 91, year1Total: 2817, annualRecurring: 1092 },
+      rec: { baseCost: 2500, multipliersCost: 0, sectorModulesCost: 0, contingency: 375, initialTotal: 2875, maintenanceMonthly: 113, thirdPartyMonthly: 98, monthlyTotal: 211, year1Total: 5407, annualRecurring: 2532 },
+      premium: { baseCost: 3500, multipliersCost: 0, sectorModulesCost: 0, contingency: 525, initialTotal: 4025, maintenanceMonthly: 150, thirdPartyMonthly: 179, monthlyTotal: 329, year1Total: 7973, annualRecurring: 3948 },
     },
   },
   {
@@ -42,9 +42,9 @@ const controlledScenarios: Array<{
       isUrgent: false,
     },
     expected: {
-      eco: { baseCost: 5000, multipliersCost: 2000, sectorModulesCost: 0, contingency: 1050, initialTotal: 8050, maintenanceMonthly: 150, thirdPartyMonthly: 16, monthlyTotal: 166, year1Total: 10042, annualRecurring: 1992 },
-      rec: { baseCost: 10000, multipliersCost: 5000, sectorModulesCost: 0, contingency: 2250, initialTotal: 17250, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 21426, annualRecurring: 4176 },
-      premium: { baseCost: 15000, multipliersCost: 9000, sectorModulesCost: 0, contingency: 3600, initialTotal: 27600, maintenanceMonthly: 350, thirdPartyMonthly: 179, monthlyTotal: 529, year1Total: 33948, annualRecurring: 6348 },
+      eco: { baseCost: 3000, multipliersCost: 450, sectorModulesCost: 0, contingency: 518, initialTotal: 3968, maintenanceMonthly: 150, thirdPartyMonthly: 16, monthlyTotal: 166, year1Total: 5960, annualRecurring: 1992 },
+      rec: { baseCost: 5500, multipliersCost: 1100, sectorModulesCost: 0, contingency: 990, initialTotal: 7590, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 11766, annualRecurring: 4176 },
+      premium: { baseCost: 8000, multipliersCost: 2000, sectorModulesCost: 0, contingency: 1500, initialTotal: 11500, maintenanceMonthly: 350, thirdPartyMonthly: 179, monthlyTotal: 529, year1Total: 17848, annualRecurring: 6348 },
     },
   },
   {
@@ -90,9 +90,9 @@ const controlledScenarios: Array<{
       isUrgent: false,
     },
     expected: {
-      eco: { baseCost: 8000, multipliersCost: 5200, sectorModulesCost: 500, contingency: 2055, initialTotal: 15755, maintenanceMonthly: 150, thirdPartyMonthly: 16, monthlyTotal: 166, year1Total: 17747, annualRecurring: 1992 },
-      rec: { baseCost: 16500, multipliersCost: 13250, sectorModulesCost: 1000, contingency: 4613, initialTotal: 35363, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 39539, annualRecurring: 4176 },
-      premium: { baseCost: 25000, multipliersCost: 23000, sectorModulesCost: 1500, contingency: 7425, initialTotal: 56925, maintenanceMonthly: 350, thirdPartyMonthly: 179, monthlyTotal: 529, year1Total: 63273, annualRecurring: 6348 },
+      eco: { baseCost: 8000, multipliersCost: 3200, sectorModulesCost: 500, contingency: 1755, initialTotal: 13455, maintenanceMonthly: 150, thirdPartyMonthly: 16, monthlyTotal: 166, year1Total: 15447, annualRecurring: 1992 },
+      rec: { baseCost: 16500, multipliersCost: 8300, sectorModulesCost: 1000, contingency: 3870, initialTotal: 29670, maintenanceMonthly: 250, thirdPartyMonthly: 98, monthlyTotal: 348, year1Total: 33846, annualRecurring: 4176 },
+      premium: { baseCost: 25000, multipliersCost: 14250, sectorModulesCost: 1500, contingency: 6113, initialTotal: 46863, maintenanceMonthly: 350, thirdPartyMonthly: 179, monthlyTotal: 529, year1Total: 53211, annualRecurring: 6348 },
     },
   },
   {

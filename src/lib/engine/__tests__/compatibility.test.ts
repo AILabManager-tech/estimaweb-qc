@@ -188,6 +188,6 @@ describe("executable option compatibility registry", () => {
     });
     expect(result.inputs.multipliers).toEqual(["M03"]);
     expect(result.eco.baseCost).toBe(8_000);
-    expect(result.eco.initialTotal).toBe(15_755);
+    expect(result.eco.initialTotal).toBe(13_455);
   });
 });

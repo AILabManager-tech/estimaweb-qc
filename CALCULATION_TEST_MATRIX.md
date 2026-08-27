@@ -16,21 +16,21 @@ Abréviations : `Éco` économique, `Rec` recommandé, `Pre` premium.
 
 | Cas | Entrées normalisées | Niveau | Attendu | Observé réalisation / mois / année 1 | Statut |
 |---|---|---:|---|---|---|
-| Petit vitrine | PME, S01, une langue, aucune option | Éco | `2 500 + 0 + 0 + 375 = 2 875; 91; 3 967` | `2 875 / 91 / 3 967` | Conforme |
-|  |  | Rec | `4 250 + 0 + 0 + 638 = 4 888; 211; 7 420` | `4 888 / 211 / 7 420` | Conforme |
-|  |  | Pre | `6 000 + 0 + 0 + 900 = 6 900; 329; 10 848` | `6 900 / 329 / 10 848` | Conforme |
-| Site bilingue | JUR, S02, exactement deux langues | Éco | `5 000 + 2 000 + 0 + 1 050 = 8 050; 166; 10 042` | `8 050 / 166 / 10 042` | Conforme |
-|  |  | Rec | `10 000 + 5 000 + 0 + 2 250 = 17 250; 348; 21 426` | `17 250 / 348 / 21 426` | Conforme |
-|  |  | Pre | `15 000 + 9 000 + 0 + 3 600 = 27 600; 529; 33 948` | `27 600 / 529 / 33 948` | Conforme |
+| Petit vitrine | PME, S01, une langue, aucune option | Éco | `1 500 + 0 + 0 + 225 = 1 725; 91; 2 817` | `1 725 / 91 / 2 817` | Conforme |
+|  |  | Rec | `2 500 + 0 + 0 + 375 = 2 875; 211; 5 407` | `2 875 / 211 / 5 407` | Conforme |
+|  |  | Pre | `3 500 + 0 + 0 + 525 = 4 025; 329; 7 973` | `4 025 / 329 / 7 973` | Conforme |
+| Site bilingue | JUR, S02, exactement deux langues | Éco | `3 000 + 450 + 0 + 518 = 3 968; 166; 5 960` | `3 968 / 166 / 5 960` | Conforme |
+|  |  | Rec | `5 500 + 1 100 + 0 + 990 = 7 590; 348; 11 766` | `7 590 / 348 / 11 766` | Conforme |
+|  |  | Pre | `8 000 + 2 000 + 0 + 1 500 = 11 500; 529; 17 848` | `11 500 / 529 / 17 848` | Conforme |
 | Minimum | PME, S06, une langue, aucune option | Éco | `1 200 + 0 + 0 + 180 = 1 380; 66; 2 172` | `1 380 / 66 / 2 172` | Conforme |
 |  |  | Rec | `2 350 + 0 + 0 + 353 = 2 703; 161; 4 635` | `2 703 / 161 / 4 635` | Conforme |
 |  |  | Pre | `3 500 + 0 + 0 + 525 = 4 025; 254; 7 073` | `4 025 / 254 / 7 073` | Conforme |
 | Multilingue urgent | PME, S06, trois langues ou plus, urgent | Éco | `1 200 + 1 608 + 0 + 421 = 3 229; 66; 4 021` | `3 229 / 66 / 4 021` | Conforme |
 |  |  | Rec | `2 350 + 4 230 + 0 + 987 = 7 567; 161; 9 499` | `7 567 / 161 / 9 499` | Conforme |
 |  |  | Pre | `3 500 + 8 050 + 0 + 1 733 = 13 283; 254; 16 331` | `13 283 / 254 / 16 331` | Conforme |
-| Commerce contrôlé | PME, S03, M03 + PME03, bilingue; M11 fourni puis normalisé | Éco | `8 000 + 5 200 + 500 + 2 055 = 15 755; 166; 17 747` | `15 755 / 166 / 17 747` | Conforme UI/PDF |
-|  |  | Rec | `16 500 + 13 250 + 1 000 + 4 613 = 35 363; 348; 39 539` | `35 363 / 348 / 39 539` | Conforme UI/PDF |
-|  |  | Pre | `25 000 + 23 000 + 1 500 + 7 425 = 56 925; 529; 63 273` | `56 925 / 529 / 63 273` | Conforme UI/PDF |
+| Commerce contrôlé | PME, S03, M03 + PME03, bilingue; M11 fourni puis normalisé | Éco | `8 000 + 3 200 + 500 + 1 755 = 13 455; 166; 15 447` | `13 455 / 166 / 15 447` | Conforme UI/PDF |
+|  |  | Rec | `16 500 + 8 300 + 1 000 + 3 870 = 29 670; 348; 33 846` | `29 670 / 348 / 33 846` | Conforme UI/PDF |
+|  |  | Pre | `25 000 + 14 250 + 1 500 + 6 113 = 46 863; 529; 53 211` | `46 863 / 529 / 53 211` | Conforme UI/PDF |
 | Application/intégrations | PRO, S05, M04 + M05 + PRO03 | Éco | `25 000 + 4 500 + 2 000 + 4 725 = 36 225; 366; 40 617` | `36 225 / 366 / 40 617` | Conforme PDF |
 |  |  | Rec | `52 500 + 12 250 + 6 000 + 10 613 = 81 363; 648; 89 139` | `81 363 / 648 / 89 139` | Conforme UI/PDF |
 |  |  | Pre | `80 000 + 20 000 + 10 000 + 16 500 = 126 500; 929; 137 648` | `126 500 / 929 / 137 648` | Conforme PDF |

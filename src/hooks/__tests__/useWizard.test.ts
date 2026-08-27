@@ -21,7 +21,7 @@ describe("wizard reducer", () => {
     state = wizardReducer(state, { type: "TOGGLE_SECTOR_MODULE", id: "PME03" });
     state = wizardReducer(state, { type: "COMPUTE_RESULT" });
     const firstTotal = state.result?.rec.initialTotal;
-    expect(firstTotal).toBe(8338);
+    expect(firstTotal).toBe(6325);
 
     state = wizardReducer(state, { type: "EDIT_ANSWERS" });
     expect(state.currentStep).toBe(0);
@@ -30,7 +30,7 @@ describe("wizard reducer", () => {
 
     state = wizardReducer(state, { type: "TOGGLE_MULTIPLIER", id: "M08" });
     state = wizardReducer(state, { type: "COMPUTE_RESULT" });
-    expect(state.result?.rec.initialTotal).toBe(6038);
+    expect(state.result?.rec.initialTotal).toBe(4025);
     expect(state.result?.rec.initialTotal).toBeLessThan(firstTotal ?? 0);
   });
 
@@ -89,7 +89,7 @@ describe("wizard reducer", () => {
 
     state = wizardReducer(state, { type: "COMPUTE_RESULT" });
     expect(state.result?.inputs.multipliers).toEqual(["M06", "M11"]);
-    expect(state.result?.rec.initialTotal).toBe(13225);
+    expect(state.result?.rec.initialTotal).toBe(11213);
   });
 
   it("refuses a site type that the sector does not offer", () => {

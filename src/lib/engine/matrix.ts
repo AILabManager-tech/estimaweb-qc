@@ -26,8 +26,8 @@ export const MARKET_DATA_METADATA = {
 // ══════════════════════════════════════════════════════════════════
 
 export const SOCLE_ITEMS: Record<SiteTypeId, PriceRange> = {
-  S01: { min: 2_500, max: 6_000 },    // Site vitrine 1-5 pages
-  S02: { min: 5_000, max: 15_000 },   // Site vitrine 6-15 pages
+  S01: { min: 1_500, max: 3_500 },    // Site vitrine 1-5 pages (généré via NEXOS)
+  S02: { min: 3_000, max: 8_000 },    // Site vitrine 6-15 pages (généré via NEXOS)
   S03: { min: 8_000, max: 25_000 },   // E-commerce base <100 produits
   S04: { min: 20_000, max: 50_000 },  // E-commerce avancé 100+
   S05: { min: 25_000, max: 80_000 },  // Plateforme sur mesure
@@ -48,7 +48,7 @@ export const SOCLE_ADDONS: Record<SocleAddonId, PriceRange> = {
 // ══════════════════════════════════════════════════════════════════
 
 export const MULTIPLIERS: Record<string, MultiplierItem> = {
-  M01: { id: "M01", type: "multiplicateur", value: { min: 1.4, max: 1.6 } },   // Bilingue FR/EN
+  M01: { id: "M01", type: "multiplicateur", value: { min: 1.15, max: 1.25 } }, // Bilingue FR/EN (génération NEXOS, pas duplication manuelle)
   M02: { id: "M02", type: "multiplicateur", value: { min: 1.8, max: 2.2 } },   // Multilingue 3+
   M03: { id: "M03", type: "ajout_fixe", value: { min: 2_000, max: 8_000 } },   // Réservation en ligne
   M04: { id: "M04", type: "ajout_fixe", value: { min: 3_000, max: 15_000 } },  // Portail client

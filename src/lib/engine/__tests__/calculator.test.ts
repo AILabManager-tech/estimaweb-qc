@@ -50,19 +50,19 @@ describe("calculateEstimation", () => {
     }
   });
 
-  it("eco uses min values (S01: 2500$)", () => {
+  it("eco uses min values (S01: 1500$)", () => {
     const result = calculateEstimation(baseInput);
-    expect(result.eco.baseCost).toBe(2500);
+    expect(result.eco.baseCost).toBe(1500);
   });
 
-  it("premium uses max values (S01: 6000$)", () => {
+  it("premium uses max values (S01: 3500$)", () => {
     const result = calculateEstimation(baseInput);
-    expect(result.premium.baseCost).toBe(6000);
+    expect(result.premium.baseCost).toBe(3500);
   });
 
-  it("rec uses midpoint (S01: 4250$)", () => {
+  it("rec uses midpoint (S01: 2500$)", () => {
     const result = calculateEstimation(baseInput);
-    expect(result.rec.baseCost).toBe(4250);
+    expect(result.rec.baseCost).toBe(2500);
   });
 
   it("applies bilingual multiplier correctly", () => {
@@ -117,9 +117,9 @@ describe("calculateEstimation", () => {
 
   it("applies 15% contingency", () => {
     const result = calculateEstimation(baseInput);
-    // Eco: base=2500, no multipliers, no modules
-    // subtotal=2500, contingency=2500*0.15=375
-    expect(result.eco.contingency).toBe(375);
+    // Eco: base=1500, no multipliers, no modules
+    // subtotal=1500, contingency=1500*0.15=225
+    expect(result.eco.contingency).toBe(225);
   });
 
   it("year1 = initial + monthly*12", () => {
