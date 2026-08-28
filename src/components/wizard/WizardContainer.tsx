@@ -64,6 +64,11 @@ export function WizardContainer() {
             value={state.siteType}
             onChange={(s) => dispatch({ type: "SET_SITE_TYPE", siteType: s })}
             sector={state.sector}
+            projectNature={state.projectNature}
+            codeAuthor={state.codeAuthor}
+            blocsNeufs={state.blocsNeufs}
+            blocsRhabilles={state.blocsRhabilles}
+            blocsConserves={state.blocsConserves}
           />
         ) : null;
       case NATURE_STEP:

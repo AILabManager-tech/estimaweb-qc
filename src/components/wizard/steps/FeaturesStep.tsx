@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { MULTIPLIERS, SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
+import { billedOptionRange } from "@/lib/engine/calculator";
 import { getOptionAvailability } from "@/lib/engine/compatibility";
 import { formatCurrency } from "@/lib/utils";
 import { RadioGroup } from "@/components/ui/RadioGroup";
@@ -14,6 +15,7 @@ import type {
   OptionState,
   OptionStateMap,
   ProjectNature,
+  PriceRange,
 } from "@/lib/engine/types";
 
 interface FeaturesStepProps {
@@ -48,6 +50,8 @@ export function FeaturesStep({
 
   const tStates = useTranslations("steps.optionStates");
   const totalSelected = selectedMultipliers.length + selectedSectorModules.length;
+  const stateOf = (id: MultiplierId | SectorModuleId): OptionState =>
+    optionStates[id] ?? "neuf";
 
   // En refonte, chaque option retenue porte un état : une fonctionnalité qui
   // existe déjà ne doit pas être facturée à son prix de construction.
@@ -72,6 +76,18 @@ export function FeaturesStep({
     selectedSectorModules,
   };
 
+  /**
+   * Indice de prix réellement facturé. En refonte, une option déjà en place ne
+   * coûte rien et une option rhabillée ne coûte qu'une fraction : afficher son
+   * prix de construction ferait mentir l'interface sur ce que le calcul retient.
+   */
+  const priceHintFor = (id: MultiplierId | SectorModuleId, price: PriceRange) => {
+    const state = projectNature === "refonte" ? stateOf(id) : "neuf";
+    if (state === "existant") return tStates("hintExistant");
+    const billed = billedOptionRange(price, state);
+    return `+ ${formatCurrency(billed.min, locale)} – ${formatCurrency(billed.max, locale)}`;
+  };
+
   const multiplierOptions = ADDITIVE_IDS.map((id) => {
     const m = MULTIPLIERS[id];
     const availability = getOptionAvailability(selection, "multiplier", id);
@@ -79,7 +95,7 @@ export function FeaturesStep({
       value: id,
       label: tFeatures(`${id}.label`),
       description: tFeatures(`${id}.description`),
-      priceHint: `+ ${formatCurrency(m.value.min, locale)} – ${formatCurrency(m.value.max, locale)}`,
+      priceHint: priceHintFor(id, m.value),
       disabled: availability.disabled,
       disabledReason: availability.reason
         ? tCompatibility(availability.reason)
@@ -94,7 +110,7 @@ export function FeaturesStep({
       value: mod.id,
       label: tModules(`${mod.id}.label`),
       description: tModules(`${mod.id}.description`),
-      priceHint: `+ ${formatCurrency(mod.price.min, locale)} – ${formatCurrency(mod.price.max, locale)}`,
+      priceHint: priceHintFor(mod.id, mod.price),
       disabled: availability.disabled,
       disabledReason: availability.reason
         ? tCompatibility(availability.reason)

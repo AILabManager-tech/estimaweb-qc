@@ -113,7 +113,9 @@
       "S06": {
         "label": "Landing page",
         "description": "Page unique optimisée pour la conversion"
-      }
+      },
+      "priceScopeNeuf": "Fourchettes pour une construction neuve, avant options.",
+      "priceScopeRefonte": "Fourchettes ajustées à votre refonte : les sections conservées ne sont pas refacturées."
     },
     "nature": {
       "eyebrow": "VOTRE",
@@ -316,7 +318,8 @@
       "existant": {
         "label": "Déjà en place",
         "description": "Conservée, non refacturée"
-      }
+      },
+      "hintExistant": "Déjà en place — non refacturé"
     },
     "extras": {
       "title": "Langue et options supplémentaires",

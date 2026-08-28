@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { calculateEstimation } from "../calculator";
+import { billedOptionRange, billedSocleRange, calculateEstimation } from "../calculator";
 import { CalculatorInputSchema } from "../schema";
 import { ADDITIVE_IDS, MULTIPLIERS, SECTOR_MODULES, SOCLE_ITEMS } from "../matrix";
 import { SITE_TYPES_BY_SECTOR } from "../compatibility";
@@ -273,6 +273,70 @@ describe("mode refonte", () => {
     });
     expect(refonte.rec.maintenanceMonthly).toBe(neuf.rec.maintenanceMonthly);
     expect(refonte.rec.thirdPartyMonthly).toBe(neuf.rec.thirdPartyMonthly);
+  });
+});
+
+describe("l'affiché égale le facturé", () => {
+  const refonte: CalculatorInput = {
+    sector: "PRO",
+    siteType: "S02",
+    selectedMultipliers: ["M06"],
+    selectedSectorModules: ["PRO02"],
+    languageMode: "single",
+    isUrgent: false,
+    projectNature: "refonte",
+    codeAuthor: "nous",
+    blocsNeufs: 2,
+    blocsRhabilles: 4,
+    blocsConserves: 1,
+    optionStates: { M06: "existant", PRO02: "rhabille" },
+  };
+
+  it("annonce zéro pour une option déjà en place, et ne la facture pas", () => {
+    expect(billedOptionRange(MULTIPLIERS.M06.value, "existant")).toEqual({ min: 0, max: 0 });
+
+    const avec = calculateEstimation(refonte);
+    const sans = calculateEstimation({
+      ...refonte,
+      selectedMultipliers: [],
+      optionStates: { PRO02: "rhabille" },
+    });
+    // M06 est sélectionnée mais à l'état « existant » : elle ne doit rien ajouter.
+    expect(avec.rec.multipliersCost).toBe(sans.rec.multipliersCost);
+    expect(avec.rec.initialTotal).toBe(sans.rec.initialTotal);
+  });
+
+  it("annonce pour une option rhabillée exactement ce que les scénarios facturent", () => {
+    const pro02 = SECTOR_MODULES.PRO.find((m) => m.id === "PRO02")!;
+    const affiche = billedOptionRange(pro02.price, "rhabille");
+    const result = calculateEstimation({
+      ...refonte,
+      selectedMultipliers: [],
+      selectedSectorModules: ["PRO02"],
+      optionStates: { PRO02: "rhabille" },
+    });
+    expect(result.eco.sectorModulesCost).toBe(Math.round(affiche.min));
+    expect(result.premium.sectorModulesCost).toBe(Math.round(affiche.max));
+  });
+
+  it("annonce un socle de refonte égal à celui que le calcul retient", () => {
+    const affiche = billedSocleRange(refonte);
+    const result = calculateEstimation(refonte);
+    expect(result.eco.baseCost).toBe(Math.round(affiche.min));
+    expect(result.premium.baseCost).toBe(Math.round(affiche.max));
+  });
+
+  it("laisse le socle et les options intacts en construction neuve", () => {
+    const neuf: CalculatorInput = {
+      sector: "PRO",
+      siteType: "S02",
+      selectedMultipliers: [],
+      selectedSectorModules: [],
+      languageMode: "single",
+      isUrgent: false,
+    };
+    expect(billedSocleRange(neuf)).toEqual(SOCLE_ITEMS.S02);
+    expect(billedOptionRange(MULTIPLIERS.M06.value)).toEqual(MULTIPLIERS.M06.value);
   });
 });
 

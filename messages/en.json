@@ -113,7 +113,9 @@
       "S06": {
         "label": "Landing page",
         "description": "Single page optimized for conversion"
-      }
+      },
+      "priceScopeNeuf": "Ranges for a build from scratch, before options.",
+      "priceScopeRefonte": "Ranges adjusted to your redesign: sections you keep are never re-billed."
     },
     "nature": {
       "eyebrow": "YOUR",
@@ -316,7 +318,8 @@
       "existant": {
         "label": "Already in place",
         "description": "Kept, never re-billed"
-      }
+      },
+      "hintExistant": "Already in place — not re-billed"
     },
     "extras": {
       "title": "Language and additional options",

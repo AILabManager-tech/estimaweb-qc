@@ -4,6 +4,7 @@ import type {
   CalculatorInput,
   OptionState,
   OptionStateMap,
+  PriceRange,
 } from "./types";
 import {
   SOCLE_ITEMS,
@@ -141,6 +142,34 @@ export function calculateEstimation(input: CalculatorInput): EstimationResult {
         : {}),
     },
   };
+}
+
+/**
+ * Fourchette réellement facturée pour une option, selon son état.
+ *
+ * L'interface doit annoncer ce que le calcul retiendra : une option déjà en
+ * place vaut zéro, une option rhabillée ne vaut qu'une fraction de son prix de
+ * construction. Passe par `optionStateFactor`, comme le calcul, pour que
+ * l'affiché et le facturé ne puissent pas diverger.
+ */
+export function billedOptionRange(
+  price: PriceRange,
+  state: OptionState = "neuf"
+): PriceRange {
+  return {
+    min: price.min * optionStateFactor(state, 0),
+    max: price.max * optionStateFactor(state, 1),
+  };
+}
+
+/**
+ * Fourchette de socle réellement facturée, décomposition de refonte comprise.
+ *
+ * Réutilise `computeSocle` aux deux extrémités plutôt que de refaire le calcul :
+ * une évolution de la formule se reflète automatiquement dans l'interface.
+ */
+export function billedSocleRange(input: CalculatorInput): PriceRange {
+  return { min: computeSocle(input, 0), max: computeSocle(input, 1) };
 }
 
 // ── Compute a single scenario ───────────────────────────────────
