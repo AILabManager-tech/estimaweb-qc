@@ -13,3 +13,10 @@ playwright-report/
 # Next 16 dev-only agent scaffolding; global project instructions live outside this repo.
 AGENTS.md
 CLAUDE.md
+
+# Dépôt public : les documents de travail internes et les livrables tarifaires
+# distribuables restent hors du dépôt. La grille elle-même vit dans
+# src/lib/engine/matrix.ts; ce qui est exclu ici, ce sont les mandats internes et
+# les classeurs prêts à diffuser qui la reprennent.
+PROMPT_*.md
+*.xlsx

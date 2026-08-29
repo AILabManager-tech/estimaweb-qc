@@ -226,7 +226,19 @@ function computeScenario(
     costAfterMultipliers + additiveCost + sectorModulesCost
   );
   const contingency = normalizeDecimal(subtotal * 0.15);
-  const initialTotal = normalizeDecimal(subtotal + contingency);
+
+  // Le total est la somme des quatre lignes telles qu'elles sont affichées, et
+  // non l'arrondi du sous-total : arrondir chaque ligne séparément puis le total
+  // une seule fois faisait diverger les deux d'un dollar dès que le socle tombait
+  // sur une fraction — ce qui arrive systématiquement en refonte, où il est
+  // divisé par le nombre de blocs. En construction neuve les deux formules
+  // donnent le même résultat, aucun montant existant ne change.
+  const roundedBase = Math.round(baseCost);
+  const roundedMultipliers = Math.round(multipliersCost + additiveCost);
+  const roundedSectorModules = Math.round(sectorModulesCost);
+  const roundedContingency = Math.round(contingency);
+  const initialTotal =
+    roundedBase + roundedMultipliers + roundedSectorModules + roundedContingency;
 
   // 6. Coûts mensuels — le forfait dépend de l'ampleur du projet, pas du scénario
   const maintenanceTierId = SITE_TYPE_MAINTENANCE[input.siteType];
@@ -245,15 +257,15 @@ function computeScenario(
   const roundedAnnual = roundedMonthly * 12;
 
   return {
-    baseCost: Math.round(baseCost),
-    multipliersCost: Math.round(multipliersCost + additiveCost),
-    sectorModulesCost: Math.round(sectorModulesCost),
-    contingency: Math.round(contingency),
-    initialTotal: Math.round(initialTotal),
+    baseCost: roundedBase,
+    multipliersCost: roundedMultipliers,
+    sectorModulesCost: roundedSectorModules,
+    contingency: roundedContingency,
+    initialTotal,
     maintenanceMonthly: roundedMaintenance,
     thirdPartyMonthly: roundedThirdParty,
     monthlyTotal: roundedMonthly,
-    year1Total: Math.round(initialTotal) + roundedAnnual,
+    year1Total: initialTotal + roundedAnnual,
     annualRecurring: roundedAnnual,
   };
 }

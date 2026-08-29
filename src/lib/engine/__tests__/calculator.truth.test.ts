@@ -474,6 +474,61 @@ describe("intégrité arithmétique de la grille", () => {
     }
   });
 
+  it("s'additionne aussi en refonte, où le socle tombe sur des fractions", () => {
+    // Le socle divisé par le nombre de blocs produit presque toujours une
+    // fraction : c'est exactement le cas que l'invariant en mode neuf ne pouvait
+    // pas révéler, puisque la grille y garantit des sous-totaux entiers.
+    const offenders: string[] = [];
+    for (const sector of Object.keys(SECTOR_MODULES) as Sector[]) {
+      for (const siteType of SITE_TYPES_BY_SECTOR[sector] as readonly SiteTypeId[]) {
+        for (const blocs of [
+          { blocsNeufs: 2, blocsRhabilles: 3, blocsConserves: 2 },
+          { blocsNeufs: 1, blocsRhabilles: 1, blocsConserves: 1 },
+          { blocsNeufs: 4, blocsRhabilles: 5, blocsConserves: 0 },
+          { blocsNeufs: 7, blocsRhabilles: 0, blocsConserves: 0 },
+        ]) {
+          for (const codeAuthor of ["nous", "tiers"] as const) {
+            for (const languageMode of ["single", "bilingual", "multilingual"] as const) {
+              const modules = SECTOR_MODULES[sector].map((m) => m.id);
+              const result = calculateEstimation({
+                sector,
+                siteType,
+                selectedMultipliers: [...ADDITIVE_IDS],
+                selectedSectorModules: modules,
+                languageMode,
+                isUrgent: false,
+                projectNature: "refonte",
+                codeAuthor,
+                ...blocs,
+                optionStates: Object.fromEntries([
+                  ...ADDITIVE_IDS.map((id, i) => [id, i % 3 === 0 ? "rhabille" : i % 3 === 1 ? "existant" : "neuf"]),
+                  ...modules.map((id, i) => [id, i % 2 === 0 ? "rhabille" : "neuf"]),
+                ]),
+              });
+              for (const [name, s] of Object.entries({
+                eco: result.eco,
+                rec: result.rec,
+                premium: result.premium,
+              })) {
+                const somme =
+                  s.baseCost + s.multipliersCost + s.sectorModulesCost + s.contingency;
+                if (somme !== s.initialTotal) {
+                  offenders.push(
+                    `${sector}/${siteType}/${codeAuthor}/${languageMode}/${name}: ${somme} ≠ ${s.initialTotal}`
+                  );
+                }
+                if (s.year1Total !== s.initialTotal + s.annualRecurring) {
+                  offenders.push(`${sector}/${siteType}/${name}: année 1 incohérente`);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+
   it("toute valeur de la grille produit un sous-total entier (prérequis de l'invariant)", () => {
     const fractional: string[] = [];
     const halves = [
