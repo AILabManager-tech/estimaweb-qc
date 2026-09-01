@@ -102,7 +102,9 @@ Sur les 18 combinaisons secteur × type, projet nu, le récurrent annuel reste i
 
 ## Cas de refonte (ajoutés le 27 août 2026)
 
-Facteurs appliqués : rhabillage d’un bloc `0,25 / 0,325 / 0,40` (éco/rec/pre), bloc conservé `0`, code écrit par nous `1,0`, code tiers `1,20 / 1,30 / 1,40`. Le socle du type de site est divisé par le nombre total de blocs décrits pour obtenir le coût d’un bloc neuf.
+Facteurs appliqués : rhabillage d’un bloc `0,25 / 0,325 / 0,40` (éco/rec/pre), bloc conservé `0`, code écrit par nous `1,0`, code tiers `1,20 / 1,30 / 1,40`.
+
+**Révisé le 29 août 2026 — scission du socle** (voir `CALIBRATION_MOTEUR.md`). Le socle du type de site ne se divise plus en entier par le nombre de blocs. Il se scinde d’abord en une part projet de `25 %` — cadrage, assurance qualité, non-régression, mise en ligne — facturée en entier dès qu’au moins un bloc est touché, et jamais divisée; le reste est réparti sur le nombre total de blocs décrits pour obtenir le coût d’un bloc neuf. Les montants de refonte ci-dessous ont donc changé; ceux de la construction neuve sont inchangés.
 
 Cas de référence — une page d’accueil comptant 4 sections entièrement nouvelles, 5 sections rhabillées et 1 section supprimée (donc non comptée), avec un module « calculateurs/simulateurs » (PRO02) déjà en place et seulement rhabillé.
 
@@ -110,34 +112,39 @@ Entrées : `PRO, S06, refonte, code écrit par nous, 4 neufs / 5 rhabillés / 0 
 
 | Niveau | Attendu | Observé réalisation | Statut |
 |---|---|---|---|
-| Éco | `800 + 120 + 500 + 81 = 1 501` | `1 501` | Conforme |
-| Rec | `1 469 + 294 + 1 625 + 508 = 3 896` | `3 896` | Conforme |
-| Pre | `2 333 + 583 + 3 200 + 917 = 7 034` | `7 034` | Conforme |
+| Éco | `825 + 124 + 500 + 217 = 1 666` | `1 666` | Conforme |
+| Rec | `1 689 + 338 + 1 625 + 548 = 4 200` | `4 200` | Conforme |
+| Pre | `2 625 + 656 + 3 200 + 972 = 7 453` | `7 453` | Conforme |
 
-Points de contrôle du mandat : au-dessus de `5 000 $` la refonte ne serait pas prise en compte; en dessous de `1 500 $` le facteur de rhabillage serait trop agressif. Le scénario recommandé observé (`3 896 $`) respecte ces deux bornes, mais dépasse la fenêtre de `3 000 – 3 500 $` annoncée dans le mandat — voir § Écart ci-dessous.
+Points de contrôle du mandat : au-dessus de `5 000 $` la refonte ne serait pas prise en compte; en dessous de `1 500 $` le facteur de rhabillage serait trop agressif. Le scénario recommandé observé (`4 200 $`) respecte ces deux bornes.
 
 ### Comparaison neuf / refonte, à sélection identique
 
 | Cas | Réalisation recommandée | Écart |
 |---|---|---|
 | Même page construite à neuf | `8 993` | référence |
-| Refonte du cas de référence | `3 896` | −57 % |
+| Refonte du cas de référence | `4 200` | −53 % |
+| Refonte, `PRO02` compté dans les blocs | `2 331` | −74 % |
 
 ### Invariants vérifiés
 
 | Invariant | Résultat attendu | Statut |
 |---|---|---|
-| Tout conservé (9 blocs conservés, PRO02 existant) | `0` sur socle, modules, multiplicateurs et total | Conforme |
+| Tout conservé (9 blocs conservés, PRO02 existant) | `0` sur socle, modules, multiplicateurs et total — aucune part projet sans bloc touché | Conforme |
 | Rhabillé strictement entre conservé et neuf, à bloc égal | `0 < rhabillé < neuf` | Conforme |
 | Dix blocs tous neufs | reconstruit exactement le socle du type de site | Conforme |
 | Code tiers | socle supérieur au même cas écrit par nous | Conforme |
 | Forfait de maintenance | identique au neuf, suit le type de site | Conforme |
 | `projectNature: "neuf"` explicite | strictement identique à l’absence de champ, sur les 7 cas contrôlés | Conforme |
+| `productionMode` absent | strictement identique à `"genere"` déclaré | Conforme |
+| Socle `surMesure` | supérieur au généré sur S01 et S02 seulement, identique sur S03 à S06 | Conforme |
+| Dilution par les blocs conservés | même travail sur 10 blocs contre 100 : rapport `< 3` (il était de `10`) | Conforme |
+| Option à l’état `bloc` | facturée `0`, et l’état reste distinct de `existant` dans le résultat | Conforme |
 
 ### Écart avec la fenêtre annoncée dans le mandat — arbitré, ne pas rouvrir
 
 Le mandat attendait `3 000 – 3 500 $` au scénario recommandé; le moteur produit `3 896 $` avec les facteurs qu’il spécifie. La cause est isolée : le module PRO02 rhabillé pèse `1 625 $`, soit plus que la totalité du socle refait (`1 469 $`). Le facteur de rhabillage est partagé entre les blocs de page et les modules, alors que rhabiller un calculateur interactif et rhabiller une section de contenu ne sont pas le même travail.
 
-**Décision du 27 août 2026 : la fourchette `0,25 – 0,40` est conservée telle quelle.** Descendre à `0,20 – 0,30` ferait tomber le cas de référence à `3 329 $`, dans la fenêtre — mais régler une convention pour atteindre un chiffre unique est du calage sur un seul point de mesure, pas une validation. Le cas de référence reste dans les deux bornes de contrôle du mandat (`1 500` et `5 000`), qui sont le vrai critère.
+**Décision du 27 août 2026 : la fourchette `0,25 – 0,40` est conservée telle quelle.** Descendre à `0,20 – 0,30` ferait tomber le cas de référence dans la fenêtre — mais régler une convention pour atteindre un chiffre unique est du calage sur un seul point de mesure, pas une validation. Le cas de référence reste dans les deux bornes de contrôle du mandat (`1 500` et `5 000`), qui sont le vrai critère.
 
-Si cet écart doit un jour être repris, la piste est un facteur de rhabillage **distinct pour les modules sectoriels**, pas un resserrement global de la fourchette actuelle.
+**Complément du 29 août 2026.** Le diagnostic ci-dessus tenait deux choses ensemble : le poids du facteur de rhabillage sur les modules, et le fait que `PRO02` recouvre des sections déjà comptées parmi les blocs. La seconde est désormais traitée par l’état `bloc`, qui déclare une option comme déjà chiffrée par les sections et la facture `0` : le cas de référence tombe alors à `2 331 $`. La première — rhabiller un calculateur interactif n’est pas rhabiller une section de contenu — reste entière, et reste sans mesure. La piste demeure un facteur de rhabillage **distinct pour les modules sectoriels**, pas un resserrement global de la fourchette actuelle.
