@@ -23,12 +23,28 @@ export type ProjectNature = "neuf" | "refonte";
 export type CodeAuthor = "nous" | "tiers";
 
 /**
+ * Mode de production du socle.
+ * - `genere`    : production assistée par le générateur interne, sur des
+ *   gabarits standardisés — c'est ce que chiffrent les socles S01/S02 depuis
+ *   leur repricing de positionnement;
+ * - `surMesure` : montage manuel, notamment sur une maquette fournie par un
+ *   tiers, sans effet du générateur.
+ *
+ * Deux gestes différents ne peuvent pas partager un socle. `genere` reste le
+ * défaut : aucun montant existant ne change.
+ */
+export type ProductionMode = "genere" | "surMesure";
+
+/**
  * État d'un bloc, d'un ajout fixe ou d'un module dans une refonte.
  * - `neuf`     : à construire de zéro, facturé plein tarif;
  * - `rhabille` : existe déjà, seule l'apparence change;
- * - `existant` : conservé tel quel, jamais refacturé.
+ * - `existant` : conservé tel quel, jamais refacturé;
+ * - `bloc`     : le travail est réel, mais il est déjà compté parmi les blocs
+ *   déclarés du socle — l'option ne se facture donc pas une seconde fois.
+ *   Distinct de `existant`, qui décrit du travail qui n'a pas lieu.
  */
-export type OptionState = "neuf" | "rhabille" | "existant";
+export type OptionState = "neuf" | "rhabille" | "existant" | "bloc";
 
 /** État par option; toute option absente de la table est considérée `neuf`. */
 export type OptionStateMap = Partial<
@@ -94,6 +110,12 @@ export interface CalculatorInput {
   isUrgent: boolean;
   /** Absent équivaut à `neuf` : une entrée écrite avant le mode refonte reste valide. */
   projectNature?: ProjectNature;
+  /**
+   * Absent équivaut à `genere` : une entrée écrite avant l'axe de production
+   * reste valide et produit exactement le même montant qu'auparavant.
+   * S'applique aussi bien en construction neuve qu'en refonte.
+   */
+  productionMode?: ProductionMode;
   // Les champs ci-dessous sont requis si et seulement si `projectNature === "refonte"`.
   codeAuthor?: CodeAuthor;
   blocsNeufs?: number;
@@ -128,6 +150,7 @@ export interface EstimationResult {
     languageMode: LanguageMode;
     isUrgent: boolean;
     projectNature: ProjectNature;
+    productionMode: ProductionMode;
     /** Renseigné uniquement en refonte. */
     refonte?: {
       codeAuthor: CodeAuthor;

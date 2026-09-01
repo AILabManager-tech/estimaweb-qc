@@ -9,6 +9,7 @@ import type {
   ThirdPartyCostId,
   Sector,
   PriceRange,
+  ProductionMode,
 } from "./types";
 
 export const MARKET_DATA_METADATA = {
@@ -25,14 +26,74 @@ export const MARKET_DATA_METADATA = {
 // COUCHE 1 — SOCLE COMMUN (Réalisation initiale)
 // ══════════════════════════════════════════════════════════════════
 
-export const SOCLE_ITEMS: Record<SiteTypeId, PriceRange> = {
-  S01: { min: 1_500, max: 3_500 },    // Site vitrine 1-5 pages (généré via NEXOS)
-  S02: { min: 3_000, max: 8_000 },    // Site vitrine 6-15 pages (généré via NEXOS)
-  S03: { min: 8_000, max: 25_000 },   // E-commerce base <100 produits
-  S04: { min: 20_000, max: 50_000 },  // E-commerce avancé 100+
-  S05: { min: 25_000, max: 80_000 },  // Plateforme sur mesure
-  S06: { min: 1_200, max: 3_500 },    // Landing page
+/**
+ * Un socle par mode de production.
+ *
+ * `genere` porte la décision de positionnement du commit 9dce874 : S01 et S02
+ * y ont été abaissés pour un nouvel entrant, l'avantage du générateur interne
+ * réduisant le temps de production sur des vitrines standardisées. S03 à S05
+ * n'ont pas été touchés — ce sont des travaux bespoke, sans effet du
+ * générateur.
+ *
+ * `surMesure` chiffre le montage manuel : reproduction bloc par bloc d'une
+ * maquette, souvent fournie par un tiers. Ce n'est pas le même geste, et le
+ * socle `genere` ne doit pas servir à le chiffrer.
+ *
+ * Les valeurs `surMesure` de S01 et S02 ne sont pas posées : ce sont celles du
+ * dépôt avant 9dce874. Corroborées par la grille tarifaire interne du
+ * 2026-02-20, chiffrée en dollars et en heures, qui situe une vitrine de
+ * 5 pages à 5 500-7 000 $ (46-58 h) et une vitrine avancée de 10 pages à
+ * 12 000-16 000 $ (95-130 h). S03 et S05 y concordent déjà avec le socle
+ * commun (1,09× et 0,86× au milieu de fourchette), ce qui est la raison de les
+ * laisser identiques dans les deux modes.
+ *
+ * Voir `CALIBRATION_MOTEUR.md` § couche 2.
+ */
+export const SOCLE_ITEMS_BY_MODE: Record<ProductionMode, Record<SiteTypeId, PriceRange>> = {
+  genere: {
+    S01: { min: 1_500, max: 3_500 },    // Site vitrine 1-5 pages (généré via NEXOS)
+    S02: { min: 3_000, max: 8_000 },    // Site vitrine 6-15 pages (généré via NEXOS)
+    S03: { min: 8_000, max: 25_000 },   // E-commerce base <100 produits
+    S04: { min: 20_000, max: 50_000 },  // E-commerce avancé 100+
+    S05: { min: 25_000, max: 80_000 },  // Plateforme sur mesure
+    S06: { min: 1_200, max: 3_500 },    // Landing page
+  },
+  surMesure: {
+    S01: { min: 2_500, max: 6_000 },    // Vitrine 1-5 pages montée à la main
+    S02: { min: 5_000, max: 15_000 },   // Vitrine 6-15 pages montée à la main
+    S03: { min: 8_000, max: 25_000 },   // Bespoke : aucun effet du générateur
+    S04: { min: 20_000, max: 50_000 },  // Bespoke : aucun effet du générateur
+    S05: { min: 25_000, max: 80_000 },  // Bespoke : aucun effet du générateur
+    S06: { min: 1_200, max: 3_500 },    // Jamais repricé : identique
+  },
 };
+
+/** Mode de production retenu quand l'entrée n'en déclare pas. */
+export const DEFAULT_PRODUCTION_MODE: ProductionMode = "genere";
+
+/**
+ * Socle par défaut — le mode généré. Conservé pour l'interface et la grille
+ * publiée, qui n'exposent pas encore l'axe de production.
+ */
+export const SOCLE_ITEMS: Record<SiteTypeId, PriceRange> =
+  SOCLE_ITEMS_BY_MODE[DEFAULT_PRODUCTION_MODE];
+
+/**
+ * Part du socle qui ne dépend pas du nombre de blocs touchés : cadrage,
+ * assurance qualité, non-régression, mise en ligne. Ce travail porte sur le
+ * mandat et sur le site entier, pas sur la fraction de blocs refaits — le
+ * diviser par le nombre total de blocs sous-évalue toute refonte partielle.
+ *
+ * Convention **sourcée**, pas mesurée. La grille tarifaire interne du
+ * 2026-02-20 ventile chaque classe de projet en six phases; les phases
+ * Stratégie & Brief, QA & Tests et Déploiement & Formation y pèsent 21,7 % à
+ * 26,8 % du total, sur quatre classes et huit bornes. Contrôle indépendant sur
+ * la ventilation d'un mandat de refonte réel : 23,1 % à 30,9 % selon le
+ * classement des rondes de révision. Retenu : 25 %.
+ *
+ * Voir `CALIBRATION_MOTEUR.md` § 2.3.
+ */
+export const SOCLE_PROJECT_SHARE = 0.25;
 
 export const SOCLE_ADDONS: Record<SocleAddonId, PriceRange> = {
   S07: { min: 300, max: 800 },      // Design UI/UX (par page)
@@ -58,6 +119,17 @@ export const SOCLE_ADDONS: Record<SocleAddonId, PriceRange> = {
  * - `codeTiers`    : surcoût de lecture et de compréhension d'un code que nous
  *   n'avons pas écrit;
  * - `codeNous`     : aucun surcoût sur notre propre code.
+ *
+ * Aucun de ces facteurs n'est calibré, et rien ne permet de les calibrer
+ * aujourd'hui : la grille tarifaire interne du 2026-02-20 ne comporte aucune
+ * section refonte, et le seul mandat réellement facturé l'a été avec un rabais de
+ * lancement majeur, socle technique non facturé. Ils sont donc laissés tels
+ * quels, et déclarés comme conventions, plutôt que remplacés par d'autres
+ * conventions. Un manque connu reste non modélisé faute de mesure : un bloc
+ * neuf inséré dans un site vivant coûte plus qu'un bloc neuf en construction,
+ * et le moteur les facture à l'identique.
+ *
+ * Voir `CALIBRATION_MOTEUR.md` § couche 3 pour le protocole de mesure.
  */
 export const REFONTE_FACTORS = {
   blocRhabille: { min: 0.25, max: 0.4 },
@@ -70,8 +142,21 @@ export const REFONTE_FACTORS = {
 // COUCHE 2 — MULTIPLICATEURS DE COMPLEXITÉ
 // ══════════════════════════════════════════════════════════════════
 
+/**
+ * Le supplément bilingue dépend lui aussi du mode de production, et pour la
+ * même raison que le socle : le générateur produit le FR/EN nativement, un
+ * montage manuel duplique chaque bloc. La valeur `surMesure` est celle du
+ * dépôt avant 9dce874, qui l'a abaissée en même temps que S01 et S02.
+ */
+export const BILINGUAL_MULTIPLIER_BY_MODE: Record<ProductionMode, PriceRange> = {
+  genere: { min: 1.15, max: 1.25 },
+  surMesure: { min: 1.4, max: 1.6 },
+};
+
 export const MULTIPLIERS: Record<string, MultiplierItem> = {
-  M01: { id: "M01", type: "multiplicateur", value: { min: 1.15, max: 1.25 } }, // Bilingue FR/EN (génération NEXOS, pas duplication manuelle)
+  // Valeur du mode généré — le défaut. Le calcul lit `BILINGUAL_MULTIPLIER_BY_MODE`
+  // pour que la ligne de matrice et le montant facturé ne puissent pas diverger.
+  M01: { id: "M01", type: "multiplicateur", value: BILINGUAL_MULTIPLIER_BY_MODE.genere }, // Bilingue FR/EN
   M02: { id: "M02", type: "multiplicateur", value: { min: 1.8, max: 2.2 } },   // Multilingue 3+
   M03: { id: "M03", type: "ajout_fixe", value: { min: 2_000, max: 8_000 } },   // Réservation en ligne
   M04: { id: "M04", type: "ajout_fixe", value: { min: 3_000, max: 15_000 } },  // Portail client

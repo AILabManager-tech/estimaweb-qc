@@ -30,7 +30,9 @@ interface FeaturesStepProps {
   onSetOptionState: (id: MultiplierId | SectorModuleId, state: OptionState) => void;
 }
 
-const OPTION_STATES = ["neuf", "rhabille", "existant"] as const;
+// `bloc` ferme la règle de non-recouvrement : une option qui correspond à une
+// section déjà déclarée à l'étape précédente ne doit pas être facturée en plus.
+const OPTION_STATES = ["neuf", "rhabille", "existant", "bloc"] as const;
 
 export function FeaturesStep({
   sector,
@@ -84,6 +86,7 @@ export function FeaturesStep({
   const priceHintFor = (id: MultiplierId | SectorModuleId, price: PriceRange) => {
     const state = projectNature === "refonte" ? stateOf(id) : "neuf";
     if (state === "existant") return tStates("hintExistant");
+    if (state === "bloc") return tStates("hintBloc");
     const billed = billedOptionRange(price, state);
     return `+ ${formatCurrency(billed.min, locale)} – ${formatCurrency(billed.max, locale)}`;
   };
@@ -197,7 +200,7 @@ export function FeaturesStep({
                   }))}
                   value={optionStates[option.id] ?? "neuf"}
                   onChange={(v) => onSetOptionState(option.id, v as OptionState)}
-                  columns={3}
+                  columns={4}
                   ariaLabel={`${option.label} — ${tStates("title")}`}
                 />
               </div>

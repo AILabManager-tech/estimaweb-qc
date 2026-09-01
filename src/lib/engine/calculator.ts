@@ -5,9 +5,13 @@ import type {
   OptionState,
   OptionStateMap,
   PriceRange,
+  ProductionMode,
 } from "./types";
 import {
-  SOCLE_ITEMS,
+  SOCLE_ITEMS_BY_MODE,
+  DEFAULT_PRODUCTION_MODE,
+  SOCLE_PROJECT_SHARE,
+  BILINGUAL_MULTIPLIER_BY_MODE,
   MULTIPLIERS,
   SECTOR_MODULES,
   MAINTENANCE_TIERS,
@@ -42,6 +46,11 @@ function optionStateFactor(state: OptionState, t: number): number {
     case "existant":
       // Règle d'exclusion : ce qui est conservé ne se refacture jamais.
       return 0;
+    case "bloc":
+      // Règle de non-recouvrement : le travail a bien lieu, mais il est déjà
+      // compté parmi les blocs déclarés du socle. Le facturer en plus le
+      // compterait deux fois.
+      return 0;
     case "rhabille":
       return lerp(REFONTE_FACTORS.blocRhabille.min, REFONTE_FACTORS.blocRhabille.max, t);
     default:
@@ -53,17 +62,39 @@ function stateOf(states: OptionStateMap | undefined, id: string): OptionState {
   return states?.[id as keyof OptionStateMap] ?? "neuf";
 }
 
+/** Mode de production de l'entrée; absent équivaut au mode généré. */
+function productionModeOf(input: CalculatorInput): ProductionMode {
+  return input.productionMode ?? DEFAULT_PRODUCTION_MODE;
+}
+
 /**
  * Socle facturé pour le scénario.
  *
- * En neuf, c'est le montant du type de site. En refonte, ce montant sert de
- * référence pour un coût par bloc, puis chaque bloc est facturé selon son état :
- * neuf à plein tarif, rhabillé à une fraction, conservé à zéro. L'infrastructure
- * (routing, i18n, hébergement, composants partagés) est portée par les blocs
- * conservés et n'est donc jamais refacturée.
+ * En neuf, c'est le montant du type de site pour le mode de production retenu.
+ *
+ * En refonte, ce montant se scinde en deux parts qui ne se comportent pas de la
+ * même façon :
+ *
+ * - une **part projet** (`SOCLE_PROJECT_SHARE`) — cadrage, assurance qualité,
+ *   non-régression, mise en ligne. Ce travail porte sur le mandat et sur le
+ *   site entier : il est facturé en entier, sans division par les blocs;
+ * - une **part blocs** — le reste, réparti sur le nombre total de blocs, puis
+ *   facturé selon l'état de chacun : neuf à plein tarif, rhabillé à une
+ *   fraction, conservé à zéro.
+ *
+ * La division par le nombre total de blocs porte donc désormais sur le seul
+ * travail réellement proportionnel aux sections. Auparavant elle portait sur
+ * tout le socle, ce qui diluait le travail neuf dans le site ancien : à travail
+ * strictement identique, le socle facturé variait d'un facteur 10 selon le
+ * nombre de blocs conservés. Il reste une variation résiduelle, et elle est
+ * voulue : à budget de type de site donné, un site de cent sections a des
+ * sections plus légères qu'un site de dix.
+ *
+ * L'infrastructure (routing, i18n, hébergement, composants partagés) reste
+ * portée par les blocs conservés et n'est jamais refacturée.
  */
 function computeSocle(input: CalculatorInput, t: number): number {
-  const socle = SOCLE_ITEMS[input.siteType];
+  const socle = SOCLE_ITEMS_BY_MODE[productionModeOf(input)][input.siteType];
   const fullBuild = lerp(socle.min, socle.max, t);
   if (input.projectNature !== "refonte") return fullBuild;
 
@@ -74,8 +105,14 @@ function computeSocle(input: CalculatorInput, t: number): number {
   // Le schéma refuse déjà une somme nulle; garde défensive contre un appel direct.
   if (totalBlocs === 0) return 0;
 
-  const coutBloc = fullBuild / totalBlocs;
+  // La part projet n'existe que s'il y a un mandat : si aucun bloc n'est touché,
+  // il n'y a ni cadrage, ni non-régression, ni mise en ligne à facturer. La
+  // règle d'exclusion l'emporte — rien de refait, rien de facturé.
+  const blocsTouches = blocsNeufs + blocsRhabilles;
+  const partProjet = blocsTouches > 0 ? fullBuild * SOCLE_PROJECT_SHARE : 0;
+  const coutBloc = (fullBuild - fullBuild * SOCLE_PROJECT_SHARE) / totalBlocs;
   const rebuilt =
+    partProjet +
     blocsNeufs * coutBloc +
     blocsRhabilles * coutBloc * optionStateFactor("rhabille", t) +
     blocsConserves * REFONTE_FACTORS.blocConserve;
@@ -129,6 +166,7 @@ export function calculateEstimation(input: CalculatorInput): EstimationResult {
       languageMode: validatedInput.languageMode,
       isUrgent: validatedInput.isUrgent,
       projectNature: validatedInput.projectNature,
+      productionMode: validatedInput.productionMode,
       ...(validatedInput.projectNature === "refonte"
         ? {
             refonte: {
@@ -185,8 +223,10 @@ function computeScenario(
   // 2. Multiplicateurs chaînés (choix linguistique × urgence)
   let chainedMultiplier = 1;
   if (input.languageMode === "bilingual") {
-    const m = MULTIPLIERS.M01;
-    chainedMultiplier *= lerp(m.value.min, m.value.max, t);
+    // Le supplément bilingue suit le mode de production : le générateur produit
+    // le FR/EN nativement, un montage manuel duplique chaque bloc.
+    const m01 = BILINGUAL_MULTIPLIER_BY_MODE[productionModeOf(input)];
+    chainedMultiplier *= lerp(m01.min, m01.max, t);
   }
   if (input.languageMode === "multilingual") {
     const m = MULTIPLIERS.M02;

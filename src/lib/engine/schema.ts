@@ -47,7 +47,7 @@ const sectorModuleSchema = z.enum([
   "PME07",
 ]);
 
-const optionStateSchema = z.enum(["neuf", "rhabille", "existant"]);
+const optionStateSchema = z.enum(["neuf", "rhabille", "existant", "bloc"]);
 const blocCountSchema = z.number().int().nonnegative();
 
 /** Champs exigés par le mode refonte, interdits en construction neuve. */
@@ -74,6 +74,10 @@ export const CalculatorInputSchema = z
     // Absent équivaut à `neuf` : une entrée écrite avant le mode refonte reste
     // valide et produit exactement le même résultat qu'auparavant.
     projectNature: z.enum(["neuf", "refonte"]).default("neuf"),
+    // Le mode de production s'applique aux deux natures de projet : un site peut
+    // être monté à la main aussi bien en construction neuve qu'en refonte.
+    // Absent équivaut à `genere`, le socle publié — aucun montant ne change.
+    productionMode: z.enum(["genere", "surMesure"]).default("genere"),
     codeAuthor: z.enum(["nous", "tiers"]).optional(),
     blocsNeufs: blocCountSchema.optional(),
     blocsRhabilles: blocCountSchema.optional(),

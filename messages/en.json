@@ -319,7 +319,12 @@
         "label": "Already in place",
         "description": "Kept, never re-billed"
       },
-      "hintExistant": "Already in place — not re-billed"
+      "bloc": {
+        "label": "Counted in the blocks",
+        "description": "Reworked, but already priced by the declared sections"
+      },
+      "hintExistant": "Already in place — not re-billed",
+      "hintBloc": "Counted in the blocks — not billed twice"
     },
     "extras": {
       "title": "Language and additional options",

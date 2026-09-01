@@ -193,9 +193,13 @@ describe("mode refonte", () => {
 
   it("garde le cas de référence stable au centime près", () => {
     const { eco, rec, premium } = calculateEstimation(referenceRefonte);
-    expect(eco.initialTotal).toBe(1_501);
-    expect(rec.initialTotal).toBe(3_896);
-    expect(premium.initialTotal).toBe(7_034);
+    // Valeurs relevées après la scission du socle en part projet / part blocs
+    // (voir `CALIBRATION_MOTEUR.md`). Neuf sections sur neuf sont touchées, donc
+    // la part projet est facturée en entier : elle n'est plus diluée dans le
+    // nombre total de blocs.
+    expect(eco.initialTotal).toBe(1_666);
+    expect(rec.initialTotal).toBe(4_200);
+    expect(premium.initialTotal).toBe(7_453);
   });
 
   it("facture nettement moins qu'une construction neuve équivalente", () => {
@@ -548,10 +552,11 @@ describe("intégrité arithmétique de la grille", () => {
 describe("calculator input validation", () => {
   const valid: CalculatorInput = controlledScenarios[0].input;
 
-  it("accepts a valid strict input and defaults its nature to neuf", () => {
+  it("accepts a valid strict input and defaults its nature and production mode", () => {
     expect(CalculatorInputSchema.parse(valid)).toEqual({
       ...valid,
       projectNature: "neuf",
+      productionMode: "genere",
     });
   });
 

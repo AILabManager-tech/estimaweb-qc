@@ -319,7 +319,12 @@
         "label": "Déjà en place",
         "description": "Conservée, non refacturée"
       },
-      "hintExistant": "Déjà en place — non refacturé"
+      "bloc": {
+        "label": "Compté dans les blocs",
+        "description": "Refait, mais déjà chiffré par les sections déclarées"
+      },
+      "hintExistant": "Déjà en place — non refacturé",
+      "hintBloc": "Compté dans les blocs — non facturé en plus"
     },
     "extras": {
       "title": "Langue et options supplémentaires",
