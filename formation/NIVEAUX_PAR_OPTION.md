@@ -34,6 +34,94 @@ La colonne « grille actuelle » est un **repère, pas une validation**. Ces mon
 d'aujourd'hui et 87 % du registre n'a aucune preuve recevable. Le chiffrage de chaque niveau
 est l'étape 3, et il se fera par les heures.
 
+### Le taux affiché n'est pas le taux facturé
+
+*Correction 1 de l'audit du 2026-09-01.*
+
+Le taux de référence est de **125,00 $/h**, mais la marge d'imprévus de 15 % s'applique
+par-dessus. Le client paie donc **143,75 $/h** pour chaque heure annoncée.
+
+Ce nombre doit être **écrit** partout où le taux de référence apparaît — en-tête du catalogue,
+pied de page, dossier interne. Le laisser sortir d'une multiplication invisible est ce qui
+permet à un écart de 15 % de circuler sans que personne ne le nomme.
+
+| | |
+|---|---|
+| Taux de référence | 125,00 $/h |
+| Marge d'imprévus | 15 % |
+| **Taux effectif facturé** | **143,75 $/h** |
+
+### Ce qui ne se chiffre pas en heures
+
+*Correction 3 de l'audit.*
+
+Trois lignes sortent du modèle horaire et se vendent **au forfait** : `S10` photographie,
+`S11` vidéo, `S12` identité visuelle. Le marché les vend ainsi, et multiplier des heures par
+un taux détruit l'information dans les deux sens — le coût horaire du travail y est inférieur
+à 125 $, mais le prix de vente du livrable est supérieur à ce que les heures produisent, parce
+qu'il incorpore le matériel, le déplacement, les droits d'usage et un temps de traitement qui
+ne se facture pas à l'heure.
+
+### Aucun contrôle ne se prouve par la grille elle-même
+
+*Correction 5 de l'audit.*
+
+Le catalogue imprimé du 30 août portait en tête un « contrôle » qui reconstruisait un mandat
+avec ces heures et comparait le résultat à une facture antérieure. **Ce contrôle ne prouve
+rien** : il compare une estimation issue de cette grille à une autre estimation issue de la
+même grille non prouvée. Il est retiré et ne doit pas être réintroduit.
+
+La règle générale : un contrôle n'est valable que s'il peut **échouer**. Comparer un montant
+à un seuil dérivé de ce même montant est une tautologie, quelle que soit la forme qu'elle
+prend.
+
+### Les lignes ne s'additionnent pas toutes — 15 règles de recoupement
+
+*Correction 4 de l'audit du 2026-09-01, la plus coûteuse des cinq.*
+
+Le catalogue laissait entendre que les lignes s'additionnent. **Elles ne s'additionnent pas.**
+Le moteur applique quinze règles qui retirent une ligne générique quand une ligne plus
+spécifique la couvre déjà. Un devis monté à la main en additionnant les lignes **surfacture
+jusqu'à 22 %**.
+
+Ces règles sont exécutables — `REPLACEMENT_RULES` et `INCLUSION_RULES` dans
+`src/lib/engine/compatibility.ts` — et documentées dans `docs/OPTION_COMPATIBILITY_MATRIX.md`.
+Elles s'appliquent en cascade jusqu'à stabilisation. Les voici en clair.
+
+**Sept remplacements — le module sectoriel remplace l'option générique**
+
+| Si le devis contient | Alors on retire | Parce que |
+|---|---|---|
+| `MED01` Prise de rendez-vous | `M03` Réservation en ligne | Même parcours de prise de rendez-vous |
+| `JUR03` Espace client confidentiel | `M04` Espace client | C'est l'espace client, version juridique |
+| `MED03` Espace patient sécurisé | `M04` Espace client | C'est l'espace client, version santé |
+| `PRO04` Portail de documents clients | `M04` Espace client | C'est l'espace client, version ordre professionnel |
+| `MED02` Loi 25 — données de santé | `M08` Conformité Loi 25 | C'est la Loi 25, version santé |
+| `PME02` Demande de soumission | `M09` Formulaires avancés | Le module contient déjà son formulaire conditionnel |
+| `PRO05` Demande de soumission en ligne | `M09` Formulaires avancés | Le module contient déjà son formulaire conditionnel |
+
+**Huit inclusions — le type de site contient déjà la capacité**
+
+| Si le devis contient | Alors on retire | Parce que |
+|---|---|---|
+| `S03` Boutique < 100 produits | `PME01` Catalogue de produits | Une boutique contient son catalogue |
+| `S04` Boutique > 100 produits | `PME01` Catalogue de produits | Idem |
+| `S03` Boutique < 100 produits | `M11` Paiement en ligne | Une boutique contient son paiement |
+| `S04` Boutique > 100 produits | `M11` Paiement en ligne | Idem |
+| `S03` Boutique < 100 produits | `PME05` Menu et commande | Même parcours de commande |
+| `S04` Boutique > 100 produits | `PME05` Menu et commande | Idem |
+| `PME05` Menu et commande | `M11` Paiement en ligne | La commande contient son paiement |
+| `PME05` Menu et commande | `PME01` Catalogue de produits | Le menu structure déjà son catalogue |
+
+**Règle apparentée, en refonte.** Une option qui correspond à une section déjà déclarée parmi
+les blocs porte l'état `bloc` et se facture à zéro : le travail a lieu, mais il est déjà chiffré
+par le socle. C'est une déclaration de l'utilisateur, pas une détection — le moteur ne sait pas
+quelles sections recouvrent quel module.
+
+**Deux règles de cohérence sectorielle** complètent le dispositif sans retirer de montant :
+les types boutique `S03` et `S04` ne sont offerts qu'au secteur PME, et un module sectoriel ne
+peut pas être retenu pour un autre secteur.
+
 
 ---
 
@@ -177,6 +265,10 @@ Audit page par page, données structurées avancées, maillage interne, Core Web
 ### `S10` — Photographie
 
 *Grille actuelle : 500 – 1 500 $ · 2 niveaux*
+**Vendu au forfait — hors du modèle horaire.** Le prix est celui de la séance livrée, pas
+d'un nombre d'heures. Voir « Ce qui ne se chiffre pas en heures ». Le marché québécois vend
+la demi-journée et la journée retouchées nettement au-dessus de ce que ces heures produisent :
+la valeur actuelle est trop basse d'un facteur 1,5 à 3 selon l'audit.
 
 
 **1. Demi-journée**  
@@ -189,6 +281,8 @@ Séance d'une journée, série complète retouchée, déclinaisons pour le site 
 ### `S11` — Vidéo
 
 *Grille actuelle : 2 000 – 8 000 $ · 2 niveaux*
+**Vendu au forfait — hors du modèle horaire.** Le prix est celui de la capsule ou de la
+production livrée. Voir « Ce qui ne se chiffre pas en heures ».
 
 
 **1. Capsule**  
@@ -203,6 +297,8 @@ Script, tournage sur plusieurs lieux, habillage graphique, sous-titres bilingues
 ### `S12` — Identité visuelle
 
 *Grille actuelle : 800 – 5 000 $ · 2 niveaux*
+**Vendu au forfait — hors du modèle horaire.** Le prix est celui du logo ou du système
+livré. Voir « Ce qui ne se chiffre pas en heures ».
 
 
 **1. Logo**  
@@ -386,12 +482,21 @@ Séquences composées, éléments réagissant au défilement, illustrations anim
 ### `M13` — Délai comprimé
 
 *Grille actuelle : ×1.3 – ×1.5 · 2 niveaux*
+**Se chiffre en pourcentage du sous-total, jamais en heures fixes.**
 
+*Correction 2 de l'audit du 2026-09-01.* Le catalogue du 30 août chiffrait l'urgence en
+heures fixes. Un même supplément de 3 000 $ pesait alors **34 % d'un petit projet et 4,9 %
+d'un gros** : le client qui a le moins de marge payait proportionnellement sept fois plus.
+L'urgence porte sur la réorganisation d'un calendrier, qui est proportionnelle à l'ampleur
+du mandat — pas sur un nombre d'heures constant.
 
-**1. Quatre semaines**  
+Le moteur, lui, l'a toujours traité correctement comme un multiplicateur (`MULTIPLICATIVE_IDS`
+dans `src/lib/engine/matrix.ts`). C'est le catalogue qui s'en était écarté.
+
+**1. Quatre semaines** — *+30 % du sous-total*  
 Livraison en quatre semaines : le calendrier de production est resserré.
 
-**2. Deux semaines**  
+**2. Deux semaines** — *+50 % du sous-total*  
 Livraison en deux semaines : la production est réorganisée et les autres mandats décalés.
 
 
