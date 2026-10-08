@@ -1,11 +1,9 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
-import { MULTIPLIERS, SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
-import { billedOptionRange } from "@/lib/engine/calculator";
+import { SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
 import { getOptionAvailability } from "@/lib/engine/compatibility";
-import { formatCurrency } from "@/lib/utils";
 import { RadioGroup } from "@/components/ui/RadioGroup";
 import type {
   MultiplierId,
@@ -15,7 +13,6 @@ import type {
   OptionState,
   OptionStateMap,
   ProjectNature,
-  PriceRange,
 } from "@/lib/engine/types";
 
 interface FeaturesStepProps {
@@ -46,8 +43,6 @@ export function FeaturesStep({
   const tFeatures = useTranslations("steps.features");
   const tModules = useTranslations("steps.sectorModules");
   const tCompatibility = useTranslations("compatibility");
-  const locale = useLocale() as "fr" | "en";
-
   const tStates = useTranslations("steps.optionStates");
   const totalSelected = selectedMultipliers.length + selectedSectorModules.length;
   const stateOf = (id: MultiplierId | SectorModuleId): OptionState =>
@@ -77,25 +72,22 @@ export function FeaturesStep({
   };
 
   /**
-   * Indice de prix réellement facturé. En refonte, une option déjà en place ne
-   * coûte rien et une option rhabillée ne coûte qu'une fraction : afficher son
-   * prix de construction ferait mentir l'interface sur ce que le calcul retient.
+   * Aucun prix n'est affiché sur les options (décision du 2026-10-07) : le
+   * calcul reste le même, seul le résultat final le montre. En refonte, une
+   * option déjà en place garde sa mention.
    */
-  const priceHintFor = (id: MultiplierId | SectorModuleId, price: PriceRange) => {
+  const priceHintFor = (id: MultiplierId | SectorModuleId) => {
     const state = projectNature === "refonte" ? stateOf(id) : "neuf";
-    if (state === "existant") return tStates("hintExistant");
-    const billed = billedOptionRange(price, state);
-    return `+ ${formatCurrency(billed.min, locale)} – ${formatCurrency(billed.max, locale)}`;
+    return state === "existant" ? tStates("hintExistant") : undefined;
   };
 
   const multiplierOptions = ADDITIVE_IDS.map((id) => {
-    const m = MULTIPLIERS[id];
     const availability = getOptionAvailability(selection, "multiplier", id);
     return {
       value: id,
       label: tFeatures(`${id}.label`),
       description: tFeatures(`${id}.description`),
-      priceHint: priceHintFor(id, m.value),
+      priceHint: priceHintFor(id),
       disabled: availability.disabled,
       disabledReason: availability.reason
         ? tCompatibility(availability.reason)
@@ -110,7 +102,7 @@ export function FeaturesStep({
       value: mod.id,
       label: tModules(`${mod.id}.label`),
       description: tModules(`${mod.id}.description`),
-      priceHint: priceHintFor(mod.id, mod.price),
+      priceHint: priceHintFor(mod.id),
       disabled: availability.disabled,
       disabledReason: availability.reason
         ? tCompatibility(availability.reason)
