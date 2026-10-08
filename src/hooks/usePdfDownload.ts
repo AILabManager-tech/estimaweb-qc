@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import type { EstimationResult } from "@/lib/engine/types";
+import type { ResultatFormule } from "@/lib/formules/recommander";
 
 interface PdfDownloadOptions {
-  result: EstimationResult;
+  result: ResultatFormule;
   locale: "fr" | "en";
 }
 

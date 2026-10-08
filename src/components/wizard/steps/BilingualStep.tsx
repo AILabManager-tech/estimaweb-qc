@@ -6,18 +6,15 @@ import type { LanguageMode } from "@/lib/engine/types";
 
 interface BilingualStepProps {
   languageMode: LanguageMode;
-  isUrgent: boolean;
   onSetLanguageMode: (mode: LanguageMode) => void;
-  onSetUrgent: (v: boolean) => void;
 }
 
 export function BilingualStep({
   languageMode,
-  isUrgent,
   onSetLanguageMode,
-  onSetUrgent,
 }: BilingualStepProps) {
   const t = useTranslations("steps.extras");
+  const tIndices = useTranslations("formules.indices");
 
   return (
     <div className="space-y-8">
@@ -40,38 +37,25 @@ export function BilingualStep({
                 value: "single",
                 label: t("language.single.label"),
                 description: t("language.single.description"),
+                priceHint: tIndices("compris"),
               },
               {
                 value: "bilingual",
                 label: t("language.bilingual.label"),
                 description: t("language.bilingual.description"),
+                priceHint: tIndices("compris"),
               },
               {
                 value: "multilingual",
                 label: t("language.multilingual.label"),
                 description: t("language.multilingual.description"),
+                priceHint: tIndices("aChiffrer"),
               },
             ]}
             value={languageMode}
             onChange={(v) => onSetLanguageMode(v as LanguageMode)}
             columns={3}
             ariaLabel={t("language.label")}
-          />
-        </div>
-
-        <div>
-          <h3 className="mb-3 text-sm font-semibold text-text-primary">
-            {t("urgency.label")}
-          </h3>
-          <RadioGroup
-            options={[
-              { value: "yes", label: t("urgency.yes") },
-              { value: "no", label: t("urgency.no") },
-            ]}
-            value={isUrgent ? "yes" : "no"}
-            onChange={(v) => onSetUrgent(v === "yes")}
-            columns={2}
-            ariaLabel={t("urgency.label")}
           />
         </div>
       </div>

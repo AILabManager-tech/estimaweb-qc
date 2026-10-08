@@ -4,15 +4,12 @@ import { useTranslations } from "next-intl";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
 import { SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
 import { getOptionAvailability } from "@/lib/engine/compatibility";
-import { RadioGroup } from "@/components/ui/RadioGroup";
+import { effetOption } from "@/lib/formules/recommander";
 import type {
   MultiplierId,
   SectorModuleId,
   Sector,
   SiteTypeId,
-  OptionState,
-  OptionStateMap,
-  ProjectNature,
 } from "@/lib/engine/types";
 
 interface FeaturesStepProps {
@@ -22,12 +19,7 @@ interface FeaturesStepProps {
   selectedSectorModules: SectorModuleId[];
   onToggleMultiplier: (id: MultiplierId) => void;
   onToggleSectorModule: (id: SectorModuleId) => void;
-  projectNature: ProjectNature;
-  optionStates: OptionStateMap;
-  onSetOptionState: (id: MultiplierId | SectorModuleId, state: OptionState) => void;
 }
-
-const OPTION_STATES = ["neuf", "rhabille", "existant"] as const;
 
 export function FeaturesStep({
   sector,
@@ -36,33 +28,13 @@ export function FeaturesStep({
   selectedSectorModules,
   onToggleMultiplier,
   onToggleSectorModule,
-  projectNature,
-  optionStates,
-  onSetOptionState,
 }: FeaturesStepProps) {
   const tFeatures = useTranslations("steps.features");
   const tModules = useTranslations("steps.sectorModules");
   const tCompatibility = useTranslations("compatibility");
-  const tStates = useTranslations("steps.optionStates");
-  const totalSelected = selectedMultipliers.length + selectedSectorModules.length;
-  const stateOf = (id: MultiplierId | SectorModuleId): OptionState =>
-    optionStates[id] ?? "neuf";
+  const tFormules = useTranslations("formules");
 
-  // En refonte, chaque option retenue porte un état : une fonctionnalité qui
-  // existe déjà ne doit pas être facturée à son prix de construction.
-  const statefulOptions =
-    projectNature === "refonte"
-      ? [
-          ...selectedMultipliers.map((id) => ({
-            id: id as MultiplierId | SectorModuleId,
-            label: tFeatures(`${id}.label`),
-          })),
-          ...selectedSectorModules.map((id) => ({
-            id: id as MultiplierId | SectorModuleId,
-            label: tModules(`${id}.label`),
-          })),
-        ]
-      : [];
+  const totalSelected = selectedMultipliers.length + selectedSectorModules.length;
 
   const selection = {
     sector,
@@ -71,14 +43,12 @@ export function FeaturesStep({
     selectedSectorModules,
   };
 
-  /**
-   * Aucun prix n'est affiché sur les options (décision du 2026-10-07) : le
-   * calcul reste le même, seul le résultat final le montre. En refonte, une
-   * option déjà en place garde sa mention.
-   */
-  const priceHintFor = (id: MultiplierId | SectorModuleId) => {
-    const state = projectNature === "refonte" ? stateOf(id) : "neuf";
-    return state === "existant" ? tStates("hintExistant") : undefined;
+  /** Indice : l'effet de l'option sur la formule, jamais un montant ponctuel. */
+  const hintFor = (id: MultiplierId | SectorModuleId) => {
+    const effet = effetOption(id);
+    if (effet.effet === "comprise") return tFormules("indices.compris");
+    if (effet.effet === "aChiffrer") return tFormules("indices.aChiffrer");
+    return tFormules("indices.monte", { formule: tFormules(`${effet.formule}.nom`) });
   };
 
   const multiplierOptions = ADDITIVE_IDS.map((id) => {
@@ -87,7 +57,7 @@ export function FeaturesStep({
       value: id,
       label: tFeatures(`${id}.label`),
       description: tFeatures(`${id}.description`),
-      priceHint: priceHintFor(id),
+      priceHint: hintFor(id),
       disabled: availability.disabled,
       disabledReason: availability.reason
         ? tCompatibility(availability.reason)
@@ -102,7 +72,7 @@ export function FeaturesStep({
       value: mod.id,
       label: tModules(`${mod.id}.label`),
       description: tModules(`${mod.id}.description`),
-      priceHint: priceHintFor(mod.id),
+      priceHint: hintFor(mod.id),
       disabled: availability.disabled,
       disabledReason: availability.reason
         ? tCompatibility(availability.reason)
@@ -160,42 +130,6 @@ export function FeaturesStep({
             ariaLabel={tFeatures("sectorModules")}
           />
         </>
-      )}
-
-      {statefulOptions.length > 0 && (
-        <div className="space-y-4 border-t border-surface-border pt-6">
-          <div>
-            <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
-              {tStates("title")}
-            </h3>
-            <p className="mt-1 text-xs text-text-secondary">
-              {tStates("subtitle")}
-            </p>
-          </div>
-          <div className="space-y-3">
-            {statefulOptions.map((option) => (
-              <div
-                key={option.id}
-                className="rounded-sm border border-surface-border bg-surface p-4"
-              >
-                <p className="mb-3 text-sm font-medium text-text-primary">
-                  {option.label}
-                </p>
-                <RadioGroup
-                  options={OPTION_STATES.map((value) => ({
-                    value,
-                    label: tStates(`${value}.label`),
-                    description: tStates(`${value}.description`),
-                  }))}
-                  value={optionStates[option.id] ?? "neuf"}
-                  onChange={(v) => onSetOptionState(option.id, v as OptionState)}
-                  columns={3}
-                  ariaLabel={`${option.label} — ${tStates("title")}`}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       )}
     </div>
   );

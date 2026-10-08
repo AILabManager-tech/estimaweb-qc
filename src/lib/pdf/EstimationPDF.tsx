@@ -1,10 +1,20 @@
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import frMessages from "../../../messages/fr.json";
 import enMessages from "../../../messages/en.json";
-import type {
-  EstimationResult,
-  ScenarioBreakdown,
-} from "@/lib/engine/types";
+import {
+  ENGAGEMENT_MOIS,
+  FRAIS_DE_DEPART,
+  OPTIONS_AGENTS_IA,
+  type FormuleId,
+} from "@/lib/formules/donnees";
+import {
+  ORDRE_FORMULES,
+  formatDatePrixFixes,
+  getFormule,
+  raisonsNonCouvertes,
+  type ElementAChiffrer,
+  type ResultatFormule,
+} from "@/lib/formules/recommander";
 
 export type PdfLocale = "fr" | "en";
 
@@ -49,40 +59,46 @@ const styles = StyleSheet.create({
   inputRow: { flexDirection: "row", paddingVertical: 2 },
   inputLabel: { width: 118, color: "#69736F" },
   inputValue: { flex: 1, fontWeight: "bold", color: "#202725" },
-  scenarioContainer: { flexDirection: "row", gap: 10, marginTop: 7 },
-  scenarioCard: {
+  formuleContainer: { flexDirection: "row", gap: 8, marginTop: 7 },
+  formuleCard: {
     flex: 1,
     border: "1 solid #D8D1C5",
     borderRadius: 5,
     padding: 9,
     backgroundColor: "#FFFFFF",
   },
-  scenarioHeader: {
+  formuleCardRecommandee: { border: "2 solid #165A63" },
+  formuleCardAttenuee: { opacity: 0.6 },
+  badge: {
+    alignSelf: "flex-start",
     marginBottom: 5,
-    borderBottom: "1 solid #E4DED3",
-    paddingBottom: 4,
-    fontSize: 11,
-    fontWeight: "bold",
-    color: "#165A63",
-  },
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 4,
+    borderRadius: 3,
     paddingVertical: 2,
+    paddingHorizontal: 5,
+    backgroundColor: "#165A63",
+    color: "#FFFFFF",
+    fontSize: 7,
+    fontWeight: "bold",
+    textTransform: "uppercase",
   },
-  label: { flex: 1, fontSize: 7.5, color: "#69736F" },
-  value: { fontSize: 7.5, fontWeight: "bold" },
-  totalRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 4,
-    marginTop: 4,
-    borderTop: "1 solid #D8D1C5",
-    paddingTop: 5,
+  formuleNom: { fontSize: 12, fontWeight: "bold", color: "#165A63" },
+  prix: { marginTop: 4, fontSize: 20, fontWeight: "bold", color: "#202725" },
+  parMois: { fontSize: 9, fontWeight: "normal", color: "#53615D" },
+  sousLigne: { marginTop: 2, fontSize: 7, color: "#69736F" },
+  pages: { marginTop: 4, fontSize: 8.5, fontWeight: "bold" },
+  neCouvrePas: { marginTop: 4, fontSize: 7.5, color: "#53615D" },
+  inclus: { marginTop: 3, fontSize: 7.5, color: "#53615D" },
+  inclusFirst: { marginTop: 6 },
+  bullet: { marginBottom: 3, fontSize: 8.5, color: "#202725" },
+  bulletNote: { marginBottom: 3, marginLeft: 8, fontSize: 7.5, color: "#53615D" },
+  soumission: {
+    border: "2 solid #165A63",
+    borderRadius: 5,
+    padding: 14,
+    backgroundColor: "#FFFFFF",
   },
-  totalLabel: { flex: 1, fontSize: 8.5, fontWeight: "bold" },
-  totalValue: { fontSize: 8.5, fontWeight: "bold", color: "#1F4A3A" },
+  soumissionTitre: { fontSize: 14, fontWeight: "bold", color: "#165A63" },
+  soumissionTexte: { marginTop: 5, fontSize: 9.5, color: "#202725" },
   notes: {
     marginTop: 3,
     border: "1 solid #D8D1C5",
@@ -92,7 +108,6 @@ const styles = StyleSheet.create({
   },
   noteTitle: { marginBottom: 4, fontWeight: "bold", color: "#1F4A3A" },
   noteText: { marginBottom: 3, fontSize: 8, color: "#53615D" },
-  warning: { marginTop: 2, fontSize: 8, fontWeight: "bold", color: "#202725" },
   footer: {
     position: "absolute",
     bottom: 28,
@@ -111,88 +126,63 @@ const messages = { fr: frMessages, en: enMessages } as const;
 export const PDF_COPY = {
   fr: {
     eyebrow: "Un outil gratuit par Auxo Systems",
-    subtitle: "Estimation indicative des coûts d’un projet web",
+    subtitle: "Formule mensuelle recommandée pour votre site web",
     generated: "Généré le",
-    summary: "Résumé du projet",
+    formules: "Les formules",
     sector: "Secteur",
     siteType: "Type de site",
     features: "Fonctionnalités",
     sectorModules: "Modules sectoriels",
     language: "Langues",
-    oneLanguage: "Une langue",
-    bilingual: "Bilingue (FR/EN)",
-    multilingual: "Multilingue (3+ langues)",
-    urgent: "Livraison urgente",
-    yes: "Oui",
-    no: "Non",
     none: "Aucune",
-    scenarios: "Trois scénarios",
-    base: "Socle de base",
-    complexity: "Complexité et fonctionnalités",
-    modules: "Modules sectoriels",
-    contingency: "Imprévus (15 %)",
-    initial: "Réalisation",
-    maintenance: "Maintenance / mois",
-    thirdParty: "Coûts tiers / mois",
-    month: "Total mensuel",
-    year1: "Total — année 1",
-    recurring: "Récurrent annuel",
-    notes: "Notes de transparence",
     footer: "EstimaWeb QC — Auxo Systems — auxosystems.ca — Dollars canadiens, avant taxes",
   },
   en: {
     eyebrow: "A free tool by Auxo Systems",
-    subtitle: "Indicative web project cost estimate",
+    subtitle: "Recommended monthly plan for your website",
     generated: "Generated on",
-    summary: "Project summary",
+    formules: "The plans",
     sector: "Sector",
     siteType: "Site type",
     features: "Features",
     sectorModules: "Sector modules",
     language: "Languages",
-    oneLanguage: "One language",
-    bilingual: "Bilingual (FR/EN)",
-    multilingual: "Multilingual (3+ languages)",
-    urgent: "Urgent delivery",
-    yes: "Yes",
-    no: "No",
     none: "None",
-    scenarios: "Three scenarios",
-    base: "Base cost",
-    complexity: "Complexity and features",
-    modules: "Sector modules",
-    contingency: "Contingency (15%)",
-    initial: "Initial build",
-    maintenance: "Maintenance / month",
-    thirdParty: "Third-party costs / month",
-    month: "Monthly total",
-    year1: "Year 1 total",
-    recurring: "Annual recurring",
-    notes: "Transparency notes",
     footer: "EstimaWeb QC — Auxo Systems — auxosystems.ca — Canadian dollars, before taxes",
   },
 } as const;
 
-function getMessage(locale: PdfLocale, path: string): string {
+function getRaw(locale: PdfLocale, path: string): unknown {
   let current: unknown = messages[locale];
   for (const key of path.split(".")) {
     if (!current || typeof current !== "object" || !(key in current)) {
-      return path;
+      return undefined;
     }
     current = (current as Record<string, unknown>)[key];
   }
-  return typeof current === "string" ? current : path;
+  return current;
+}
+
+/** Texte des catalogues, avec remplacement des paramètres simples {nom}. */
+function getMessage(
+  locale: PdfLocale,
+  path: string,
+  params: Record<string, string | number> = {}
+): string {
+  const raw = getRaw(locale, path);
+  if (typeof raw !== "string") return path;
+  return raw.replace(/\{(\w+)\}/g, (match, key: string) =>
+    key in params ? String(params[key]) : match
+  );
 }
 
 export function getPdfDisclosureCopy(locale: PdfLocale) {
   return {
-    pricing: getMessage(locale, "transparency.notes.0"),
-    grid: getMessage(locale, "transparency.notes.1"),
-    taxes: getMessage(locale, "transparency.notes.2"),
-    thirdParty: getMessage(locale, "transparency.notes.3"),
-    recurring: getMessage(locale, "transparency.notes.5"),
-    scope: getMessage(locale, "transparency.notes.6"),
-    maintenance: getMessage(locale, "transparency.notes.7"),
+    pricing: getMessage(locale, "transparency.notes.0", {
+      date: formatDatePrixFixes(locale),
+    }),
+    contract: getMessage(locale, "transparency.notes.1"),
+    extras: getMessage(locale, "transparency.notes.2"),
   };
 }
 
@@ -206,64 +196,90 @@ export function formatPdfCurrency(amount: number, locale: PdfLocale): string {
   }).format(amount);
 }
 
-function ScenarioColumn({
-  name,
-  breakdown,
+function FormuleColumn({
+  formule,
+  recommandee,
+  neCouvrePas,
   locale,
 }: {
-  name: string;
-  breakdown: ScenarioBreakdown;
+  formule: FormuleId;
+  recommandee: boolean;
+  neCouvrePas: string[];
   locale: PdfLocale;
 }) {
-  const t = PDF_COPY[locale];
-  const fmt = (amount: number) => formatPdfCurrency(amount, locale);
+  const { prixMensuel, pagesMax } = getFormule(formule);
+  const inclus = (getRaw(locale, `formules.${formule}.inclus`) as string[] | undefined) ?? [];
   return (
-    <View style={styles.scenarioCard}>
-      <Text style={styles.scenarioHeader}>{name}</Text>
-      <View style={styles.row}><Text style={styles.label}>{t.base}</Text><Text style={styles.value}>{fmt(breakdown.baseCost)}</Text></View>
-      <View style={styles.row}><Text style={styles.label}>{t.complexity}</Text><Text style={styles.value}>{fmt(breakdown.multipliersCost)}</Text></View>
-      <View style={styles.row}><Text style={styles.label}>{t.modules}</Text><Text style={styles.value}>{fmt(breakdown.sectorModulesCost)}</Text></View>
-      <View style={styles.row}><Text style={styles.label}>{t.contingency}</Text><Text style={styles.value}>{fmt(breakdown.contingency)}</Text></View>
-      <View style={styles.totalRow}><Text style={styles.totalLabel}>{t.initial}</Text><Text style={styles.totalValue}>{fmt(breakdown.initialTotal)}</Text></View>
-      <View style={[styles.row, { marginTop: 5 }]}><Text style={styles.label}>{t.maintenance}</Text><Text style={styles.value}>{fmt(breakdown.maintenanceMonthly)}</Text></View>
-      <View style={styles.row}><Text style={styles.label}>{t.thirdParty}</Text><Text style={styles.value}>{fmt(breakdown.thirdPartyMonthly)}</Text></View>
-      <View style={styles.row}><Text style={styles.label}>{t.month}</Text><Text style={styles.value}>{fmt(breakdown.monthlyTotal)}</Text></View>
-      <View style={styles.totalRow}><Text style={styles.totalLabel}>{t.year1}</Text><Text style={styles.totalValue}>{fmt(breakdown.year1Total)}</Text></View>
-      <View style={styles.row}><Text style={styles.label}>{t.recurring}</Text><Text style={styles.value}>{fmt(breakdown.annualRecurring)}</Text></View>
+    <View
+      style={[
+        styles.formuleCard,
+        ...(recommandee ? [styles.formuleCardRecommandee] : []),
+        ...(neCouvrePas.length > 0 ? [styles.formuleCardAttenuee] : []),
+      ]}
+    >
+      {recommandee && <Text style={styles.badge}>{getMessage(locale, "formules.recommandee")}</Text>}
+      <Text style={styles.formuleNom}>{getMessage(locale, `formules.${formule}.nom`)}</Text>
+      <Text style={styles.prix}>
+        {formatPdfCurrency(prixMensuel, locale)}{" "}
+        <Text style={styles.parMois}>{getMessage(locale, "formules.parMois")}</Text>
+      </Text>
+      <Text style={styles.sousLigne}>
+        {getMessage(locale, "formules.sousLigne", {
+          mois: ENGAGEMENT_MOIS,
+          frais: formatPdfCurrency(FRAIS_DE_DEPART, locale),
+        })}
+      </Text>
+      <Text style={styles.pages}>{getMessage(locale, "formules.pages", { pages: pagesMax })}</Text>
+      {neCouvrePas.length > 0 && (
+        <Text style={styles.neCouvrePas}>
+          {getMessage(locale, "formules.neCouvrePas", { raisons: neCouvrePas.join(", ") })}
+        </Text>
+      )}
+      {inclus.map((item, i) => (
+        <Text key={item} style={i === 0 ? [styles.inclus, styles.inclusFirst] : styles.inclus}>
+          • {item}
+        </Text>
+      ))}
     </View>
   );
 }
 
 export interface EstimationPDFProps {
-  result: EstimationResult;
+  result: ResultatFormule;
   locale: PdfLocale;
   generatedAt?: Date;
 }
+
+const CONDITIONS = ["engagement", "propriete", "contenu", "revisions", "pages"] as const;
 
 export function EstimationPDF({
   result,
   locale,
   generatedAt = new Date(),
 }: EstimationPDFProps) {
-  const { inputs } = result;
+  const { selection } = result;
   const t = PDF_COPY[locale];
   const disclosure = getPdfDisclosureCopy(locale);
   const formattedDate = new Intl.DateTimeFormat(
     locale === "fr" ? "fr-CA" : "en-CA",
     { dateStyle: "long" }
   ).format(generatedAt);
-  const featureLabels = inputs.multipliers.map((id) =>
+  const featureLabels = selection.multipliers.map((id) =>
     getMessage(locale, `steps.features.${id}.label`)
   );
-  const sectorModuleLabels = inputs.sectorModules.map((id) =>
+  const sectorModuleLabels = selection.sectorModules.map((id) =>
     getMessage(locale, `steps.sectorModules.${id}.label`)
   );
-  const languages =
-    inputs.languageMode === "multilingual"
-      ? t.multilingual
-      : inputs.languageMode === "bilingual"
-        ? t.bilingual
-        : t.oneLanguage;
+  const labelAChiffrer = (element: ElementAChiffrer) =>
+    element.kind === "langue"
+      ? getMessage(locale, "formules.aChiffrer.langue")
+      : getMessage(
+          locale,
+          element.kind === "multiplier"
+            ? `steps.features.${element.id}.label`
+            : `steps.sectorModules.${element.id}.label`
+        );
+  const params = { mois: ENGAGEMENT_MOIS, frais: formatPdfCurrency(FRAIS_DE_DEPART, locale) };
 
   return (
     <Document title="EstimaWeb QC" author="Auxo Systems" language={locale}>
@@ -275,34 +291,71 @@ export function EstimationPDF({
           <Text style={styles.subtitle}>{t.generated} {formattedDate}</Text>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t.summary}</Text>
-          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.sector}</Text><Text style={styles.inputValue}>{getMessage(locale, `steps.sector.${inputs.sector}.label`)}</Text></View>
-          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.siteType}</Text><Text style={styles.inputValue}>{getMessage(locale, `steps.siteType.${inputs.siteType}.label`)}</Text></View>
+        {result.kind === "formule" ? (
+          <View style={styles.section} wrap={false}>
+            <Text style={styles.sectionTitle}>{t.formules}</Text>
+            <View style={styles.formuleContainer}>
+              {ORDRE_FORMULES.map((formule) => (
+                <FormuleColumn
+                  key={formule}
+                  formule={formule}
+                  recommandee={formule === result.formule}
+                  neCouvrePas={raisonsNonCouvertes(result, formule).map((r) =>
+                    getMessage(locale, `formules.raisons.${r}`)
+                  )}
+                  locale={locale}
+                />
+              ))}
+            </View>
+            {result.noteCroissance11a15 && (
+              <Text style={[styles.bullet, { marginTop: 7 }]}>
+                {getMessage(locale, "formules.note11a15")}
+              </Text>
+            )}
+          </View>
+        ) : (
+          <View style={[styles.section, styles.soumission]} wrap={false}>
+            <Text style={styles.soumissionTitre}>{getMessage(locale, "formules.soumission.titre")}</Text>
+            <Text style={styles.soumissionTexte}>{getMessage(locale, "formules.soumission.texte")}</Text>
+          </View>
+        )}
+
+        {result.kind === "formule" && result.aChiffrer.length > 0 && (
+          <View style={styles.section} wrap={false}>
+            <Text style={styles.sectionTitle}>{getMessage(locale, "formules.aChiffrer.titre")}</Text>
+            {result.aChiffrer.map((element) => (
+              <View key={element.kind === "langue" ? "langue" : element.id}>
+                <Text style={styles.bullet}>• {labelAChiffrer(element)}</Text>
+                {element.kind !== "langue" && OPTIONS_AGENTS_IA.includes(element.id) && (
+                  <Text style={styles.bulletNote}>{getMessage(locale, "formules.aChiffrer.agentsIa")}</Text>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
+
+        <View style={styles.section} wrap={false}>
+          <Text style={styles.sectionTitle}>{getMessage(locale, "steps.results.summary.title")}</Text>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.sector}</Text><Text style={styles.inputValue}>{getMessage(locale, `steps.sector.${selection.sector}.label`)}</Text></View>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.siteType}</Text><Text style={styles.inputValue}>{getMessage(locale, `steps.siteType.${selection.siteType}.label`)}</Text></View>
           <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.features}</Text><Text style={styles.inputValue}>{featureLabels.join(", ") || t.none}</Text></View>
           <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.sectorModules}</Text><Text style={styles.inputValue}>{sectorModuleLabels.join(", ") || t.none}</Text></View>
-          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.language}</Text><Text style={styles.inputValue}>{languages}</Text></View>
-          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.urgent}</Text><Text style={styles.inputValue}>{inputs.isUrgent ? t.yes : t.no}</Text></View>
-        </View>
-
-        <View style={styles.section} minPresenceAhead={190}>
-          <Text style={styles.sectionTitle}>{t.scenarios}</Text>
-          <View style={styles.scenarioContainer} wrap={false}>
-            <ScenarioColumn name={getMessage(locale, "scenarios.eco.name")} breakdown={result.eco} locale={locale} />
-            <ScenarioColumn name={getMessage(locale, "scenarios.rec.name")} breakdown={result.rec} locale={locale} />
-            <ScenarioColumn name={getMessage(locale, "scenarios.premium.name")} breakdown={result.premium} locale={locale} />
-          </View>
+          <View style={styles.inputRow}><Text style={styles.inputLabel}>{t.language}</Text><Text style={styles.inputValue}>{getMessage(locale, `steps.results.summary.languageModes.${selection.languageMode}`)}</Text></View>
         </View>
 
         <View style={styles.notes} wrap={false}>
-          <Text style={styles.noteTitle}>{t.notes}</Text>
-          <Text style={styles.noteText}>• {disclosure.grid}</Text>
-          <Text style={styles.noteText}>• {disclosure.taxes}</Text>
-          <Text style={styles.noteText}>• {disclosure.thirdParty}</Text>
-          <Text style={styles.noteText}>• {disclosure.recurring}</Text>
-          <Text style={styles.noteText}>• {disclosure.scope}</Text>
-          <Text style={styles.noteText}>• {disclosure.maintenance}</Text>
-          <Text style={styles.warning}>{disclosure.pricing}</Text>
+          {result.kind === "formule" && (
+            <>
+              <Text style={styles.noteTitle}>{getMessage(locale, "formules.conditions.titre")}</Text>
+              {CONDITIONS.map((key) => (
+                <Text key={key} style={styles.noteText}>• {getMessage(locale, `formules.conditions.${key}`, params)}</Text>
+              ))}
+            </>
+          )}
+          <Text style={[styles.noteTitle, { marginTop: 4 }]}>{getMessage(locale, "transparency.title")}</Text>
+          <Text style={styles.noteText}>• {disclosure.pricing}</Text>
+          <Text style={styles.noteText}>• {disclosure.contract}</Text>
+          <Text style={styles.noteText}>• {disclosure.extras}</Text>
         </View>
 
         <Text style={styles.footer} fixed>{t.footer}</Text>

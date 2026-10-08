@@ -1,25 +1,21 @@
 {
   "metadata": {
     "title": "EstimaWeb QC — Free web estimator by Auxo Systems",
-    "description": "Estimate a web project using Auxo Systems’ internal pricing grid. Indicative amounts in Canadian dollars, before taxes."
+    "description": "Find the monthly plan that fits your website, for free: a site built by an agency, paid like a subscription, with no upfront invoice. Prices in Canadian dollars, before taxes."
   },
   "common": {
     "appName": "EstimaWeb QC",
-    "tagline": "Estimate the cost of your web project in minutes",
+    "tagline": "Find the monthly plan that fits your website",
     "next": "Next",
     "previous": "Previous",
     "step": "Step",
     "of": "of",
     "downloadPdf": "Download PDF",
     "generatingPdf": "Generating…",
-    "getQuote": "See my estimate",
+    "getQuote": "See my plan",
     "editAnswers": "Edit my answers",
     "restart": "Start over",
     "currency": "CAD",
-    "perMonth": "/month",
-    "year1": "Year 1",
-    "recurring": "Annual recurring",
-    "recommended": "Recommended",
     "poweredBy": "A free tool by Auxo Systems",
     "langSwitch": "FR",
     "switchLanguage": "Display the French version",
@@ -30,11 +26,11 @@
     "titlePre": "How much does ",
     "titleAccent": "your website",
     "titlePost": " cost?",
-    "subtitle": "An indicative estimate in under 2 minutes, calculated locally from Auxo Systems’ internal pricing grid.",
+    "subtitle": "A site built by an agency, paid like a subscription, with no upfront invoice. Find the monthly plan that fits your project in 2 minutes.",
     "cta": "Start the estimate",
     "trust1": "Transparent calculation",
     "trust2": "No data transmitted",
-    "trust3": "Amounts in Canadian dollars"
+    "trust3": "Monthly prices in Canadian dollars"
   },
   "header": {
     "brand": "EstimaWeb QC"
@@ -47,20 +43,18 @@
   },
   "wizard": {
     "title": "Web Cost Estimator",
-    "subtitle": "Answer a few questions to get a personalized estimate",
+    "subtitle": "Answer a few questions to find the plan that fits your project",
     "steps": {
       "sector": "Sector",
       "siteType": "Site Type",
-      "nature": "Project Nature",
       "features": "Features",
-      "extras": "Language & Extras",
+      "extras": "Languages",
       "results": "Results"
     },
     "progressLabel": "Estimate progress",
     "stepsShort": {
       "sector": "Sector",
       "siteType": "Type",
-      "nature": "Nature",
       "features": "Feat.",
       "extras": "Lang.",
       "results": "Result"
@@ -114,55 +108,11 @@
         "label": "Landing page",
         "description": "Single page optimized for conversion"
       },
-      "priceScopeNeuf": "Ranges for a build from scratch, before options.",
-      "priceScopeRefonte": "Ranges adjusted to your redesign: sections you keep are never re-billed."
-    },
-    "nature": {
-      "eyebrow": "YOUR",
-      "title": "Is your project starting from scratch?",
-      "subtitle": "An existing site is already partly paid for: we never re-bill what you keep.",
-      "nature": {
-        "neuf": {
-          "label": "New site",
-          "description": "Nothing exists yet, everything is to be built"
-        },
-        "refonte": {
-          "label": "Redesign of an existing site",
-          "description": "The site exists; some or all sections are reworked"
-        }
-      },
-      "blocs": {
-        "label": "Page sections",
-        "help": "Count your page sections: those rebuilt from scratch, those where only the look changes, and those you keep as is. A deleted section is not counted.",
-        "neufs": {
-          "label": "Rebuilt",
-          "description": "Entirely new sections"
-        },
-        "rhabilles": {
-          "label": "Restyled",
-          "description": "Content kept, look reworked"
-        },
-        "conserves": {
-          "label": "Kept as is",
-          "description": "Sections left untouched"
-        },
-        "required": "Enter at least one section to continue."
-      },
-      "codeAuthor": {
-        "label": "Who wrote the current site?",
-        "nous": {
-          "label": "We did",
-          "description": "We already know the codebase"
-        },
-        "tiers": {
-          "label": "Someone else",
-          "description": "The existing code must first be read and understood"
-        }
-      }
+      "priceScope": "Starting plan for each site type, before features."
     },
     "features": {
       "title": "What features do you need?",
-      "subtitle": "Select all options that apply.",
+      "subtitle": "Select every option that applies. The hint on the right shows its effect on the plan.",
       "selectedCount": "{count, plural, one {# option selected} other {# options selected}}",
       "sectorModules": "Specialized modules for your sector",
       "M03": {
@@ -304,26 +254,9 @@
         "description": "Connections and content from social networks"
       }
     },
-    "optionStates": {
-      "title": "State of the selected features",
-      "subtitle": "For each feature, say whether it must be built, only restyled, or is already in place.",
-      "neuf": {
-        "label": "To build",
-        "description": "Does not exist yet"
-      },
-      "rhabille": {
-        "label": "To restyle",
-        "description": "Exists, look reworked"
-      },
-      "existant": {
-        "label": "Already in place",
-        "description": "Kept, never re-billed"
-      },
-      "hintExistant": "Already in place — not re-billed"
-    },
     "extras": {
-      "title": "Language and additional options",
-      "subtitle": "Configure the final details of your project.",
+      "title": "Site languages",
+      "subtitle": "Last question before your plan.",
       "language": {
         "label": "How many languages should the site offer?",
         "single": {
@@ -338,27 +271,19 @@
           "label": "Multilingual",
           "description": "Three languages or more"
         }
-      },
-      "urgency": {
-        "label": "Urgent delivery (< 4 weeks)?",
-        "yes": "Yes, urgent",
-        "no": "No, normal timeline"
       }
     },
     "results": {
-      "title": "Your personalized estimate",
-      "subtitle": "Three indicative scenarios, from the minimum scope to the most complete",
+      "title": "Your recommended plan",
+      "subtitle": "A monthly subscription, with no upfront invoice",
       "summary": {
-        "title": "Final calculated selection",
+        "title": "Your selection",
         "sector": "Sector",
         "siteType": "Site type",
         "features": "Features",
         "modules": "Specialized modules",
         "language": "Languages",
-        "urgency": "Urgent delivery",
         "none": "None",
-        "yes": "Yes",
-        "no": "No",
         "languageModes": {
           "single": "One language",
           "bilingual": "Bilingual, exactly two languages",
@@ -371,51 +296,99 @@
     "replacedBySpecialized": "This feature is already included in the selected specialized module.",
     "includedElsewhere": "This feature is already included in another selection."
   },
-  "scenarios": {
-    "eco": {
-      "name": "Economy",
-      "description": "Low end of the pricing grid for every line"
+  "formules": {
+    "depart": {
+      "nom": "Départ",
+      "accroche": "The essentials to be found and contacted.",
+      "inclus": [
+        "Custom design (not a template)",
+        "French and English",
+        "Full Law 25 compliance: cookies, privacy policy, legal notice",
+        "Hosting, domain name and SSL certificate",
+        "Basic technical SEO and Google Search Console",
+        "Contact form",
+        "Small changes included every month"
+      ]
     },
-    "rec": {
-      "name": "Recommended",
-      "description": "Middle of the pricing grid for every line"
+    "pro": {
+      "nom": "Pro",
+      "accroche": "To measure what your site brings in.",
+      "inclus": [
+        "Everything in Départ",
+        "Medium changes included",
+        "Google Analytics with inquiry tracking",
+        "Google Business Profile listing",
+        "Quarterly performance report"
+      ]
     },
-    "premium": {
-      "name": "Premium",
-      "description": "High end of the pricing grid for every line"
+    "croissance": {
+      "nom": "Croissance",
+      "accroche": "For a site that works for you.",
+      "inclus": [
+        "Everything in Pro",
+        "Major changes included",
+        "An interactive tool: calculator, assessment, appointment booking, etc.",
+        "Ongoing SEO monitoring",
+        "Monthly report",
+        "Priority response"
+      ]
+    },
+    "pages": "Up to {pages} pages",
+    "parMois": "/month",
+    "sousLigne": "{mois}-month commitment · {frais} upfront · before taxes",
+    "recommandee": "Recommended for you",
+    "neCouvrePas": "Does not cover: {raisons}",
+    "raisons": {
+      "plusDe5Pages": "more than 5 pages",
+      "animations": "advanced animations",
+      "googleBusiness": "the Google Business Profile listing",
+      "outilInteractif": "the interactive tool",
+      "priseDeRendezVous": "online appointment booking",
+      "suiviSeo": "ongoing SEO monitoring"
+    },
+    "note11a15": "Does your site have 11 to 15 pages? That is the Croissance plan.",
+    "aChiffrer": {
+      "titre": "To be priced with you, in addition to the plan",
+      "sousTitre": "These items go beyond what a plan includes. We price them with you, separately.",
+      "langue": "Site in three or more languages",
+      "agentsIa": "Auxo Systems also builds custom AI agents."
+    },
+    "soumission": {
+      "titre": "Custom quote",
+      "texte": "Your project goes beyond what our monthly plans cover. We will price it with you, based on your actual needs."
+    },
+    "conditions": {
+      "titre": "Plan terms",
+      "engagement": "{mois}-month commitment, {frais} upfront fee.",
+      "propriete": "At the end of the commitment, the site belongs to you.",
+      "contenu": "You provide the text and photos; copywriting is available as an option.",
+      "revisions": "Two rounds of revisions are included during the build.",
+      "pages": "More pages than the plan includes: that is the next plan."
+    },
+    "indices": {
+      "compris": "Included in every plan",
+      "monte": "{formule} plan at minimum",
+      "aChiffrer": "Priced separately",
+      "soumission": "Custom quote",
+      "siteFormule": "{formule}: {prix} /month"
     }
-  },
-  "results": {
-    "initialCost": "Initial build",
-    "baseCost": "Base cost",
-    "multipliers": "Complexity and features",
-    "sectorModules": "Sector modules",
-    "contingency": "Contingency (15%)",
-    "monthlyCost": "Monthly costs",
-    "maintenance": "Maintenance plan",
-    "thirdParty": "Estimated third-party costs",
-    "year1Total": "Year 1 Total",
-    "annualRecurring": "Annual recurring cost"
   },
   "transparency": {
     "title": "Transparency notes",
     "notes": [
-      "Estimates based on Auxo Systems’ internal pricing grid. Indicative amounts in Canadian dollars, before taxes. This estimate does not constitute a contractual quote.",
-      "Auxo Systems’ internal pricing grid was revised on August 3, 2026. It is not presented as a benchmark for the Quebec market.",
-      "Applicable taxes will be determined in any official quote based on the client’s location.",
-      "Third-party costs (hosting, licenses, etc.) are paid directly by the client and may vary.",
-      "Your answers and calculations stay in your browser. The PDF report is generated locally on your device.",
-      "The maintenance plan and baseline third-party costs are assigned automatically; they are not selected in the wizard.",
-      "Language and urgency premiums apply to the base package, not to features and modules, which are already priced for their own scope.",
-      "The maintenance plan follows the size of the project: a landing page and a custom platform do not receive the same plan."
+      "Plan prices set by Auxo Systems on {date}. Indicative amounts in Canadian dollars, before taxes: GST and QST are added.",
+      "This result is indicative and does not constitute a contractual quote. The exact scope is confirmed with you before any agreement.",
+      "Items priced separately are billed in addition to the plan.",
+      "Your answers and the calculation stay in your browser. The PDF report is generated locally on your device."
     ]
   },
   "contact_cta": {
-    "title": "Validate your project with Auxo Systems",
-    "subtitle": "To turn this indicative estimate into a project scope, send us a message.",
-    "cta": "Email Auxo Systems",
+    "title": "Confirm your plan with Auxo Systems",
+    "subtitle": "Write to us: we will confirm the plan and price anything added to it with you.",
+    "cta": "Write to Auxo Systems",
     "response": "info@auxosystems.ca",
     "subject": "Web project — EstimaWeb QC",
-    "body": "Hello,\n\nI used EstimaWeb QC and would like to validate the scope of my web project.\n\nThank you!"
+    "body": "Hello,\n\nI used EstimaWeb QC. The recommended plan for my project is {formule} ({prix} per month, {mois}-month commitment).\n\nI would like to discuss it with you.\n\nThank you!",
+    "bodySoumission": "Hello,\n\nI used EstimaWeb QC. My project goes beyond the monthly plans: I would like you to price it with me.\n\nThank you!"
   }
 }

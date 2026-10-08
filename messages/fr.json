@@ -1,25 +1,21 @@
 {
   "metadata": {
     "title": "EstimaWeb QC — Estimateur web gratuit par Auxo Systems",
-    "description": "Estimez gratuitement un projet web avec la grille tarifaire interne d’Auxo Systems. Montants indicatifs en dollars canadiens, avant taxes."
+    "description": "Trouvez gratuitement la formule mensuelle qui correspond à votre site web : un site fait par une agence, payé comme un abonnement, sans facture au départ. Prix en dollars canadiens, avant taxes."
   },
   "common": {
     "appName": "EstimaWeb QC",
-    "tagline": "Estimez le coût de votre projet web en quelques minutes",
+    "tagline": "Trouvez la formule mensuelle qui correspond à votre site web",
     "next": "Suivant",
     "previous": "Précédent",
     "step": "Étape",
     "of": "de",
     "downloadPdf": "Télécharger le PDF",
     "generatingPdf": "Génération…",
-    "getQuote": "Voir mon estimation",
+    "getQuote": "Voir ma formule",
     "editAnswers": "Modifier mes réponses",
     "restart": "Recommencer",
     "currency": "CAD",
-    "perMonth": "/mois",
-    "year1": "Année 1",
-    "recurring": "Récurrent annuel",
-    "recommended": "Recommandé",
     "poweredBy": "Un outil gratuit par Auxo Systems",
     "langSwitch": "EN",
     "switchLanguage": "Afficher la version anglaise",
@@ -30,11 +26,11 @@
     "titlePre": "Combien coûte ",
     "titleAccent": "votre site web",
     "titlePost": "?",
-    "subtitle": "Une estimation indicative en moins de 2 minutes, calculée localement à partir de la grille tarifaire interne d’Auxo Systems.",
+    "subtitle": "Un site fait par une agence, payé comme un abonnement, sans facture au départ. Trouvez en 2 minutes la formule mensuelle qui correspond à votre projet.",
     "cta": "Démarrer l'estimation",
     "trust1": "Calcul transparent",
     "trust2": "Aucune donnée transmise",
-    "trust3": "Montants en dollars canadiens"
+    "trust3": "Prix mensuels en dollars canadiens"
   },
   "header": {
     "brand": "EstimaWeb QC"
@@ -47,20 +43,18 @@
   },
   "wizard": {
     "title": "Estimateur de coûts web",
-    "subtitle": "Répondez à quelques questions pour obtenir une estimation personnalisée",
+    "subtitle": "Répondez à quelques questions pour trouver la formule qui correspond à votre projet",
     "steps": {
       "sector": "Secteur",
       "siteType": "Type de site",
-      "nature": "Nature du projet",
       "features": "Fonctionnalités",
-      "extras": "Langue & extras",
+      "extras": "Langues",
       "results": "Résultats"
     },
     "progressLabel": "Progression de l’estimation",
     "stepsShort": {
       "sector": "Sect.",
       "siteType": "Type",
-      "nature": "Nature",
       "features": "Fonc.",
       "extras": "Lang.",
       "results": "Rés."
@@ -114,55 +108,11 @@
         "label": "Landing page",
         "description": "Page unique optimisée pour la conversion"
       },
-      "priceScopeNeuf": "Fourchettes pour une construction neuve, avant options.",
-      "priceScopeRefonte": "Fourchettes ajustées à votre refonte : les sections conservées ne sont pas refacturées."
-    },
-    "nature": {
-      "eyebrow": "VOTRE",
-      "title": "Votre projet part-il de zéro?",
-      "subtitle": "Un site qui existe déjà est en partie payé : on ne refacture pas ce qui est conservé.",
-      "nature": {
-        "neuf": {
-          "label": "Nouveau site",
-          "description": "Rien n'existe encore, tout est à construire"
-        },
-        "refonte": {
-          "label": "Refonte d'un site existant",
-          "description": "Le site existe; on refait tout ou partie des sections"
-        }
-      },
-      "blocs": {
-        "label": "Sections de la page",
-        "help": "Comptez les sections de votre page : celles à refaire entièrement, celles dont seule l'apparence change, et celles que vous gardez telles quelles. Une section supprimée ne se compte pas.",
-        "neufs": {
-          "label": "À refaire",
-          "description": "Sections entièrement nouvelles"
-        },
-        "rhabilles": {
-          "label": "À rhabiller",
-          "description": "Contenu gardé, apparence revue"
-        },
-        "conserves": {
-          "label": "Gardées telles quelles",
-          "description": "Sections laissées intactes"
-        },
-        "required": "Indiquez au moins une section pour continuer."
-      },
-      "codeAuthor": {
-        "label": "Qui a écrit le site actuel?",
-        "nous": {
-          "label": "Nous",
-          "description": "Nous connaissons déjà le code"
-        },
-        "tiers": {
-          "label": "Quelqu'un d'autre",
-          "description": "Il faut d'abord lire et comprendre le code existant"
-        }
-      }
+      "priceScope": "Formule de départ selon le type de site, avant les fonctionnalités."
     },
     "features": {
       "title": "Quelles fonctionnalités souhaitez-vous?",
-      "subtitle": "Sélectionnez toutes les options qui s'appliquent.",
+      "subtitle": "Sélectionnez toutes les options qui s’appliquent. L’indice à droite montre leur effet sur la formule.",
       "selectedCount": "{count, plural, one {# option sélectionnée} other {# options sélectionnées}}",
       "sectorModules": "Modules spécialisés pour votre secteur",
       "M03": {
@@ -304,26 +254,9 @@
         "description": "Connexions et contenus issus des réseaux sociaux"
       }
     },
-    "optionStates": {
-      "title": "État des fonctionnalités retenues",
-      "subtitle": "Pour chaque fonctionnalité, précisez si elle est à construire, seulement à rhabiller, ou déjà en place.",
-      "neuf": {
-        "label": "À construire",
-        "description": "N'existe pas encore"
-      },
-      "rhabille": {
-        "label": "À rhabiller",
-        "description": "Existe, apparence revue"
-      },
-      "existant": {
-        "label": "Déjà en place",
-        "description": "Conservée, non refacturée"
-      },
-      "hintExistant": "Déjà en place — non refacturé"
-    },
     "extras": {
-      "title": "Langue et options supplémentaires",
-      "subtitle": "Configurez les derniers détails de votre projet.",
+      "title": "Langues du site",
+      "subtitle": "Dernière question avant votre formule.",
       "language": {
         "label": "Combien de langues le site doit-il offrir?",
         "single": {
@@ -338,27 +271,19 @@
           "label": "Multilingue",
           "description": "Trois langues ou plus"
         }
-      },
-      "urgency": {
-        "label": "Livraison urgente (< 4 semaines)?",
-        "yes": "Oui, urgent",
-        "no": "Non, délai normal"
       }
     },
     "results": {
-      "title": "Votre estimation personnalisée",
-      "subtitle": "Trois scénarios indicatifs, du périmètre minimal au plus complet",
+      "title": "Votre formule recommandée",
+      "subtitle": "Un abonnement mensuel, sans facture au départ",
       "summary": {
-        "title": "Sélection finale calculée",
+        "title": "Votre sélection",
         "sector": "Secteur",
         "siteType": "Type de site",
         "features": "Fonctionnalités",
         "modules": "Modules spécialisés",
         "language": "Langues",
-        "urgency": "Livraison urgente",
         "none": "Aucune",
-        "yes": "Oui",
-        "no": "Non",
         "languageModes": {
           "single": "Une langue",
           "bilingual": "Bilingue, exactement deux langues",
@@ -371,51 +296,99 @@
     "replacedBySpecialized": "Cette fonctionnalité est déjà comprise dans le module spécialisé sélectionné.",
     "includedElsewhere": "Cette fonctionnalité est déjà comprise dans une autre sélection."
   },
-  "scenarios": {
-    "eco": {
-      "name": "Économique",
-      "description": "Bas de la grille tarifaire pour chaque poste"
+  "formules": {
+    "depart": {
+      "nom": "Départ",
+      "accroche": "L’essentiel pour être trouvé et contacté.",
+      "inclus": [
+        "Design sur mesure (pas un gabarit)",
+        "Français et anglais",
+        "Loi 25 complète : témoins, politique de confidentialité, mentions légales",
+        "Hébergement, nom de domaine et certificat SSL",
+        "SEO technique de base et Google Search Console",
+        "Formulaire de contact",
+        "Petites modifications incluses chaque mois"
+      ]
     },
-    "rec": {
-      "name": "Recommandé",
-      "description": "Milieu de la grille tarifaire pour chaque poste"
+    "pro": {
+      "nom": "Pro",
+      "accroche": "Pour mesurer ce que le site vous rapporte.",
+      "inclus": [
+        "Tout ce que comprend Départ",
+        "Modifications moyennes incluses",
+        "Google Analytics avec suivi des demandes",
+        "Fiche Google Business Profile",
+        "Rapport de performance trimestriel"
+      ]
     },
-    "premium": {
-      "name": "Premium",
-      "description": "Haut de la grille tarifaire pour chaque poste"
+    "croissance": {
+      "nom": "Croissance",
+      "accroche": "Pour un site qui travaille pour vous.",
+      "inclus": [
+        "Tout ce que comprend Pro",
+        "Modifications importantes incluses",
+        "Un outil interactif : calculateur, diagnostic, prise de rendez-vous, etc.",
+        "Suivi SEO continu",
+        "Rapport mensuel",
+        "Réponse prioritaire"
+      ]
+    },
+    "pages": "Jusqu’à {pages} pages",
+    "parMois": "/mois",
+    "sousLigne": "engagement {mois} mois · {frais} au départ · avant taxes",
+    "recommandee": "Recommandée pour vous",
+    "neCouvrePas": "Ne couvre pas : {raisons}",
+    "raisons": {
+      "plusDe5Pages": "plus de 5 pages",
+      "animations": "les animations avancées",
+      "googleBusiness": "la fiche Google Business Profile",
+      "outilInteractif": "l’outil interactif",
+      "priseDeRendezVous": "la prise de rendez-vous en ligne",
+      "suiviSeo": "le suivi SEO continu"
+    },
+    "note11a15": "Votre site compte de 11 à 15 pages? C’est la formule Croissance.",
+    "aChiffrer": {
+      "titre": "À chiffrer avec vous, en plus de la formule",
+      "sousTitre": "Ces éléments dépassent ce que comprend une formule. Nous les chiffrons avec vous, séparément.",
+      "langue": "Site en trois langues ou plus",
+      "agentsIa": "Auxo Systems conçoit aussi des agents IA sur mesure."
+    },
+    "soumission": {
+      "titre": "Sur soumission",
+      "texte": "Votre projet dépasse ce que couvrent nos formules mensuelles. Nous le chiffrons avec vous, selon vos besoins réels."
+    },
+    "conditions": {
+      "titre": "Conditions des formules",
+      "engagement": "Engagement de {mois} mois, {frais} de frais de départ.",
+      "propriete": "À la fin de l’engagement, le site vous appartient.",
+      "contenu": "Vous fournissez les textes et les photos; la rédaction est offerte en option.",
+      "revisions": "Deux rondes de révisions sont comprises à la construction.",
+      "pages": "Plus de pages que n’en compte la formule : c’est la formule suivante."
+    },
+    "indices": {
+      "compris": "Compris dans toute formule",
+      "monte": "Formule {formule} au minimum",
+      "aChiffrer": "À chiffrer à part",
+      "soumission": "Sur soumission",
+      "siteFormule": "{formule} : {prix} /mois"
     }
-  },
-  "results": {
-    "initialCost": "Réalisation initiale",
-    "baseCost": "Socle de base",
-    "multipliers": "Complexité et fonctionnalités",
-    "sectorModules": "Modules sectoriels",
-    "contingency": "Marge imprévus (15%)",
-    "monthlyCost": "Coûts mensuels",
-    "maintenance": "Forfait maintenance",
-    "thirdParty": "Coûts tiers estimés",
-    "year1Total": "Total Année 1",
-    "annualRecurring": "Coût annuel récurrent"
   },
   "transparency": {
     "title": "Notes de transparence",
     "notes": [
-      "Estimations basées sur la grille tarifaire interne d’Auxo Systems. Montants indicatifs en dollars canadiens, avant taxes. Cette estimation ne constitue pas une soumission contractuelle.",
-      "La grille tarifaire interne d’Auxo Systems a été révisée le 3 août 2026. Elle n’est pas présentée comme une mesure du marché québécois.",
-      "Les taxes applicables seront déterminées lors d’une éventuelle soumission officielle selon le lieu du client.",
-      "Les coûts tiers (hébergement, licences, etc.) sont payés directement par le client et peuvent varier.",
-      "Vos réponses et les calculs restent dans votre navigateur. Le rapport PDF est généré localement sur votre appareil.",
-      "Le forfait de maintenance et les coûts tiers de base sont assignés automatiquement; ils ne sont pas sélectionnés dans l’assistant.",
-      "Les suppléments de langue et d’urgence majorent le socle de base, non les fonctionnalités et modules, déjà chiffrés pour leur propre périmètre.",
-      "Le forfait de maintenance proposé suit l’ampleur du projet : une landing page et une plateforme sur mesure ne reçoivent pas le même forfait."
+      "Prix des formules fixés par Auxo Systems le {date}. Montants indicatifs en dollars canadiens, avant taxes : la TPS et la TVQ s’ajoutent.",
+      "Ce résultat est indicatif et ne constitue pas une soumission contractuelle. Le périmètre exact est confirmé avec vous avant toute entente.",
+      "Les éléments à chiffrer à part font l’objet d’un prix distinct, en plus de la formule.",
+      "Vos réponses et le calcul restent dans votre navigateur. Le rapport PDF est généré localement sur votre appareil."
     ]
   },
   "contact_cta": {
-    "title": "Validez votre projet avec Auxo Systems",
-    "subtitle": "Pour transformer cette estimation indicative en périmètre de projet, écrivez-nous.",
+    "title": "Validez votre formule avec Auxo Systems",
+    "subtitle": "Écrivez-nous : nous confirmons la formule et chiffrons avec vous ce qui s’y ajoute.",
     "cta": "Écrire à Auxo Systems",
     "response": "info@auxosystems.ca",
     "subject": "Projet web — EstimaWeb QC",
-    "body": "Bonjour,\n\nJ’ai utilisé EstimaWeb QC et j’aimerais valider le périmètre de mon projet web.\n\nMerci!"
+    "body": "Bonjour,\n\nJ’ai utilisé EstimaWeb QC. La formule recommandée pour mon projet est {formule} ({prix} par mois, engagement de {mois} mois).\n\nJ’aimerais en discuter avec vous.\n\nMerci!",
+    "bodySoumission": "Bonjour,\n\nJ’ai utilisé EstimaWeb QC. Mon projet dépasse les formules mensuelles : j’aimerais que vous le chiffriez avec moi.\n\nMerci!"
   }
 }

@@ -4,21 +4,21 @@ import en from "../../../../messages/en.json";
 import { MARKET_DATA_METADATA, SECTOR_MODULES } from "../matrix";
 
 describe("definitive bilingual business copy", () => {
-  it("states the exact French before-tax pricing position", () => {
+  it("states the French subscription pricing position, taxes added", () => {
     expect(fr.transparency.notes[0]).toBe(
-      "Estimations basées sur la grille tarifaire interne d’Auxo Systems. Montants indicatifs en dollars canadiens, avant taxes. Cette estimation ne constitue pas une soumission contractuelle."
+      "Prix des formules fixés par Auxo Systems le {date}. Montants indicatifs en dollars canadiens, avant taxes : la TPS et la TVQ s’ajoutent."
     );
-    expect(fr.transparency.notes[2]).toContain("selon le lieu du client");
+    expect(fr.transparency.notes[1]).toContain("ne constitue pas une soumission contractuelle");
   });
 
   it("states the professional English equivalent", () => {
     expect(en.transparency.notes[0]).toBe(
-      "Estimates based on Auxo Systems’ internal pricing grid. Indicative amounts in Canadian dollars, before taxes. This estimate does not constitute a contractual quote."
+      "Plan prices set by Auxo Systems on {date}. Indicative amounts in Canadian dollars, before taxes: GST and QST are added."
     );
-    expect(en.transparency.notes[2]).toContain("based on the client’s location");
+    expect(en.transparency.notes[1]).toContain("does not constitute a contractual quote");
   });
 
-  it("identifies the Auxo internal grid and its definitive revision date", () => {
+  it("keeps the internal grid metadata of the one-time engine", () => {
     expect(MARKET_DATA_METADATA).toEqual({
       owner: "Auxo Systems",
       sourceStatus: "auxo-internal-rate-card",
@@ -28,8 +28,6 @@ describe("definitive bilingual business copy", () => {
       contractual: false,
       marketRepresentative: false,
     });
-    expect(fr.transparency.notes[1]).toContain("révisée le 3 août 2026");
-    expect(en.transparency.notes[1]).toContain("revised on August 3, 2026");
   });
 
   it("defines one language choice with the same three meanings in both locales", () => {

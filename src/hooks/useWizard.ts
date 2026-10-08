@@ -2,27 +2,32 @@
 
 import { useReducer, useCallback, useMemo } from "react";
 import type {
-  WizardState,
   Sector,
   SiteTypeId,
   MultiplierId,
   SectorModuleId,
   LanguageMode,
-  ProjectNature,
-  CodeAuthor,
-  OptionState,
-  OptionStateMap,
-  CalculatorInput,
 } from "@/lib/engine/types";
-import { calculateEstimation } from "@/lib/engine/calculator";
 import {
   isSiteTypeAllowed,
   normalizeCompatibleSelection,
 } from "@/lib/engine/compatibility";
+import { recommanderFormule, type ResultatFormule } from "@/lib/formules/recommander";
+
+// ── État ────────────────────────────────────────────────────────
+// La nature du projet (neuf ou refonte) et l'urgence ne changent pas la
+// formule : l'assistant ne les demande plus.
+export interface WizardState {
+  currentStep: number;
+  sector: Sector | null;
+  siteType: SiteTypeId | null;
+  selectedMultipliers: MultiplierId[];
+  selectedSectorModules: SectorModuleId[];
+  languageMode: LanguageMode;
+  result: ResultatFormule | null;
+}
 
 // ── Actions ─────────────────────────────────────────────────────
-export type BlocKind = "blocsNeufs" | "blocsRhabilles" | "blocsConserves";
-
 export type WizardAction =
   | { type: "SET_STEP"; step: number }
   | { type: "SET_SECTOR"; sector: Sector }
@@ -30,19 +35,13 @@ export type WizardAction =
   | { type: "TOGGLE_MULTIPLIER"; id: MultiplierId }
   | { type: "TOGGLE_SECTOR_MODULE"; id: SectorModuleId }
   | { type: "SET_LANGUAGE_MODE"; languageMode: LanguageMode }
-  | { type: "SET_URGENT"; value: boolean }
-  | { type: "SET_PROJECT_NATURE"; projectNature: ProjectNature }
-  | { type: "SET_CODE_AUTHOR"; codeAuthor: CodeAuthor }
-  | { type: "SET_BLOC_COUNT"; kind: BlocKind; value: number }
-  | { type: "SET_OPTION_STATE"; id: MultiplierId | SectorModuleId; state: OptionState }
   | { type: "COMPUTE_RESULT" }
   | { type: "EDIT_ANSWERS" }
   | { type: "RESET" };
 
-export const TOTAL_STEPS = 6;
+/** Secteur, type de site, fonctionnalités, langue, résultat. */
+export const TOTAL_STEPS = 5;
 
-/** Index de l'étape « nature du projet », insérée après le type de site. */
-export const NATURE_STEP = 2;
 /** Dernière étape de saisie : passer à la suivante déclenche le calcul. */
 export const LAST_INPUT_STEP = TOTAL_STEPS - 2;
 
@@ -50,66 +49,16 @@ export const initialState: WizardState = {
   currentStep: 0,
   sector: null,
   siteType: null,
-  // M08 (Loi 25) est présélectionnée : obligation légale québécoise, pas une
-  // option facultative. Reste décochable pour un client hors Québec.
+  // M08 (Loi 25) est présélectionnée : obligation légale québécoise, comprise
+  // dans toute formule. Reste décochable pour un client hors Québec.
   selectedMultipliers: ["M08"],
   selectedSectorModules: [],
   languageMode: "single",
-  isUrgent: false,
-  projectNature: "neuf",
-  codeAuthor: "nous",
-  blocsNeufs: 0,
-  blocsRhabilles: 0,
-  blocsConserves: 0,
-  optionStates: {},
   result: null,
 };
 
-/** Nombre de blocs décrits; une refonte doit en compter au moins un. */
-export function totalBlocs(state: WizardState): number {
-  return state.blocsNeufs + state.blocsRhabilles + state.blocsConserves;
-}
-
 /**
- * Entrée du calculateur. Les champs de refonte ne sont transmis qu'en refonte :
- * l'état conserve l'intention de l'utilisateur, mais une estimation en neuf ne
- * doit porter aucune trace de refonte (le schéma les y refuse).
- */
-export function toCalculatorInput(
-  state: WizardState,
-  sector: Sector,
-  siteType: SiteTypeId
-): CalculatorInput {
-  const effective = getEffectiveSelection(state);
-  const base: CalculatorInput = {
-    sector,
-    siteType,
-    selectedMultipliers: effective.selectedMultipliers,
-    selectedSectorModules: effective.selectedSectorModules,
-    languageMode: state.languageMode,
-    isUrgent: state.isUrgent,
-    projectNature: state.projectNature,
-  };
-  if (state.projectNature !== "refonte") return base;
-
-  const billed = new Set<string>([
-    ...effective.selectedMultipliers,
-    ...effective.selectedSectorModules,
-  ]);
-  return {
-    ...base,
-    codeAuthor: state.codeAuthor,
-    blocsNeufs: state.blocsNeufs,
-    blocsRhabilles: state.blocsRhabilles,
-    blocsConserves: state.blocsConserves,
-    optionStates: Object.fromEntries(
-      Object.entries(state.optionStates).filter(([id]) => billed.has(id))
-    ) as OptionStateMap,
-  };
-}
-
-/**
- * Sélection réellement facturée : l'état conserve l'intention de l'utilisateur,
+ * Sélection réellement retenue : l'état conserve l'intention de l'utilisateur,
  * la normalisation n'est appliquée qu'à la projection. Une option masquée par un
  * choix ultérieur redevient donc active si ce choix est annulé.
  */
@@ -182,36 +131,17 @@ export function wizardReducer(
     case "SET_LANGUAGE_MODE":
       return { ...state, languageMode: action.languageMode };
 
-    case "SET_URGENT":
-      return { ...state, isUrgent: action.value };
-
-    case "SET_PROJECT_NATURE":
-      return { ...state, projectNature: action.projectNature };
-
-    case "SET_CODE_AUTHOR":
-      return { ...state, codeAuthor: action.codeAuthor };
-
-    case "SET_BLOC_COUNT": {
-      // Un compte de blocs est un entier positif; le reste n'est pas saisissable.
-      const value = Math.max(0, Math.floor(action.value));
-      if (!Number.isFinite(value)) return state;
-      return { ...state, [action.kind]: value };
-    }
-
-    case "SET_OPTION_STATE":
-      return {
-        ...state,
-        optionStates: { ...state.optionStates, [action.id]: action.state },
-      };
-
     case "COMPUTE_RESULT": {
       if (!state.sector || !state.siteType) return state;
-      // Une refonte qui ne décrit aucun bloc n'est pas calculable.
-      if (state.projectNature === "refonte" && totalBlocs(state) === 0) return state;
-      const result = calculateEstimation(
-        toCalculatorInput(state, state.sector, state.siteType)
-      );
+      const effective = getEffectiveSelection(state);
       // L'intention reste dans l'état; seul le résultat porte la sélection normalisée.
+      const result = recommanderFormule({
+        sector: state.sector,
+        siteType: state.siteType,
+        multipliers: effective.selectedMultipliers,
+        sectorModules: effective.selectedSectorModules,
+        languageMode: state.languageMode,
+      });
       return { ...state, result };
     }
 
@@ -238,24 +168,19 @@ export function useWizard() {
         return state.sector !== null;
       case 1:
         return state.siteType !== null;
-      case NATURE_STEP:
-        // Une refonte doit décrire au moins un bloc; le neuf n'a rien à saisir.
-        return state.projectNature !== "refonte" || totalBlocs(state) > 0;
+      case 2:
+        return true; // fonctionnalités facultatives
       case 3:
-        return true; // features are optional
-      case 4:
-        return true; // extras are optional
-      case 5:
-        return false; // results — no "next"
+        return true; // langue : une valeur par défaut
       default:
-        return false;
+        return false; // résultat — pas de « suivant »
     }
   }, [state]);
 
   const goNext = useCallback(() => {
     if (state.currentStep < TOTAL_STEPS - 1) {
       const nextStep = state.currentStep + 1;
-      // Auto-compute when reaching results
+      // Le résultat est calculé à l'arrivée sur la dernière étape.
       if (nextStep === TOTAL_STEPS - 1) {
         dispatch({ type: "COMPUTE_RESULT" });
       }
