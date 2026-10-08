@@ -1,20 +1,18 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Info } from "lucide-react";
+import { formatDatePrixFixes } from "@/lib/formules/recommander";
 
 export function TransparencyNotes() {
   const t = useTranslations("transparency");
+  const locale = useLocale() as "fr" | "en";
 
   const notes = [
-    t("notes.0"),
+    t("notes.0", { date: formatDatePrixFixes(locale) }),
     t("notes.1"),
     t("notes.2"),
     t("notes.3"),
-    t("notes.4"),
-    t("notes.5"),
-    t("notes.6"),
-    t("notes.7"),
   ];
 
   return (

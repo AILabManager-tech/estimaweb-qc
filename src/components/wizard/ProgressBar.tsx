@@ -12,7 +12,6 @@ interface ProgressBarProps {
 const STEP_KEYS = [
   "sector",
   "siteType",
-  "nature",
   "features",
   "extras",
   "results",
@@ -34,7 +33,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
               <div className="flex w-full items-center">
                 <div
                   className={cn(
-                    "relative flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold transition-all duration-300",
+                    "relative flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[0.625rem] font-bold transition-all duration-300",
                     isCompleted && "bg-accent text-background",
                     isActive &&
                       "bg-accent/20 text-accent ring-2 ring-accent",
@@ -66,7 +65,7 @@ export function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
               </div>
               <span
                 className={cn(
-                  "text-[10px] leading-tight",
+                  "text-[0.625rem] leading-tight",
                   isActive ? "text-accent font-medium" : "text-text-tertiary"
                 )}
               >

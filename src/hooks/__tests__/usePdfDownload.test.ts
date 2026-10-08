@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { usePdfDownload } from "../usePdfDownload";
-import type { EstimationResult } from "@/lib/engine/types";
+import type { ResultatFormule } from "@/lib/formules/recommander";
 
 const toBlob = vi.fn();
 
@@ -13,7 +13,7 @@ vi.mock("@/lib/pdf/EstimationPDF", () => ({
   EstimationPDF: () => null,
 }));
 
-const result = { inputs: {} } as unknown as EstimationResult;
+const result = { inputs: {} } as unknown as ResultatFormule;
 
 describe("usePdfDownload", () => {
   beforeEach(() => {

@@ -2,13 +2,12 @@
 
 import { useRef, useCallback, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { useWizard, NATURE_STEP, LAST_INPUT_STEP } from "@/hooks/useWizard";
+import { useWizard, LAST_INPUT_STEP } from "@/hooks/useWizard";
 import { usePdfDownload } from "@/hooks/usePdfDownload";
 import { ProgressBar } from "./ProgressBar";
 import { StepTransition } from "./StepTransition";
 import { SectorStep } from "./steps/SectorStep";
 import { SiteTypeStep } from "./steps/SiteTypeStep";
-import { ProjectNatureStep } from "./steps/ProjectNatureStep";
 import { FeaturesStep } from "./steps/FeaturesStep";
 import { BilingualStep } from "./steps/BilingualStep";
 import { ResultsStep } from "./steps/ResultsStep";
@@ -64,33 +63,9 @@ export function WizardContainer() {
             value={state.siteType}
             onChange={(s) => dispatch({ type: "SET_SITE_TYPE", siteType: s })}
             sector={state.sector}
-            projectNature={state.projectNature}
-            codeAuthor={state.codeAuthor}
-            blocsNeufs={state.blocsNeufs}
-            blocsRhabilles={state.blocsRhabilles}
-            blocsConserves={state.blocsConserves}
           />
         ) : null;
-      case NATURE_STEP:
-        return (
-          <ProjectNatureStep
-            projectNature={state.projectNature}
-            codeAuthor={state.codeAuthor}
-            blocsNeufs={state.blocsNeufs}
-            blocsRhabilles={state.blocsRhabilles}
-            blocsConserves={state.blocsConserves}
-            onSetProjectNature={(projectNature) =>
-              dispatch({ type: "SET_PROJECT_NATURE", projectNature })
-            }
-            onSetCodeAuthor={(codeAuthor) =>
-              dispatch({ type: "SET_CODE_AUTHOR", codeAuthor })
-            }
-            onSetBlocCount={(kind, value) =>
-              dispatch({ type: "SET_BLOC_COUNT", kind, value })
-            }
-          />
-        );
-      case 3:
+      case 2:
         return state.sector ? (
           <FeaturesStep
             sector={state.sector}
@@ -103,25 +78,18 @@ export function WizardContainer() {
             onToggleSectorModule={(id) =>
               dispatch({ type: "TOGGLE_SECTOR_MODULE", id })
             }
-            projectNature={state.projectNature}
-            optionStates={state.optionStates}
-            onSetOptionState={(id, optionState) =>
-              dispatch({ type: "SET_OPTION_STATE", id, state: optionState })
-            }
           />
         ) : null;
-      case 4:
+      case 3:
         return (
           <BilingualStep
             languageMode={state.languageMode}
-            isUrgent={state.isUrgent}
             onSetLanguageMode={(languageMode) =>
               dispatch({ type: "SET_LANGUAGE_MODE", languageMode })
             }
-            onSetUrgent={(v) => dispatch({ type: "SET_URGENT", value: v })}
           />
         );
-      case 5:
+      case 4:
         return state.result ? (
           <ResultsStep
             result={state.result}

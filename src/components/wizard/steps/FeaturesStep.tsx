@@ -1,21 +1,15 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { CheckboxGroup } from "@/components/ui/CheckboxGroup";
-import { MULTIPLIERS, SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
-import { billedOptionRange } from "@/lib/engine/calculator";
+import { SECTOR_MODULES, ADDITIVE_IDS } from "@/lib/engine/matrix";
 import { getOptionAvailability } from "@/lib/engine/compatibility";
-import { formatCurrency } from "@/lib/utils";
-import { RadioGroup } from "@/components/ui/RadioGroup";
+import { effetOption } from "@/lib/formules/recommander";
 import type {
   MultiplierId,
   SectorModuleId,
   Sector,
   SiteTypeId,
-  OptionState,
-  OptionStateMap,
-  ProjectNature,
-  PriceRange,
 } from "@/lib/engine/types";
 
 interface FeaturesStepProps {
@@ -25,14 +19,7 @@ interface FeaturesStepProps {
   selectedSectorModules: SectorModuleId[];
   onToggleMultiplier: (id: MultiplierId) => void;
   onToggleSectorModule: (id: SectorModuleId) => void;
-  projectNature: ProjectNature;
-  optionStates: OptionStateMap;
-  onSetOptionState: (id: MultiplierId | SectorModuleId, state: OptionState) => void;
 }
-
-// `bloc` ferme la règle de non-recouvrement : une option qui correspond à une
-// section déjà déclarée à l'étape précédente ne doit pas être facturée en plus.
-const OPTION_STATES = ["neuf", "rhabille", "existant", "bloc"] as const;
 
 export function FeaturesStep({
   sector,
@@ -41,35 +28,13 @@ export function FeaturesStep({
   selectedSectorModules,
   onToggleMultiplier,
   onToggleSectorModule,
-  projectNature,
-  optionStates,
-  onSetOptionState,
 }: FeaturesStepProps) {
   const tFeatures = useTranslations("steps.features");
   const tModules = useTranslations("steps.sectorModules");
   const tCompatibility = useTranslations("compatibility");
-  const locale = useLocale() as "fr" | "en";
+  const tFormules = useTranslations("formules");
 
-  const tStates = useTranslations("steps.optionStates");
   const totalSelected = selectedMultipliers.length + selectedSectorModules.length;
-  const stateOf = (id: MultiplierId | SectorModuleId): OptionState =>
-    optionStates[id] ?? "neuf";
-
-  // En refonte, chaque option retenue porte un état : une fonctionnalité qui
-  // existe déjà ne doit pas être facturée à son prix de construction.
-  const statefulOptions =
-    projectNature === "refonte"
-      ? [
-          ...selectedMultipliers.map((id) => ({
-            id: id as MultiplierId | SectorModuleId,
-            label: tFeatures(`${id}.label`),
-          })),
-          ...selectedSectorModules.map((id) => ({
-            id: id as MultiplierId | SectorModuleId,
-            label: tModules(`${id}.label`),
-          })),
-        ]
-      : [];
 
   const selection = {
     sector,
@@ -78,27 +43,21 @@ export function FeaturesStep({
     selectedSectorModules,
   };
 
-  /**
-   * Indice de prix réellement facturé. En refonte, une option déjà en place ne
-   * coûte rien et une option rhabillée ne coûte qu'une fraction : afficher son
-   * prix de construction ferait mentir l'interface sur ce que le calcul retient.
-   */
-  const priceHintFor = (id: MultiplierId | SectorModuleId, price: PriceRange) => {
-    const state = projectNature === "refonte" ? stateOf(id) : "neuf";
-    if (state === "existant") return tStates("hintExistant");
-    if (state === "bloc") return tStates("hintBloc");
-    const billed = billedOptionRange(price, state);
-    return `+ ${formatCurrency(billed.min, locale)} – ${formatCurrency(billed.max, locale)}`;
+  /** Indice : l'effet de l'option sur la formule, jamais un montant ponctuel. */
+  const hintFor = (id: MultiplierId | SectorModuleId) => {
+    const effet = effetOption(id);
+    if (effet.effet === "comprise") return tFormules("indices.compris");
+    if (effet.effet === "aChiffrer") return tFormules("indices.aChiffrer");
+    return tFormules("indices.monte", { formule: tFormules(`${effet.formule}.nom`) });
   };
 
   const multiplierOptions = ADDITIVE_IDS.map((id) => {
-    const m = MULTIPLIERS[id];
     const availability = getOptionAvailability(selection, "multiplier", id);
     return {
       value: id,
       label: tFeatures(`${id}.label`),
       description: tFeatures(`${id}.description`),
-      priceHint: priceHintFor(id, m.value),
+      priceHint: hintFor(id),
       disabled: availability.disabled,
       disabledReason: availability.reason
         ? tCompatibility(availability.reason)
@@ -113,7 +72,7 @@ export function FeaturesStep({
       value: mod.id,
       label: tModules(`${mod.id}.label`),
       description: tModules(`${mod.id}.description`),
-      priceHint: priceHintFor(mod.id, mod.price),
+      priceHint: hintFor(mod.id),
       disabled: availability.disabled,
       disabledReason: availability.reason
         ? tCompatibility(availability.reason)
@@ -171,42 +130,6 @@ export function FeaturesStep({
             ariaLabel={tFeatures("sectorModules")}
           />
         </>
-      )}
-
-      {statefulOptions.length > 0 && (
-        <div className="space-y-4 border-t border-surface-border pt-6">
-          <div>
-            <h3 className="font-mono text-xs uppercase tracking-widest text-accent">
-              {tStates("title")}
-            </h3>
-            <p className="mt-1 text-xs text-text-secondary">
-              {tStates("subtitle")}
-            </p>
-          </div>
-          <div className="space-y-3">
-            {statefulOptions.map((option) => (
-              <div
-                key={option.id}
-                className="rounded-sm border border-surface-border bg-surface p-4"
-              >
-                <p className="mb-3 text-sm font-medium text-text-primary">
-                  {option.label}
-                </p>
-                <RadioGroup
-                  options={OPTION_STATES.map((value) => ({
-                    value,
-                    label: tStates(`${value}.label`),
-                    description: tStates(`${value}.description`),
-                  }))}
-                  value={optionStates[option.id] ?? "neuf"}
-                  onChange={(v) => onSetOptionState(option.id, v as OptionState)}
-                  columns={4}
-                  ariaLabel={`${option.label} — ${tStates("title")}`}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
       )}
     </div>
   );
